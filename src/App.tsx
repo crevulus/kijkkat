@@ -18,6 +18,8 @@ import {
   Container,
   Snackbar,
   CircularProgress,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 
 import { getFirestore, collection } from "firebase/firestore";
@@ -39,9 +41,22 @@ const container = (text: string, loading: boolean) => {
   );
 };
 
+const light = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+
+const dark = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
 function App() {
   const [value, setValue] = useState(0);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const [result, loading, error] = useCollection(
     collection(getFirestore(firebaseApp), "test")
@@ -60,51 +75,53 @@ function App() {
   }, [error]);
 
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={container("Home", loading)} />
-          <Route path="/map" element={container("Map", loading)} />
-          <Route
-            path="/favourites"
-            element={container("Favourites", loading)}
-          />
-        </Routes>
+    <ThemeProvider theme={isDarkMode ? dark : light}>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={container("Home", loading)} />
+            <Route path="/map" element={container("Map", loading)} />
+            <Route
+              path="/favourites"
+              element={container("Favourites", loading)}
+            />
+          </Routes>
 
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(_, newValue) => {
-            setValue(newValue);
-          }}
-        >
-          <BottomNavigationAction
-            label="Cats"
-            icon={<PetsIcon />}
-            component={RouterLink}
-            to="/"
-          />
-          <BottomNavigationAction
-            label="Map"
-            icon={<LocationOnIcon />}
-            component={RouterLink}
-            to="/map"
-          />
-          <BottomNavigationAction
-            label="Favourites"
-            icon={<FavoriteIcon />}
-            component={RouterLink}
-            to="/favourites"
-          />
-        </BottomNavigation>
-      </BrowserRouter>
-      <Snackbar
-        open={errorSnackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={error}
-      />
-    </div>
+          <BottomNavigation
+            showLabels
+            value={value}
+            onChange={(_, newValue) => {
+              setValue(newValue);
+            }}
+          >
+            <BottomNavigationAction
+              label="Cats"
+              icon={<PetsIcon />}
+              component={RouterLink}
+              to="/"
+            />
+            <BottomNavigationAction
+              label="Map"
+              icon={<LocationOnIcon />}
+              component={RouterLink}
+              to="/map"
+            />
+            <BottomNavigationAction
+              label="Favourites"
+              icon={<FavoriteIcon />}
+              component={RouterLink}
+              to="/favourites"
+            />
+          </BottomNavigation>
+        </BrowserRouter>
+        <Snackbar
+          open={errorSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={error}
+        />
+      </div>
+    </ThemeProvider>
   );
 }
 

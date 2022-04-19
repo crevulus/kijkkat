@@ -2,9 +2,10 @@ import { createTheme } from "@mui/system";
 
 export const theme = createTheme({
   palette: {
-    type: "light",
     primary: {
       main: "#9000ff",
+      light: "#9000ff",
+      dark: "#9000ff",
     },
     secondary: {
       main: "#ff9100",
