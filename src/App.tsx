@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Link as RouterLink,
+} from "react-router-dom";
 import "./App.css";
 
 import PetsIcon from "@mui/icons-material/Pets";
@@ -26,14 +32,6 @@ function App() {
     collection(getFirestore(firebaseApp), "test")
   );
 
-  useEffect(() => {
-    if (result) {
-      result.docs.forEach((doc) => {
-        console.log(doc.data());
-      });
-    }
-  }, [result]);
-
   const handleCloseSnackbar = () => {
     setErrorSnackbarOpen(false);
   };
@@ -48,22 +46,43 @@ function App() {
 
   return (
     <div className="App">
-      <Container sx={{ flexGrow: 1 }}>
-        <Typography variant="h1" gutterBottom>
-          Kijkkat
-        </Typography>
-      </Container>
-      <BottomNavigation
-        showLabels
-        value={value}
-        onChange={(_, newValue) => {
-          setValue(newValue);
-        }}
-      >
-        <BottomNavigationAction label="Cats" icon={<PetsIcon />} />
-        <BottomNavigationAction label="Map" icon={<LocationOnIcon />} />
-        <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-      </BottomNavigation>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={container("Home", loading)} />
+          <Route path="/map" element={<Map />} />
+          <Route
+            path="/favourites"
+            element={container("Favourites", loading)}
+          />
+        </Routes>
+
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(_, newValue) => {
+            setValue(newValue);
+          }}
+        >
+          <BottomNavigationAction
+            label="Cats"
+            icon={<PetsIcon />}
+            component={RouterLink}
+            to="/"
+          />
+          <BottomNavigationAction
+            label="Map"
+            icon={<LocationOnIcon />}
+            component={RouterLink}
+            to="/map"
+          />
+          <BottomNavigationAction
+            label="Favourites"
+            icon={<FavoriteIcon />}
+            component={RouterLink}
+            to="/favourites"
+          />
+        </BottomNavigation>
+      </BrowserRouter>
       <Snackbar
         open={errorSnackbarOpen}
         autoHideDuration={6000}
