@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+
+import PetsIcon from "@mui/icons-material/Pets";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+
+import {
+  Typography,
+  BottomNavigation,
+  BottomNavigationAction,
+  Container,
+} from "@mui/material";
 
 function App() {
+  const [value, setValue] = React.useState(0);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Container sx={{ flexGrow: 1 }}>
+        <Typography variant="h1" gutterBottom>
+          Kijkkat
+        </Typography>
+      </Container>
+      <BottomNavigation
+        showLabels
+        value={value}
+        onChange={(_, newValue) => {
+          setValue(newValue);
+        }}
+      >
+        <BottomNavigationAction label="Cats" icon={<PetsIcon />} />
+        <BottomNavigationAction label="Map" icon={<LocationOnIcon />} />
+        <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+      </BottomNavigation>
     </div>
   );
 }
