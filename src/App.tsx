@@ -47,14 +47,6 @@ function App() {
     collection(getFirestore(firebaseApp), "test")
   );
 
-  useEffect(() => {
-    if (result) {
-      result.docs.forEach((doc) => {
-        console.log(doc.data());
-      });
-    }
-  }, [result]);
-
   const handleCloseSnackbar = () => {
     setErrorSnackbarOpen(false);
   };
