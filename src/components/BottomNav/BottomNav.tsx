@@ -6,6 +6,8 @@ import PetsIcon from "@mui/icons-material/Pets";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
+import styles from "./BottomNav.module.css";
+
 import { NavigationRoutes } from "../../data/enums";
 
 function getPageIndex(route: string) {
@@ -31,6 +33,7 @@ export function BottomNav(): ReactElement {
       onChange={(_, index) => {
         getPageIndex(index);
       }}
+      className={styles.bottomNav}
     >
       <BottomNavigationAction
         label="Home"
