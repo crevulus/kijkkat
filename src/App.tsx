@@ -12,12 +12,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import {
-  Typography,
   BottomNavigation,
   BottomNavigationAction,
   Container,
   Snackbar,
-  CircularProgress,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
@@ -26,20 +24,10 @@ import { getFirestore, collection } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 import { firebaseApp } from "./firebase";
-
-const container = (text: string, loading: boolean) => {
-  return (
-    <Container sx={{ flexGrow: 1 }}>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Typography variant="h1" gutterBottom>
-          {text}
-        </Typography>
-      )}
-    </Container>
-  );
-};
+import Home from "./pages/Home";
+import Map from "./pages/Map";
+import Account from "./pages/Account";
+import { NavigationRoutes } from "./data/enums";
 
 const light = createTheme({
   palette: {
@@ -56,8 +44,9 @@ const dark = createTheme({
 function App() {
   const [value, setValue] = useState(0);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [result, loading, error] = useCollection(
     collection(getFirestore(firebaseApp), "test")
   );
@@ -78,39 +67,38 @@ function App() {
     <ThemeProvider theme={isDarkMode ? dark : light}>
       <div className="App">
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={container("Home", loading)} />
-            <Route path="/map" element={container("Map", loading)} />
-            <Route
-              path="/favourites"
-              element={container("Favourites", loading)}
-            />
-          </Routes>
+          <Container sx={{ flexGrow: 1 }} disableGutters>
+            <Routes>
+              <Route path={NavigationRoutes.Home} element={<Home />} />
+              <Route path={NavigationRoutes.Map} element={<Map />} />
+              <Route path={NavigationRoutes.Account} element={<Account />} />
+            </Routes>
+          </Container>
 
           <BottomNavigation
             showLabels
             value={value}
-            onChange={(_, newValue) => {
-              setValue(newValue);
+            onChange={(_, index) => {
+              setValue(index);
             }}
           >
             <BottomNavigationAction
-              label="Cats"
+              label="Home"
               icon={<PetsIcon />}
               component={RouterLink}
-              to="/"
+              to={NavigationRoutes.Home}
             />
             <BottomNavigationAction
               label="Map"
               icon={<LocationOnIcon />}
               component={RouterLink}
-              to="/map"
+              to={NavigationRoutes.Map}
             />
             <BottomNavigationAction
-              label="Favourites"
+              label="Account"
               icon={<FavoriteIcon />}
               component={RouterLink}
-              to="/favourites"
+              to={NavigationRoutes.Account}
             />
           </BottomNavigation>
         </BrowserRouter>

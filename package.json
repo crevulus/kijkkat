@@ -6,9 +6,9 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto": "^4.5.5",
+    "@googlemaps/react-wrapper": "^1.1.31",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.2",
-    "@react-google-maps/api": "^2.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -38,10 +38,11 @@
     "workbox-streams": "^5.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "plop"
   },
   "eslintConfig": {
     "extends": [
@@ -60,5 +61,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/google.maps": "^3.48.6",
+    "plop": "^3.0.5"
   }
 }
