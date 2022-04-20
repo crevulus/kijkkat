@@ -1,38 +1,39 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import PetsIcon from "@mui/icons-material/Pets";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-
-import {
-  Typography,
-  BottomNavigation,
-  BottomNavigationAction,
-  Container,
-  Snackbar,
-} from "@mui/material";
+import { Container, Snackbar, createTheme, ThemeProvider } from "@mui/material";
 
 import { getFirestore, collection } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 import { firebaseApp } from "./firebase";
+import Home from "./pages/Home";
+import Map from "./pages/Map";
+import Account from "./pages/Account";
+import { NavigationRoutes } from "./data/enums";
+import { BottomNav } from "./components";
+
+const light = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+
+const dark = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 function App() {
-  const [value, setValue] = useState(0);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+  const [isDarkMode] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [result, loading, error] = useCollection(
     collection(getFirestore(firebaseApp), "test")
   );
-
-  useEffect(() => {
-    if (result) {
-      result.docs.forEach((doc) => {
-        console.log(doc.data());
-      });
-    }
-  }, [result]);
 
   const handleCloseSnackbar = () => {
     setErrorSnackbarOpen(false);
@@ -47,30 +48,27 @@ function App() {
   }, [error]);
 
   return (
-    <div className="App">
-      <Container sx={{ flexGrow: 1 }}>
-        <Typography variant="h1" gutterBottom>
-          Kijkkat
-        </Typography>
-      </Container>
-      <BottomNavigation
-        showLabels
-        value={value}
-        onChange={(_, newValue) => {
-          setValue(newValue);
-        }}
-      >
-        <BottomNavigationAction label="Cats" icon={<PetsIcon />} />
-        <BottomNavigationAction label="Map" icon={<LocationOnIcon />} />
-        <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-      </BottomNavigation>
-      <Snackbar
-        open={errorSnackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={error}
-      />
-    </div>
+    <ThemeProvider theme={isDarkMode ? dark : light}>
+      <div className="App">
+        <BrowserRouter>
+          <Container sx={{ flexGrow: 1 }} disableGutters>
+            <Routes>
+              <Route path={NavigationRoutes.Home} element={<Home />} />
+              <Route path={NavigationRoutes.Map} element={<Map />} />
+              <Route path={NavigationRoutes.Account} element={<Account />} />
+            </Routes>
+          </Container>
+
+          <BottomNav />
+        </BrowserRouter>
+        <Snackbar
+          open={errorSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={error}
+        />
+      </div>
+    </ThemeProvider>
   );
 }
 
