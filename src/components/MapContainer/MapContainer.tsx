@@ -47,6 +47,7 @@ export function MapContainer({ coords }: MapContainerProps) {
         }
       </GoogleMap>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center, zoom]);
 
   if (loadError) {
