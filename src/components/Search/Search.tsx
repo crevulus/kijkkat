@@ -1,15 +1,17 @@
 import { useRef, useMemo, useState, useEffect } from "react";
+import parse from "autosuggest-highlight/parse";
+import throttle from "lodash.throttle";
+import { useNavigate } from "react-router-dom";
+
+import { NavigationRoutes } from "../../data/enums";
+import { useStore } from "../../data/store";
+
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import parse from "autosuggest-highlight/parse";
-import throttle from "lodash.throttle";
-import { useNavigate } from "react-router-dom";
-import { NavigationRoutes } from "../../data/enums";
-import { useStore } from "../../data/store";
 
 // This key was created specifically for the demo in mui.com.
 // You need to create a new one for your application.
@@ -41,6 +43,7 @@ interface StructuredFormatting {
 export interface PlaceType {
   description: string;
   structured_formatting: StructuredFormatting;
+  place_id: string;
 }
 
 export function Search() {
@@ -121,14 +124,18 @@ export function Search() {
   }, [chosenLocation, inputValue, fetch]);
 
   const handleSelectPlace = (newValue: PlaceType | null) => {
-    setOptions(newValue ? [newValue, ...options] : options);
-    setChosenLocation(newValue);
-    navigate(NavigationRoutes.Map);
+    if (newValue) {
+      setOptions(newValue ? [newValue, ...options] : options);
+      setChosenLocation(newValue);
+      navigate(NavigationRoutes.Map);
+    } else {
+      setChosenLocation(null);
+    }
   };
 
   return (
     <Autocomplete
-      id="google-map-demo"
+      id="google-maps-autocomplete-box"
       sx={{ width: 300 }}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.description

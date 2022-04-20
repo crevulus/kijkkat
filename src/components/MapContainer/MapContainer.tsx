@@ -1,48 +1,59 @@
-import React, { useEffect, useRef, ReactElement, useState } from "react";
-import { Wrapper, Status } from "@googlemaps/react-wrapper";
+import { useEffect, useState } from "react";
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 import styles from "./MapContainer.module.css";
 
-const render = (status: Status): ReactElement => {
-  if (status === Status.LOADING) return <h3>{status} ..</h3>;
-  return <h3>{status} ...</h3>;
+type MapContainerProps = {
+  coords: {
+    lat: number;
+    lng: number;
+  } | null;
 };
 
-function MapComponent({
-  center,
-  zoom,
-}: {
-  center: google.maps.LatLngLiteral;
-  zoom: number;
-}) {
-  const [map, setMap] = useState<google.maps.Map>();
-  const mapRef = useRef(null);
+const AMSTERDAM_COORDS = { lat: 52.356, lng: 4.896 };
+
+export function MapContainer({ coords }: MapContainerProps) {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!, // ,
+    // ...otherOptions
+  });
+
+  const [center, setCenter] = useState(AMSTERDAM_COORDS);
+  const [zoom, setZoom] = useState(10);
 
   useEffect(() => {
-    if (mapRef.current && !map) {
-      setMap(
-        new window.google.maps.Map(mapRef.current!, {
-          center,
-          zoom,
-        })
-      );
+    if (coords) {
+      console.log(coords);
+      setCenter(coords);
+      setZoom(14);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapRef, map]);
+  }, [coords]);
 
-  return <div ref={mapRef} id="map" className={styles.mapDiv} />;
-}
+  const renderMap = () => {
+    // wrapping to a function is useful in case you want to access `window.google`
+    // to eg. setup options or create latLng object, it won't be available otherwise
+    // feel free to render directly if you don't need that
+    const onLoad = function onLoad(mapInstance: any) {
+      console.log(mapInstance);
+    };
+    return (
+      //@ts-ignore
+      <GoogleMap
+        mapContainerClassName={styles.mapDiv}
+        center={center}
+        zoom={zoom}
+        onLoad={onLoad}
+      >
+        {
+          // ...Your map components
+        }
+      </GoogleMap>
+    );
+  };
 
-export function MapContainer() {
-  const center = { lat: 52.356, lng: 4.896 };
-  const zoom = 10;
+  if (loadError) {
+    return <div>Map cannot be loaded right now, sorry.</div>;
+  }
 
-  return (
-    <Wrapper
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY!}
-      render={render}
-    >
-      <MapComponent center={center} zoom={zoom} />
-    </Wrapper>
-  );
+  return isLoaded ? renderMap() : <p>Loading now</p>;
 }
