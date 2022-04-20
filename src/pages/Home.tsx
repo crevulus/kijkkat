@@ -1,9 +1,10 @@
-import { Typography } from "@mui/material";
+import { Container } from "@mui/material";
+import { Search } from "../components";
 
 export default function Home() {
   return (
-    <Typography variant="h1" gutterBottom>
-      Home
-    </Typography>
+    <Container>
+      <Search />
+    </Container>
   );
 }
