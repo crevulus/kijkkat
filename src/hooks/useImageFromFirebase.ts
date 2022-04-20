@@ -23,6 +23,7 @@ export const useImageFromFirebase = (urlString: string) => {
         .catch((error) => setErrorMsg(error.message));
     };
     getImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlString]);
 
   return [imageUrl, errorMsg];

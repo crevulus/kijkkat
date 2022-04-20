@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -29,14 +29,6 @@ function App() {
   const handleCloseSnackbar = () => {
     setErrorSnackbarOpen(false);
   };
-
-  // useEffect(() => {
-  //   if (error) {
-  //     setErrorSnackbarOpen(true);
-  //   } else {
-  //     handleCloseSnackbar();
-  //   }
-  // }, [error]);
 
   return (
     <ThemeProvider theme={isDarkMode ? dark : light}>
