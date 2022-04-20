@@ -137,7 +137,7 @@ export function Search() {
   return (
     <Autocomplete
       id="google-maps-autocomplete-box"
-      sx={{ width: 300 }}
+      sx={{ width: "100%" }}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.description
       }
