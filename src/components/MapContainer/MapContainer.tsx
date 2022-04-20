@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, ReactElement, useState } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 
+import styles from "./MapContainer.module.css";
+
 const render = (status: Status): ReactElement => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
   return <h3>{status} ...</h3>;
@@ -28,7 +30,7 @@ function MapComponent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapRef, map]);
 
-  return <div ref={mapRef} id="map" style={{ height: "100%" }} />;
+  return <div ref={mapRef} id="map" className={styles.mapDiv} />;
 }
 
 export function MapContainer() {
