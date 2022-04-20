@@ -1,24 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Link as RouterLink,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import PetsIcon from "@mui/icons-material/Pets";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Container,
-  Snackbar,
-  createTheme,
-  ThemeProvider,
-} from "@mui/material";
+import { Container, Snackbar, createTheme, ThemeProvider } from "@mui/material";
 
 import { getFirestore, collection } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -28,6 +12,7 @@ import Home from "./pages/Home";
 import Map from "./pages/Map";
 import Account from "./pages/Account";
 import { NavigationRoutes } from "./data/enums";
+import { BottomNav } from "./components";
 
 const light = createTheme({
   palette: {
@@ -42,7 +27,6 @@ const dark = createTheme({
 });
 
 function App() {
-  const [value, setValue] = useState(0);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
   const [isDarkMode] = useState(false);
 
@@ -75,32 +59,7 @@ function App() {
             </Routes>
           </Container>
 
-          <BottomNavigation
-            showLabels
-            value={value}
-            onChange={(_, index) => {
-              setValue(index);
-            }}
-          >
-            <BottomNavigationAction
-              label="Home"
-              icon={<PetsIcon />}
-              component={RouterLink}
-              to={NavigationRoutes.Home}
-            />
-            <BottomNavigationAction
-              label="Map"
-              icon={<LocationOnIcon />}
-              component={RouterLink}
-              to={NavigationRoutes.Map}
-            />
-            <BottomNavigationAction
-              label="Account"
-              icon={<FavoriteIcon />}
-              component={RouterLink}
-              to={NavigationRoutes.Account}
-            />
-          </BottomNavigation>
+          <BottomNav />
         </BrowserRouter>
         <Snackbar
           open={errorSnackbarOpen}

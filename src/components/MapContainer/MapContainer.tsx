@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 import styles from "./MapContainer.module.css";
+import { useStore } from "../../data/store";
 
 type MapContainerProps = {
   coords: {
@@ -18,24 +19,21 @@ export function MapContainer({ coords }: MapContainerProps) {
     // ...otherOptions
   });
 
+  const setMapLoaded = useStore((state) => state.setMapLoaded);
+
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [zoom, setZoom] = useState(10);
 
   useEffect(() => {
     if (coords) {
-      console.log(coords);
       setCenter(coords);
       setZoom(14);
     }
   }, [coords]);
 
-  const renderMap = () => {
-    // wrapping to a function is useful in case you want to access `window.google`
-    // to eg. setup options or create latLng object, it won't be available otherwise
-    // feel free to render directly if you don't need that
-    const onLoad = function onLoad(mapInstance: any) {
-      console.log(mapInstance);
-    };
+  const onLoad = () => setMapLoaded(true);
+
+  const renderMap = useCallback(() => {
     return (
       //@ts-ignore
       <GoogleMap
@@ -49,7 +47,7 @@ export function MapContainer({ coords }: MapContainerProps) {
         }
       </GoogleMap>
     );
-  };
+  }, [center, zoom]);
 
   if (loadError) {
     return <div>Map cannot be loaded right now, sorry.</div>;

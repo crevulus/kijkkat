@@ -49,6 +49,7 @@ export interface PlaceType {
 export function Search() {
   const chosenLocation = useStore((state) => state.chosenLocation);
   const setChosenLocation = useStore((state) => state.setChosenLocation);
+  const mapLoaded = useStore((state) => state.mapLoaded);
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
@@ -56,8 +57,8 @@ export function Search() {
 
   const navigate = useNavigate();
 
-  if (typeof window !== "undefined" && !loaded.current) {
-    if (!document.querySelector("#google-maps")) {
+  if (typeof window !== "undefined" && !loaded.current && !mapLoaded) {
+    if (!document.querySelector("#google-maps-autocomplete-box")) {
       loadScript(
         `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
         document.querySelector("head"),
