@@ -25,6 +25,7 @@ export default function Home() {
       <Typography variant="h3" padding={2}>
         Find a cat nearby
       </Typography>
+      <div>This is a test</div>
       <Search />
       {/* @ts-ignore  */}
       <PostsGrid data={values} />
