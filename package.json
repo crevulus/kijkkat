@@ -6,6 +6,8 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto": "^4.5.5",
+    "@googlemaps/js-api-loader": "^1.14.1",
+    "@googlemaps/react-wrapper": "^1.1.31",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.2",
     "@react-google-maps/api": "^2.8.1",
@@ -16,10 +18,13 @@
     "@types/node": "^12.20.48",
     "@types/react": "^16.14.25",
     "@types/react-dom": "^16.9.14",
+    "autosuggest-highlight": "^3.2.1",
     "firebase": "^9.6.11",
+    "lodash.throttle": "^4.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-firebase-hooks": "^5.0.3",
+    "react-geocode": "^0.2.3",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.6.3",
@@ -35,13 +40,15 @@
     "workbox-range-requests": "^5.1.4",
     "workbox-routing": "^5.1.4",
     "workbox-strategies": "^5.1.4",
-    "workbox-streams": "^5.1.4"
+    "workbox-streams": "^5.1.4",
+    "zustand": "^4.0.0-rc.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "plop"
   },
   "eslintConfig": {
     "extends": [
@@ -60,5 +67,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/autosuggest-highlight": "^3.2.0",
+    "@types/google.maps": "^3.48.6",
+    "@types/lodash.throttle": "^4.1.7",
+    "@types/react-geocode": "^0.2.0",
+    "plop": "^3.0.5"
   }
 }

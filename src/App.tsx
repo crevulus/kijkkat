@@ -1,95 +1,56 @@
-import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  Link as RouterLink,
-} from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import PetsIcon from "@mui/icons-material/Pets";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Container, Snackbar, createTheme, ThemeProvider } from "@mui/material";
 
-import {
-  Typography,
-  BottomNavigation,
-  BottomNavigationAction,
-  Container,
-  Snackbar,
-} from "@mui/material";
+import Home from "./pages/Home";
+import Map from "./pages/Map";
+import Account from "./pages/Account";
+import { NavigationRoutes } from "./data/enums";
+import { BottomNav } from "./components";
 
-import { getFirestore, collection } from "firebase/firestore";
-import { useCollection } from "react-firebase-hooks/firestore";
+const light = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
 
-import { firebaseApp } from "./firebase";
+const dark = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 function App() {
-  const [value, setValue] = useState(0);
   const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
-
-  const [result, loading, error] = useCollection(
-    collection(getFirestore(firebaseApp), "test")
-  );
+  const [isDarkMode] = useState(false);
 
   const handleCloseSnackbar = () => {
     setErrorSnackbarOpen(false);
   };
 
-  useEffect(() => {
-    if (error) {
-      setErrorSnackbarOpen(true);
-    } else {
-      handleCloseSnackbar();
-    }
-  }, [error]);
-
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={container("Home", loading)} />
-          <Route path="/map" element={<Map />} />
-          <Route
-            path="/favourites"
-            element={container("Favourites", loading)}
-          />
-        </Routes>
+    <ThemeProvider theme={isDarkMode ? dark : light}>
+      <div className="App">
+        <BrowserRouter>
+          <Container sx={{ flexGrow: 1 }} disableGutters>
+            <Routes>
+              <Route path={NavigationRoutes.Home} element={<Home />} />
+              <Route path={NavigationRoutes.Map} element={<Map />} />
+              <Route path={NavigationRoutes.Account} element={<Account />} />
+            </Routes>
+          </Container>
 
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(_, newValue) => {
-            setValue(newValue);
-          }}
-        >
-          <BottomNavigationAction
-            label="Cats"
-            icon={<PetsIcon />}
-            component={RouterLink}
-            to="/"
-          />
-          <BottomNavigationAction
-            label="Map"
-            icon={<LocationOnIcon />}
-            component={RouterLink}
-            to="/map"
-          />
-          <BottomNavigationAction
-            label="Favourites"
-            icon={<FavoriteIcon />}
-            component={RouterLink}
-            to="/favourites"
-          />
-        </BottomNavigation>
-      </BrowserRouter>
-      <Snackbar
-        open={errorSnackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={error}
-      />
-    </div>
+          <BottomNav />
+        </BrowserRouter>
+        <Snackbar
+          open={errorSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        />
+      </div>
+    </ThemeProvider>
   );
 }
 
