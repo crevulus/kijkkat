@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: REACT_APP_GOOGLE_MAPS_API_KEY=${{env.REACT_APP_GOOGLE_MAPS_API_KEY}} yarn && yarn build
+      - run: yarn && yarn build
+        env:
+          REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
