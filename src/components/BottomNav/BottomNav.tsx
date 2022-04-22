@@ -8,8 +8,6 @@ import CameraIcon from "@mui/icons-material/Camera";
 import PetsIcon from "@mui/icons-material/Pets";
 import FaceIcon from "@mui/icons-material/Face";
 
-import styles from "./BottomNav.module.css";
-
 import { NavigationRoutes, PageNames } from "../../data/enums";
 
 const pagesArray = Object.keys(PageNames);
@@ -33,7 +31,7 @@ export function BottomNav(): ReactElement {
       onChange={(_, index) => {
         getPageIndex(index);
       }}
-      className={styles.bottomNav}
+      sx={{ maxWidth: "100vw" }}
     >
       <BottomNavigationAction
         label={PageNames.Home}

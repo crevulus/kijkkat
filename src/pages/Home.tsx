@@ -21,7 +21,7 @@ export default function Home() {
   }
 
   return (
-    <Container sx={{ p: 2 }}>
+    <Container maxWidth="sm">
       <Typography variant="h3" padding={2}>
         Find a cat nearby
       </Typography>

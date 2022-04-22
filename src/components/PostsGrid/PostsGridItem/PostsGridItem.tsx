@@ -25,8 +25,8 @@ export function PostsGridItem({ item }: any): ReactElement {
     <ImageListItem>
       <img
         className={styles.image}
-        src={`${value}?w=100&h=100&fit=crop&auto=format`}
-        srcSet={`${value}?w=100&h=100&fit=crop&auto=format&dpr=2 2x`}
+        src={value}
+        srcSet={value}
         alt={item.timestamp}
         loading="lazy"
       />
