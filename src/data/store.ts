@@ -33,3 +33,20 @@ export const useUserStore = create<UserStateType>((set) => ({
   setIsSignedIn: (signedIn) =>
     set((state) => ({ ...state, isSignedIn: signedIn })),
 }));
+
+type ErrorStateType = {
+  error: boolean;
+  setError: (error: boolean) => void;
+  errorMessage: string;
+  setErrorMessage: (isSignedIn: string) => void;
+};
+
+const defaultErrorMessage = "Oops! Something went wrong.";
+
+export const useErrorStore = create<ErrorStateType>((set) => ({
+  error: false,
+  setError: (error) => set((state) => ({ ...state, error })),
+  errorMessage: defaultErrorMessage,
+  setErrorMessage: (message = defaultErrorMessage) =>
+    set((state) => ({ ...state, errorMessage: message })),
+}));
