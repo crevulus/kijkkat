@@ -20,7 +20,6 @@ const uiConfig = {
 };
 
 export function Account() {
-  const user = useUserStore((state) => state.user);
   const isSignedIn = useUserStore((state) => state.isSignedIn);
 
   return (
@@ -29,7 +28,7 @@ export function Account() {
         Account
       </Typography>
       <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-      {isSignedIn && user?.email}
+      {isSignedIn && auth.currentUser?.email}
     </>
   );
 }

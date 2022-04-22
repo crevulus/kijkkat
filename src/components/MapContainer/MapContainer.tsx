@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 import styles from "./MapContainer.module.css";
-import { useGeographicStore } from "../../data/store";
+import { useErrorStore, useGeographicStore } from "../../data/store";
 
 type MapContainerProps = {
   coords: {
@@ -14,12 +14,12 @@ type MapContainerProps = {
 const AMSTERDAM_COORDS = { lat: 52.356, lng: 4.896 };
 
 export function MapContainer({ coords }: MapContainerProps) {
+  const setError = useErrorStore((state) => state.setError);
+  const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!, // ,
     // ...otherOptions
   });
-
-  const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
 
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [zoom, setZoom] = useState(10);
@@ -30,6 +30,13 @@ export function MapContainer({ coords }: MapContainerProps) {
       setZoom(14);
     }
   }, [coords]);
+
+  useEffect(() => {
+    if (loadError) {
+      setError(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadError]);
 
   const onLoad = () => setMapLoaded(true);
 

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { getFirestore, collection } from "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
@@ -5,20 +6,25 @@ import { Container, Typography } from "@mui/material";
 
 import { PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
+import { useErrorStore } from "../data/store";
 
 const db = getFirestore(firebaseApp);
 
 export function Home() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [values, loading, error] = useCollectionData(collection(db, "posts"));
+  const setError = useErrorStore((state) => state.setError);
+  const [values, loading, loadError] = useCollectionData(
+    collection(db, "posts")
+  );
+
+  useEffect(() => {
+    if (loadError) {
+      setError(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadError]);
 
   if (loading) {
     return <Typography>Loading...</Typography>;
-  }
-
-  if (error) {
-    //@ts-ignore
-    return <Typography>Error: {error}</Typography>;
   }
 
   return (

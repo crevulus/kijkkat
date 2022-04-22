@@ -1,8 +1,8 @@
 import { createTheme } from "@mui/material";
 
-const primaryColor = "#00bcd4";
+export const primaryColor = "#00bcd4";
 
-const secondaryColor = "#BA9FE3";
+export const secondaryColor = "#BA9FE3";
 
 const themeBase = {
   palette: {

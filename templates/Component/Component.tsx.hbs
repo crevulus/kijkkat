@@ -1,13 +1,16 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement } from 'react';
+import { Container, Typography } from "@mui/material";
+
+import styles from './{{pascalCase name}}.module.css';
 
 type {{pascalCase name}}PropsType = {
 
 }
 
-export function {{pascalCase name}}({}: {{pascalCase name}}PropsType): ReactNode {
+export function {{pascalCase name}}({}: {{pascalCase name}}PropsType): ReactElement {
   return (
-    <div>
-      {{pascalCase name}}
-    </div>
+    <Container className={styles.{{pascalCase name}} }>
+      <Typography variant="h3">{{pascalCase name}}</Typography>
+    </Container>
   );
 };

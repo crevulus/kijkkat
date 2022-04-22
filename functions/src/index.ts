@@ -1,9 +1,21 @@
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+const vision = require("@google-cloud/vision");
+
+admin.initializeApp();
+
+exports.checkForCats = functions
+  .region("europe-west1")
+  .storage.bucket("cats")
+  .object()
+  .onFinalize(async (object) => {
+    const client = new vision.ImageAnnotatorClient();
+    const [result] = await client.labelDetection(
+      `gs://${object.bucket}/${object.name}`
+    );
+    console.log(result);
+    const labels = result.labelAnnotations;
+    console.log("Labels:");
+    labels.forEach((label: any) => console.log(label.description));
+  });
