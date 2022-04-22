@@ -22,6 +22,14 @@ module.exports = (plop) => {
         templateFile: "templates/Component/Component.tsx.hbs",
       },
       {
+        // Add a new file
+        type: "add",
+        // Path for the new file
+        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.module.css",
+        // Handlebars template used to generate content of new file
+        templateFile: "templates/Component/Component.module.css.hbs",
+      },
+      {
         type: "add",
         path: "src/components/{{pascalCase name}}/index.ts",
         templateFile: "templates/Component/index.ts.hbs",
