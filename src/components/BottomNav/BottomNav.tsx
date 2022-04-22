@@ -1,55 +1,65 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
-import PetsIcon from "@mui/icons-material/Pets";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import HomeIcon from "@mui/icons-material/Home";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CameraIcon from "@mui/icons-material/Camera";
+import PetsIcon from "@mui/icons-material/Pets";
+import FaceIcon from "@mui/icons-material/Face";
 
-import styles from "./BottomNav.module.css";
+import { NavigationRoutes, PageNames } from "../../data/enums";
 
-import { NavigationRoutes } from "../../data/enums";
+const pagesArray = Object.keys(PageNames);
 
-function getPageIndex(route: string) {
-  switch (route) {
-    case NavigationRoutes.Home:
-      return 0;
-    case NavigationRoutes.Map:
-      return 1;
-    case NavigationRoutes.Account:
-      return 2;
-    default:
-      return 0;
+const getPageIndex = (route: string): number => {
+  if (route === NavigationRoutes.Home) {
+    return 0;
   }
-}
+  return pagesArray.findIndex((pageName) =>
+    route.toLowerCase().includes(pageName.toLowerCase())
+  );
+};
 
 export function BottomNav(): ReactElement {
   const location = useLocation();
   const value = getPageIndex(location.pathname);
+
   return (
     <BottomNavigation
-      showLabels
       value={value}
       onChange={(_, index) => {
         getPageIndex(index);
       }}
-      className={styles.bottomNav}
+      sx={{ maxWidth: "100vw" }}
     >
       <BottomNavigationAction
-        label="Home"
-        icon={<PetsIcon />}
+        label={PageNames.Home}
+        icon={<HomeIcon />}
         component={RouterLink}
         to={NavigationRoutes.Home}
       />
       <BottomNavigationAction
-        label="Map"
+        label={PageNames.Map}
         icon={<LocationOnIcon />}
         component={RouterLink}
         to={NavigationRoutes.Map}
       />
       <BottomNavigationAction
-        label="Account"
-        icon={<FavoriteIcon />}
+        label={PageNames.Add}
+        icon={<CameraIcon />}
+        component={RouterLink}
+        to={NavigationRoutes.Add}
+      />
+      <BottomNavigationAction
+        label={PageNames.Posts}
+        icon={<PetsIcon />}
+        component={RouterLink}
+        to={NavigationRoutes.Posts}
+      />
+      <BottomNavigationAction
+        label={PageNames.Account}
+        icon={<FaceIcon />}
         component={RouterLink}
         to={NavigationRoutes.Account}
       />

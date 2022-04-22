@@ -8,7 +8,7 @@ import { firebaseApp } from "../firebase";
 
 const db = getFirestore(firebaseApp);
 
-export default function Home() {
+export function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [values, loading, error] = useCollectionData(collection(db, "posts"));
 
@@ -17,11 +17,12 @@ export default function Home() {
   }
 
   if (error) {
+    //@ts-ignore
     return <Typography>Error: {error}</Typography>;
   }
 
   return (
-    <Container sx={{ p: 2 }}>
+    <Container maxWidth="sm">
       <Typography variant="h3" padding={2}>
         Find a cat nearby
       </Typography>
