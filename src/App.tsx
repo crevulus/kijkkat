@@ -9,6 +9,8 @@ import Map from "./pages/Map";
 import Account from "./pages/Account";
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav } from "./components";
+import Add from "./pages/Add";
+import Posts from "./pages/Posts";
 
 const light = createTheme({
   palette: {
@@ -38,10 +40,12 @@ function App() {
             <Routes>
               <Route path={NavigationRoutes.Home} element={<Home />} />
               <Route path={NavigationRoutes.Map} element={<Map />} />
+              <Route path={NavigationRoutes.Add} element={<Add />} />
+              <Route path={NavigationRoutes.Posts} element={<Posts />} />
+              <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
               <Route path={NavigationRoutes.Account} element={<Account />} />
             </Routes>
           </Container>
-
           <BottomNav />
         </BrowserRouter>
         <Snackbar
