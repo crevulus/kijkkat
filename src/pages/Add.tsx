@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { getStorage, ref } from "firebase/storage";
@@ -10,11 +11,11 @@ import {
   Container,
   Divider,
   styled,
-  Typography,
 } from "@mui/material";
 
 import { firebaseApp } from "../firebase";
 import { NavigationRoutes } from "../data/enums";
+import { useErrorStore } from "../data/store";
 
 const auth = getAuth(firebaseApp);
 const storage = getStorage(firebaseApp);
@@ -31,9 +32,10 @@ const Root = styled(Container)(({ theme }) => ({
 const FIREBASE_IMAGE_SUBFOLDER = "cats";
 
 export function Add() {
+  const setError = useErrorStore((state) => state.setError);
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [uploadFile, uploading, _, error] = useUploadFile();
+  const [uploadFile, uploading, _, loadError] = useUploadFile();
 
   const handleRedirectIfNotSignedIn = () => {
     if (!auth.currentUser) {
@@ -54,9 +56,15 @@ export function Add() {
     }
   };
 
+  useEffect(() => {
+    if (loadError) {
+      setError(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadError]);
+
   return (
     <Root>
-      {error && <Typography variant="h6">Error...</Typography>}
       <Button variant="contained" onClick={handleRedirectIfNotSignedIn}>
         <label htmlFor="capture-button">Take a photo</label>
       </Button>

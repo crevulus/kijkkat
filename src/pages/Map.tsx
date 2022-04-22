@@ -4,7 +4,7 @@ import Geocode from "react-geocode";
 import { Container } from "@mui/material";
 
 import { MapContainer } from "../components";
-import { useGeographicStore } from "../data/store";
+import { useErrorStore, useGeographicStore } from "../data/store";
 
 type CoordsType = {
   lat: number;
@@ -14,6 +14,7 @@ type CoordsType = {
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_GEOCODING_API_KEY!);
 
 export function Map() {
+  const setError = useErrorStore((state) => state.setError);
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const [latLng, setLatLng] = useState<CoordsType | null>(null);
 
@@ -28,7 +29,7 @@ export function Map() {
           setLatLng({ lat, lng });
         },
         (error: any) => {
-          console.error(error);
+          setError(true);
         }
       );
     }

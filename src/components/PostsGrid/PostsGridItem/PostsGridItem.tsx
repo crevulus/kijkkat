@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { getStorage, ref } from "firebase/storage";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 
@@ -7,16 +7,22 @@ import { ImageListItem, CircularProgress } from "@mui/material";
 import styles from "./PostsGridItem.module.css";
 
 import { firebaseApp } from "../../../firebase";
+import { useErrorStore } from "../../../data/store";
 
 const storage = getStorage(firebaseApp);
 
 export function PostsGridItem({ item }: any): ReactElement {
-  const [value, loading, error] = useDownloadURL(ref(storage, item.imgSource));
+  const setError = useErrorStore((state) => state.setError);
+  const [value, loading, loadError] = useDownloadURL(
+    ref(storage, item.imgSource)
+  );
 
-  if (error) {
-    //@ts-ignore
-    return <div>Error: {error}</div>;
-  }
+  useEffect(() => {
+    if (loadError) {
+      setError(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadError]);
 
   return (
     <ImageListItem sx={{ alignItems: "center", justifyContent: "center" }}>
