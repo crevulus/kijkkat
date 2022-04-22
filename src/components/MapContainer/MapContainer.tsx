@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 import styles from "./MapContainer.module.css";
-import { useStore } from "../../data/store";
+import { useGeographicStore } from "../../data/store";
 
 type MapContainerProps = {
   coords: {
@@ -19,7 +19,7 @@ export function MapContainer({ coords }: MapContainerProps) {
     // ...otherOptions
   });
 
-  const setMapLoaded = useStore((state) => state.setMapLoaded);
+  const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
 
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [zoom, setZoom] = useState(10);

@@ -14,6 +14,7 @@ export function PostsGridItem({ item }: any): ReactElement {
   const [value, loading, error] = useDownloadURL(ref(storage, item.imgSource));
 
   if (error) {
+    //@ts-ignore
     return <div>Error: {error}</div>;
   }
 

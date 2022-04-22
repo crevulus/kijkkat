@@ -4,7 +4,7 @@ import Geocode from "react-geocode";
 import { Container } from "@mui/material";
 
 import { MapContainer } from "../components";
-import { useStore } from "../data/store";
+import { useGeographicStore } from "../data/store";
 
 type CoordsType = {
   lat: number;
@@ -14,7 +14,7 @@ type CoordsType = {
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_GEOCODING_API_KEY!);
 
 export default function Map() {
-  const chosenLocation = useStore((state) => state.chosenLocation);
+  const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const [latLng, setLatLng] = useState<CoordsType | null>(null);
 
   useEffect(() => {

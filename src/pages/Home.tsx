@@ -17,6 +17,7 @@ export default function Home() {
   }
 
   if (error) {
+    //@ts-ignore
     return <Typography>Error: {error}</Typography>;
   }
 

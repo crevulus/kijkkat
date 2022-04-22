@@ -4,7 +4,7 @@ import throttle from "lodash.throttle";
 import { useNavigate } from "react-router-dom";
 
 import { NavigationRoutes } from "../../data/enums";
-import { useStore } from "../../data/store";
+import { useGeographicStore } from "../../data/store";
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -47,9 +47,11 @@ export interface PlaceType {
 }
 
 export function Search() {
-  const chosenLocation = useStore((state) => state.chosenLocation);
-  const setChosenLocation = useStore((state) => state.setChosenLocation);
-  const mapLoaded = useStore((state) => state.mapLoaded);
+  const chosenLocation = useGeographicStore((state) => state.chosenLocation);
+  const setChosenLocation = useGeographicStore(
+    (state) => state.setChosenLocation
+  );
+  const mapLoaded = useGeographicStore((state) => state.mapLoaded);
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
