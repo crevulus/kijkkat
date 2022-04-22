@@ -8,7 +8,7 @@ import { firebaseApp } from "../firebase";
 
 const db = getFirestore(firebaseApp);
 
-export default function Home() {
+export function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [values, loading, error] = useCollectionData(collection(db, "posts"));
 

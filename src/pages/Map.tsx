@@ -13,7 +13,7 @@ type CoordsType = {
 
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_GEOCODING_API_KEY!);
 
-export default function Map() {
+export function Map() {
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const [latLng, setLatLng] = useState<CoordsType | null>(null);
 

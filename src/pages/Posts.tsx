@@ -1,8 +1,15 @@
-import { Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 
-export default function Posts() {
+import { Typography } from "@mui/material";
+
+import { PostsDynamic } from "./PostsDynamic";
+
+export function Posts() {
   const { id } = useParams();
+
+  if (id) {
+    return <PostsDynamic id={id} />;
+  }
 
   return (
     <>

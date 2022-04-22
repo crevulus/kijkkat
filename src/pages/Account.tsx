@@ -19,7 +19,7 @@ const uiConfig = {
   },
 };
 
-export default function Account() {
+export function Account() {
   const user = useUserStore((state) => state.user);
   const isSignedIn = useUserStore((state) => state.isSignedIn);
 

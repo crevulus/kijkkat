@@ -9,13 +9,14 @@ import { light, dark } from "./styles/theme";
 import { useUserStore } from "./data/store";
 import { firebaseApp } from "./firebase";
 
-import Home from "./pages/Home";
-import Map from "./pages/Map";
-import Account from "./pages/Account";
+import { Home } from "./pages/Home";
+import { Map } from "./pages/Map";
+import { Account } from "./pages/Account";
+import { Add } from "./pages/Add";
+import { Posts } from "./pages/Posts";
+
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav } from "./components";
-import Add from "./pages/Add";
-import Posts from "./pages/Posts";
 
 const auth = getAuth(firebaseApp);
 
