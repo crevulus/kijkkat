@@ -22,7 +22,7 @@ import {
 
 import { firebaseApp } from "../firebase";
 import { NavigationRoutes } from "../data/enums";
-import { useErrorStore } from "../data/store";
+import { useErrorStore, useUserStore } from "../data/store";
 import { CreatePost } from "../components";
 
 const auth = getAuth(firebaseApp);
@@ -41,14 +41,14 @@ const RootContainer = styled(Container)(({ theme }) => ({
 
 export function Add() {
   const setError = useErrorStore((state) => state.setError);
+  const isSignedIn = useUserStore((state) => state.isSignedIn);
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadFile, uploading, snapshot, loadError] = useUploadFile();
   const [chosenImage, setChosenImage] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
-  const testSignedIn = () => {
-    console.log(auth.currentUser);
+  const checkSignedIn = () => {
     if (!auth.currentUser) {
       setShowAlert(true);
     }
@@ -105,7 +105,7 @@ export function Add() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Button variant="contained" onClick={testSignedIn}>
+      <Button variant="contained" onClick={checkSignedIn}>
         <label htmlFor="capture-button">Take a photo</label>
       </Button>
       <Box display="none">
@@ -114,7 +114,7 @@ export function Add() {
           id="capture-button"
           type="file"
           capture="environment"
-          disabled={!auth.currentUser}
+          disabled={!isSignedIn}
           onChange={(e) => handleCapture(e.target)}
         />
       </Box>
