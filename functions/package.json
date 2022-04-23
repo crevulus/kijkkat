@@ -2,7 +2,7 @@
   "name": "functions",
   "scripts": {
     "build": "tsc",
-    "emulate": "npm run build -- --watch | firebase emulators:start",
+    "emulate": "export GOOGLE_APPLICATION_CREDENTIALS='kijkkat-meow-027c31d3d1ef.json' && npm run build -- --watch | firebase emulators:start",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
