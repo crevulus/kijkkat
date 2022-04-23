@@ -20,7 +20,7 @@ const themeBase = {
           border: 0,
           borderRadius: 3,
           color: "white",
-          height: 48,
+          height: 40,
           padding: "0 30px",
         },
       },
