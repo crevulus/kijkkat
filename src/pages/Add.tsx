@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 // import { getStorage, ref } from "firebase/storage";
 import { useUploadFile } from "react-firebase-hooks/storage";
@@ -43,6 +43,7 @@ export function Add() {
   const setError = useErrorStore((state) => state.setError);
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const navigate = useNavigate();
+  const location = useLocation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadFile, uploading, snapshot, loadError] = useUploadFile();
   const [chosenImage, setChosenImage] = useState<string | null>(null);
@@ -56,7 +57,9 @@ export function Add() {
 
   const handleRedirect = () => {
     if (!auth.currentUser) {
-      navigate(NavigationRoutes.Account);
+      navigate(NavigationRoutes.Account, {
+        state: { path: location.pathname },
+      });
     }
   };
 
