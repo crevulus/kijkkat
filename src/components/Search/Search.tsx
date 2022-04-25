@@ -48,6 +48,7 @@ export interface PlaceType {
 
 export function Search() {
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
+  const currentLocation = useGeographicStore((state) => state.currentLocation);
   const setChosenLocation = useGeographicStore(
     (state) => state.setChosenLocation
   );
@@ -130,6 +131,7 @@ export function Search() {
     if (newValue) {
       setOptions(newValue ? [newValue, ...options] : options);
       setChosenLocation(newValue);
+      console.log(newValue);
       navigate(NavigationRoutes.Map);
     } else {
       setChosenLocation(null);
