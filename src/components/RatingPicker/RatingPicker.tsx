@@ -13,17 +13,22 @@ const StyledRating = styled(Rating)({
   },
 });
 
-export const RatingPicker = () => {
+type RatingPropsType = {
+  setRatingValue: (value: number | null) => void;
+};
+
+export const RatingPicker = ({ setRatingValue }: RatingPropsType) => {
   const [rating, setRating] = useState(0);
 
   const handleRate = (_: SyntheticEvent, newValue: number | null) => {
     const chosenRating = newValue ?? 0;
     setRating(chosenRating);
+    setRatingValue(chosenRating);
   };
 
   return (
     <Box>
-      <Typography component="legend">Cuteness</Typography>
+      <Typography variant="h6">Cuteness</Typography>
       <StyledRating
         size="large"
         value={rating}
