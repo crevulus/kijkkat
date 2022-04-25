@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { Loader } from "@googlemaps/js-api-loader";
 
-import styles from "./MapContainer.module.css";
-import { useErrorStore, useGeographicStore } from "../../data/store";
+import { collection, getFirestore } from "firebase/firestore";
+import { firebaseApp } from "../../firebase";
 
 type MapContainerProps = {
   coords: {
@@ -13,53 +14,78 @@ type MapContainerProps = {
 
 const AMSTERDAM_COORDS = { lat: 52.356, lng: 4.896 };
 
-export function MapContainer({ coords }: MapContainerProps) {
-  const setError = useErrorStore((state) => state.setError);
-  const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!, // ,
-    // ...otherOptions
-  });
+const db = getFirestore(firebaseApp);
 
-  const [center, setCenter] = useState(AMSTERDAM_COORDS);
-  const [zoom, setZoom] = useState(10);
+const createImage = (url: string) =>
+  `<img src="${url}" alt="post" style="height: 100px; width: 100px; aspect-ratio: 1" />`;
+
+export function MapContainer({ coords }: MapContainerProps) {
+  const googlemapRef = useRef(null);
+  const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
+
+  const [values] = useCollectionData(collection(db, "posts"));
+
+  useEffect(() => {
+    // Loading Google Maps JavaScript API
+    const loader = new Loader({
+      apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
+    });
+    let map;
+    loader.load().then(() => {
+      // Setting parameters for embedding Google Maps
+      const initialView = {
+        center: AMSTERDAM_COORDS,
+        zoom: 10,
+      };
+      // Embedding Google Maps
+      const google = window.google;
+      if (googlemapRef.current) {
+        map = new google.maps.Map(googlemapRef.current, {
+          ...initialView,
+        });
+        setMapObject(map);
+      }
+    });
+  }, [setMapObject, googlemapRef]);
 
   useEffect(() => {
     if (coords) {
-      setCenter(coords);
-      setZoom(14);
+      if (mapObject) {
+        mapObject.setCenter(coords);
+        mapObject.setZoom(14);
+      }
     }
-  }, [coords]);
+  }, [coords, mapObject]);
+
+  const renderMarkers = useCallback(() => {
+    if (values && mapObject) {
+      values.map((item) => {
+        const infowindow = new google.maps.InfoWindow({
+          content: createImage(item.imageUrl),
+        });
+        const marker = new google.maps.Marker({
+          position: {
+            lat: item.location.latitude,
+            lng: item.location.longitude,
+          },
+          map: mapObject,
+          animation: google.maps.Animation.DROP,
+        });
+        marker.addListener("click", () => {
+          infowindow.open({
+            anchor: marker,
+            map: mapObject,
+            shouldFocus: true,
+          });
+        });
+        return marker;
+      });
+    }
+  }, [values, mapObject]);
 
   useEffect(() => {
-    if (loadError) {
-      setError(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+    renderMarkers();
+  }, [values, renderMarkers]);
 
-  const onLoad = () => setMapLoaded(true);
-
-  const renderMap = useCallback(() => {
-    return (
-      //@ts-ignore
-      <GoogleMap
-        mapContainerClassName={styles.mapDiv}
-        center={center}
-        zoom={zoom}
-        onLoad={onLoad}
-      >
-        {
-          // ...Your map components
-        }
-      </GoogleMap>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [center, zoom]);
-
-  if (loadError) {
-    return <div>Map cannot be loaded right now, sorry.</div>;
-  }
-
-  return isLoaded ? renderMap() : <p>Loading now</p>;
+  return <div ref={googlemapRef} style={{ height: "100%" }} />;
 }
