@@ -27,7 +27,7 @@ export const useGeocoder = () => {
           setErrorMessage(error.message);
         }
       )
-      .then((data) => data);
+      .then((data) => data ?? null);
 
   const geocodeCoordsFromAddress = (address: string) =>
     Geocode.fromAddress(address)

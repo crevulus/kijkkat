@@ -134,8 +134,6 @@ export function Search({ redirect }: SearchPropsType) {
       setChosenLocation(newValue);
       if (redirect) {
         navigate(NavigationRoutes.Map);
-      } else {
-        console.log("here");
       }
     } else {
       setChosenLocation(null);

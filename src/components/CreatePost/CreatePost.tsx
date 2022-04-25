@@ -47,11 +47,12 @@ export const CreatePost = ({
 }: CreatePostPropsType): ReactElement => {
   const setError = useErrorStore((state) => state.setError);
   const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
+  const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const currentLocation = useGeographicStore((state) => state.currentLocation);
   const setCurrentLocation = useGeographicStore(
     (state) => state.setCurrentLocation
   );
-  const { geocodeAddressFromCoords } = useGeocoder();
+  const { geocodeCoordsFromAddress, geocodeAddressFromCoords } = useGeocoder();
 
   const [values, loadingChips, chipsLoadError] = useDocument(
     doc(db, "tags", "appearance")
@@ -59,7 +60,7 @@ export const CreatePost = ({
   const [uploadFile] = useUploadFile();
 
   const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
-  const [ratingValue, setRatingValue] = useState<number | null>(null);
+  const [ratingValue, setRatingValue] = useState<number>(0);
 
   const [wantsCurrentLocation, setWantsCurrentLocation] = useState(true);
   const [checkedCurrentLocation, setCheckedCurrentLocation] = useState(false);
@@ -72,7 +73,7 @@ export const CreatePost = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chipsLoadError]);
 
-  const getLocation = () => {
+  const getCurrentLocation = () => {
     setCheckedCurrentLocation(true);
     if (!(navigator as any).geolocation) {
       setError(true);
@@ -111,6 +112,16 @@ export const CreatePost = ({
         currentLocation.coords.latitude,
         currentLocation.coords.longitude
       );
+    } else if (chosenLocation) {
+      const {
+        structured_formatting: { main_text, secondary_text },
+      } = chosenLocation;
+      const address = `${main_text}, ${secondary_text}`;
+      const coords = await geocodeCoordsFromAddress(address);
+      location = new GeoPoint(coords!.lat, coords!.lng);
+    } else {
+      setError(true);
+      setErrorMessage("You must choose a location");
     }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
@@ -173,13 +184,16 @@ export const CreatePost = ({
         </Card>
       )}
       <Card sx={{ p: 2 }}>
-        <RatingPicker setRatingValue={setRatingValue} />
+        <RatingPicker
+          ratingValue={ratingValue}
+          setRatingValue={setRatingValue}
+        />
       </Card>
       <LocationPicker
         wantsCurrentLocation={wantsCurrentLocation}
         checkedCurrentLocation={checkedCurrentLocation}
         currentAddress={currentAddress}
-        handleGetLocation={getLocation}
+        handleGetLocation={getCurrentLocation}
         handleSetPreferences={handleSetPreferences}
       />
       <Button onClick={handleFormSubmit}>Submit Post</Button>
