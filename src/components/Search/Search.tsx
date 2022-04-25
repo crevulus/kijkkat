@@ -13,8 +13,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
-// This key was created specifically for the demo in mui.com.
-// You need to create a new one for your application.
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 function loadScript(src: string, position: HTMLElement | null, id: string) {
@@ -46,9 +44,12 @@ export interface PlaceType {
   place_id: string;
 }
 
-export function Search() {
+interface SearchPropsType {
+  redirect: boolean;
+}
+
+export function Search({ redirect }: SearchPropsType) {
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
-  const currentLocation = useGeographicStore((state) => state.currentLocation);
   const setChosenLocation = useGeographicStore(
     (state) => state.setChosenLocation
   );
@@ -131,8 +132,11 @@ export function Search() {
     if (newValue) {
       setOptions(newValue ? [newValue, ...options] : options);
       setChosenLocation(newValue);
-      console.log(newValue);
-      navigate(NavigationRoutes.Map);
+      if (redirect) {
+        navigate(NavigationRoutes.Map);
+      } else {
+        console.log("here");
+      }
     } else {
       setChosenLocation(null);
     }
@@ -151,6 +155,7 @@ export function Search() {
       includeInputInList
       filterSelectedOptions
       value={chosenLocation}
+      clearOnBlur={false}
       onChange={(_, newValue: PlaceType | null) => {
         handleSelectPlace(newValue);
       }}

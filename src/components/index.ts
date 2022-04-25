@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import LocationPicker from './LocationPicker';
 import RatingPicker from './RatingPicker';
 import CharacteristicChip from "./CharacteristicChip";
 import CreatePost from "./CreatePost";
@@ -10,6 +11,7 @@ import MapContainer from "./MapContainer";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	LocationPicker,
 	RatingPicker,
   CharacteristicChip,
   CreatePost,

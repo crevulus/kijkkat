@@ -45,7 +45,6 @@ export function Add() {
   const location = useLocation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadFile, uploading, snapshot, loadError] = useUploadFile();
-  const [chosenImage, setChosenImage] = useState<string | null>(null);
   const [chosenFile, setChosenFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -65,19 +64,9 @@ export function Add() {
 
   const handleCapture = async (eventTarget: HTMLInputElement) => {
     if (eventTarget.files) {
-      setChosenImage(null);
+      setChosenFile(null);
       const imageForUpload = eventTarget.files[0];
-      console.log(imageForUpload);
-      // const bucketRef = ref(
-      //   storage,
-      //   `${FIREBASE_IMAGE_SUBFOLDER}/${imageForUpload.lastModified}`
-      // );
-      // await uploadFile(bucketRef, imageForUpload, {
-      //   contentType: "image/jpeg",
-      // }).then(() => {
-      setChosenImage(URL.createObjectURL(imageForUpload));
       setChosenFile(imageForUpload);
-      // });
     }
   };
 
@@ -132,9 +121,7 @@ export function Add() {
           <CircularProgress />
         </Container>
       )}
-      {chosenImage && chosenFile && (
-        <CreatePost chosenImage={chosenImage} chosenFile={chosenFile} />
-      )}
+      {chosenFile && <CreatePost chosenFile={chosenFile} />}
     </RootContainer>
   );
 }
