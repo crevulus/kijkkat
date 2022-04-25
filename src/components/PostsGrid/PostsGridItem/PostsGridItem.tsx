@@ -14,7 +14,7 @@ const storage = getStorage(firebaseApp);
 export function PostsGridItem({ item }: any): ReactElement {
   const setError = useErrorStore((state) => state.setError);
   const [value, loading, loadError] = useDownloadURL(
-    ref(storage, item.imgSource)
+    ref(storage, item.imageUrl)
   );
 
   useEffect(() => {

@@ -1,18 +1,42 @@
 import { ReactElement, useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
-import { doc, getFirestore, GeoPoint } from "firebase/firestore";
+import {
+  doc,
+  GeoPoint,
+  getFirestore,
+  addDoc,
+  Timestamp,
+  collection,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
+import { useUploadFile } from "react-firebase-hooks/storage";
+import { useNavigate } from "react-router-dom";
+
+import {
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Grid,
+  Typography,
+} from "@mui/material";
 
 import styles from "./CreatePost.module.css";
 
 import { firebaseApp } from "../../firebase";
 import { RatingPicker, CharacteristicChip } from "../";
-import { useErrorStore } from "../../data/store";
+import { useErrorStore, useGeographicStore } from "../../data/store";
+import { LocationPicker } from "../index";
+import { useGeocoder } from "../../hooks/useGeocoder";
+import { NavigationRoutes } from "../../data/enums";
 
 const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+const storage = getStorage();
 
 type CreatePostPropsType = {
-  chosenImage: string;
+  chosenFile: File;
 };
 
 export type CharacteristicsTagsType = {
@@ -21,50 +45,58 @@ export type CharacteristicsTagsType = {
 };
 
 export const CreatePost = ({
-  chosenImage,
+  chosenFile,
 }: CreatePostPropsType): ReactElement => {
   const setError = useErrorStore((state) => state.setError);
-  const [values, loading, loadError] = useDocument(
+  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
+  const chosenLocation = useGeographicStore((state) => state.chosenLocation);
+  const currentLocation = useGeographicStore((state) => state.currentLocation);
+  const setCurrentLocation = useGeographicStore(
+    (state) => state.setCurrentLocation
+  );
+  const { geocodeCoordsFromAddress, geocodeAddressFromCoords } = useGeocoder();
+
+  const [values, loadingChips, chipsLoadError] = useDocument(
     doc(db, "tags", "appearance")
   );
+  const [uploadFile] = useUploadFile();
+  const navigate = useNavigate();
+
   const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [ratingValue, setRatingValue] = useState<number>(0);
+
+  const [wantsCurrentLocation, setWantsCurrentLocation] = useState(true);
+  const [checkedCurrentLocation, setCheckedCurrentLocation] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState("");
 
   useEffect(() => {
-    if (loadError) {
+    if (chipsLoadError) {
       setError(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+  }, [chipsLoadError]);
 
-  const getLocation = () => {
+  const getCurrentLocation = () => {
+    setCheckedCurrentLocation(true);
     if (!(navigator as any).geolocation) {
-      setStatus("Geolocation is not supported by your browser");
+      setError(true);
+      setErrorMessage("Geolocation is not supported by your browser");
+      setWantsCurrentLocation(false);
     } else {
-      setStatus("Locating...");
       (navigator as any).geolocation.getCurrentPosition(
-        (position: GeolocationPosition) => {
-          setStatus(null);
-          setLat(position.coords.latitude);
-          setLng(position.coords.longitude);
+        async (position: GeolocationPosition) => {
+          setCurrentLocation(position);
+          const address = await geocodeAddressFromCoords(position);
+          setCurrentAddress(address);
         },
         () => {
-          setStatus("Unable to retrieve your location");
+          setError(true);
+          setErrorMessage("Unable to retrieve your location");
+          setWantsCurrentLocation(false);
         }
       );
     }
   };
-
-  useEffect(() => {
-    getLocation();
-    if (lat && lng) {
-      console.log(new GeoPoint(lat, lng));
-    }
-    console.log({ lat, lng, status, loading });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lng]);
 
   const handleTagClick = (tag: CharacteristicsTagsType) => {
     const index = chosenTags.findIndex((t) => t.id === tag.id);
@@ -75,25 +107,101 @@ export const CreatePost = ({
     }
   };
 
+  const handleFormSubmit = async () => {
+    let location;
+    let imageUrl;
+    if (currentLocation) {
+      location = new GeoPoint(
+        currentLocation.coords.latitude,
+        currentLocation.coords.longitude
+      );
+    } else if (chosenLocation) {
+      const {
+        structured_formatting: { main_text, secondary_text },
+      } = chosenLocation;
+      const address = `${main_text}, ${secondary_text}`;
+      const coords = await geocodeCoordsFromAddress(address);
+      location = new GeoPoint(coords!.lat, coords!.lng);
+    } else {
+      setError(true);
+      setErrorMessage("You must choose a location");
+    }
+    const tags = chosenTags.map((t) => t.id);
+    if (chosenFile) {
+      const storageRef = ref(
+        storage,
+        `cats/${auth.currentUser?.uid}/${chosenFile.name}`
+      );
+      await uploadFile(storageRef, chosenFile);
+      imageUrl = await getDownloadURL(storageRef).then((downloadURL) => {
+        return downloadURL;
+      });
+      const post = {
+        location,
+        tags,
+        rating: ratingValue,
+        userId: auth.currentUser?.uid,
+        time: Timestamp.now(),
+        likes: 0,
+        imageUrl,
+      };
+      await addDoc(collection(db, "posts"), post)
+        .then((doc) => navigate(`${NavigationRoutes.Posts}/${doc.id}`))
+        .catch((error) => {
+          setError(true);
+          setErrorMessage(error.message);
+        });
+    }
+  };
+
+  const handleSetPreferences = (preferences: { [key: string]: boolean }) => {
+    setWantsCurrentLocation(preferences.wantsCurrentLocation);
+    setCheckedCurrentLocation(preferences.checkedCurrentLocation);
+  };
+
   return (
     <>
       <Box maxWidth="sm" className={styles.CreatePost}>
-        <img src={chosenImage} alt="A cat you kijked" width="100%" />
+        <img
+          src={URL.createObjectURL(chosenFile)}
+          alt="A cat you kijked"
+          width="100%"
+        />
       </Box>
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 6, sm: 9, md: 12 }}
-      >
-        {values?.data()?.tags.map((tag: CharacteristicsTagsType) => (
-          <CharacteristicChip
-            tag={tag}
-            key={tag.id}
-            handleTagClick={handleTagClick}
-          />
-        ))}
-      </Grid>
-      <RatingPicker />
+      {loadingChips ? (
+        <CircularProgress />
+      ) : (
+        <Card sx={{ p: 2 }}>
+          <Typography variant="h6">Tags</Typography>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 6, sm: 9, md: 12 }}
+          >
+            {values?.data()?.tags.map((tag: CharacteristicsTagsType) => (
+              <CharacteristicChip
+                tag={tag}
+                key={tag.id}
+                handleTagClick={handleTagClick}
+              />
+            ))}
+          </Grid>
+        </Card>
+      )}
+      <Card sx={{ p: 2 }}>
+        <RatingPicker
+          ratingValue={ratingValue}
+          setRatingValue={setRatingValue}
+        />
+      </Card>
+      <LocationPicker
+        wantsCurrentLocation={wantsCurrentLocation}
+        checkedCurrentLocation={checkedCurrentLocation}
+        currentAddress={currentAddress}
+        handleGetLocation={getCurrentLocation}
+        handleSetPreferences={handleSetPreferences}
+      />
+      <Button onClick={handleFormSubmit}>Submit Post</Button>
     </>
   );
 };

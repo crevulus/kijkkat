@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent } from "react";
 import { styled } from "@mui/material/styles";
 
 import { Rating, Box, Typography } from "@mui/material";
@@ -13,27 +13,33 @@ const StyledRating = styled(Rating)({
   },
 });
 
-export const RatingPicker = () => {
-  const [rating, setRating] = useState(0);
+type RatingPropsType = {
+  ratingValue: number;
+  setRatingValue: (value: number) => void;
+};
 
-  const handleRate = (_: SyntheticEvent, newValue: number | null) => {
+export const RatingPicker = ({
+  ratingValue,
+  setRatingValue,
+}: RatingPropsType) => {
+  const handleRate = (_: SyntheticEvent, newValue: number) => {
     const chosenRating = newValue ?? 0;
-    setRating(chosenRating);
+    setRatingValue(chosenRating);
   };
 
   return (
     <Box>
-      <Typography component="legend">Cuteness</Typography>
+      <Typography variant="h6">Cuteness</Typography>
       <StyledRating
         size="large"
-        value={rating}
+        value={ratingValue}
         getLabelText={(value: number) =>
           `${value} Heart${value !== 1 ? "s" : ""}`
         }
         precision={1}
         icon={<FavoriteIcon fontSize="inherit" />}
         emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-        onChange={(event, value) => handleRate(event, value)}
+        onChange={(event, value = 0) => handleRate(event, value!)}
       />
     </Box>
   );

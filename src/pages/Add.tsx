@@ -30,7 +30,6 @@ const auth = getAuth(firebaseApp);
 
 const RootContainer = styled(Container)(({ theme }) => ({
   width: "100%",
-  height: "100%",
   ...theme.typography.body2,
   "& > :not(style) + :not(style)": {
     marginTop: theme.spacing(2),
@@ -46,7 +45,7 @@ export function Add() {
   const location = useLocation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadFile, uploading, snapshot, loadError] = useUploadFile();
-  const [chosenImage, setChosenImage] = useState<string | null>(null);
+  const [chosenFile, setChosenFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
   const checkSignedIn = () => {
@@ -65,17 +64,9 @@ export function Add() {
 
   const handleCapture = async (eventTarget: HTMLInputElement) => {
     if (eventTarget.files) {
-      setChosenImage(null);
+      setChosenFile(null);
       const imageForUpload = eventTarget.files[0];
-      // const bucketRef = ref(
-      //   storage,
-      //   `${FIREBASE_IMAGE_SUBFOLDER}/${imageForUpload.lastModified}`
-      // );
-      // await uploadFile(bucketRef, imageForUpload, {
-      //   contentType: "image/jpeg",
-      // }).then(() => {
-      setChosenImage(URL.createObjectURL(imageForUpload));
-      // });
+      setChosenFile(imageForUpload);
     }
   };
 
@@ -87,7 +78,7 @@ export function Add() {
   }, [loadError]);
 
   return (
-    <RootContainer sx={{ height: "100%" }}>
+    <RootContainer sx={{ mt: 2, mb: 2 }}>
       <Dialog
         open={showAlert}
         onClose={() => setShowAlert(false)}
@@ -130,7 +121,7 @@ export function Add() {
           <CircularProgress />
         </Container>
       )}
-      {chosenImage && <CreatePost chosenImage={chosenImage} />}
+      {chosenFile && <CreatePost chosenFile={chosenFile} />}
     </RootContainer>
   );
 }

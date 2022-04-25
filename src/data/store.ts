@@ -8,6 +8,8 @@ type GeographicStateType = {
   setChosenLocation: (place: PlaceType | null) => void;
   mapLoaded: boolean;
   setMapLoaded: (loaded: boolean) => void;
+  currentLocation: GeolocationPosition | null;
+  setCurrentLocation: (place: GeolocationPosition | null) => void;
 };
 
 export const useGeographicStore = create<GeographicStateType>((set) => ({
@@ -17,6 +19,9 @@ export const useGeographicStore = create<GeographicStateType>((set) => ({
   mapLoaded: false,
   setMapLoaded: (loaded: boolean) =>
     set((state) => ({ ...state, mapLoaded: loaded })),
+  currentLocation: null,
+  setCurrentLocation: (location: GeolocationPosition | null) =>
+    set((state) => ({ ...state, currentLocation: location })),
 }));
 
 type UserStateType = {

@@ -32,7 +32,7 @@ export function Home() {
       <Typography variant="h3" padding={2}>
         Find a cat nearby
       </Typography>
-      <Search />
+      <Search redirect />
       {/* @ts-ignore  */}
       <PostsGrid data={values} />
     </Container>
