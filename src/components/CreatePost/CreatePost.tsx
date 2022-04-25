@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { doc, getFirestore } from "firebase/firestore";
+import { doc, getFirestore, GeoPoint } from "firebase/firestore";
 import { useDocument } from "react-firebase-hooks/firestore";
 
 import styles from "./CreatePost.module.css";
@@ -59,9 +59,12 @@ export const CreatePost = ({
 
   useEffect(() => {
     getLocation();
+    if (lat && lng) {
+      console.log(new GeoPoint(lat, lng));
+    }
     console.log({ lat, lng, status, loading });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [lat, lng]);
 
   const handleTagClick = (tag: CharacteristicsTagsType) => {
     const index = chosenTags.findIndex((t) => t.id === tag.id);

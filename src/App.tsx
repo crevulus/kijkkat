@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { Container, ThemeProvider } from "@mui/material";
+import { AppBar, Container, ThemeProvider, Toolbar } from "@mui/material";
 import "./App.css";
 import { light, dark } from "./styles/theme";
 
@@ -37,9 +37,12 @@ function App() {
 
   return (
     <ThemeProvider theme={isDarkMode ? dark : light}>
-      <div className="App">
-        <BrowserRouter>
-          <Container sx={{ flexGrow: 1 }} disableGutters>
+      <BrowserRouter>
+        <div className="App">
+          <AppBar position="static">
+            <Toolbar>Kijkkat</Toolbar>
+          </AppBar>
+          <Container sx={{ flexGrow: 1, overflowY: "scroll" }} disableGutters>
             <Routes>
               <Route path={NavigationRoutes.Home} element={<Home />} />
               <Route path={NavigationRoutes.Map} element={<Map />} />
@@ -50,9 +53,9 @@ function App() {
             </Routes>
           </Container>
           <BottomNav />
-        </BrowserRouter>
-        <ErrorSnackbar />
-      </div>
+        </div>
+      </BrowserRouter>
+      <ErrorSnackbar />
     </ThemeProvider>
   );
 }
