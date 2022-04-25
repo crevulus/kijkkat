@@ -13,7 +13,7 @@ export function PostsGrid({ data }: PostsGridPropsType): ReactElement {
     <ImageList sx={{ width: "100%" }} cols={3} rowHeight="auto">
       {/* @ts-ignore */}
       {data.map((item) => (
-        <PostsGridItem item={item} key={item.timestamp} />
+        <PostsGridItem item={item} key={item.time} />
       ))}
     </ImageList>
   );

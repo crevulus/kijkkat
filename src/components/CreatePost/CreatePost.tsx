@@ -11,6 +11,7 @@ import { getAuth } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -28,6 +29,7 @@ import { RatingPicker, CharacteristicChip } from "../";
 import { useErrorStore, useGeographicStore } from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
+import { NavigationRoutes } from "../../data/enums";
 
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -58,6 +60,7 @@ export const CreatePost = ({
     doc(db, "tags", "appearance")
   );
   const [uploadFile] = useUploadFile();
+  const navigate = useNavigate();
 
   const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
   const [ratingValue, setRatingValue] = useState<number>(0);
@@ -142,10 +145,12 @@ export const CreatePost = ({
         likes: 0,
         imageUrl,
       };
-      await addDoc(collection(db, "posts"), post).catch((error) => {
-        setError(true);
-        setErrorMessage(error.message);
-      });
+      await addDoc(collection(db, "posts"), post)
+        .then((doc) => navigate(`${NavigationRoutes.Posts}/${doc.id}`))
+        .catch((error) => {
+          setError(true);
+          setErrorMessage(error.message);
+        });
     }
   };
 
