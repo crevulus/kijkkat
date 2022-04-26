@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   doc,
   GeoPoint,
@@ -11,7 +12,7 @@ import { getAuth } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
-import { useNavigate } from "react-router-dom";
+import * as geofire from "geofire-common";
 
 import {
   Box,
@@ -109,6 +110,7 @@ export const CreatePost = ({
 
   const handleFormSubmit = async () => {
     let location;
+    let geohash;
     let imageUrl;
     if (currentLocation) {
       location = new GeoPoint(
@@ -126,6 +128,12 @@ export const CreatePost = ({
       setError(true);
       setErrorMessage("You must choose a location");
     }
+    if (location) {
+      geohash = geofire.geohashForLocation([
+        location.latitude,
+        location.longitude,
+      ]);
+    }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
       const storageRef = ref(
@@ -138,6 +146,7 @@ export const CreatePost = ({
       });
       const post = {
         location,
+        geohash,
         tags,
         rating: ratingValue,
         userId: auth.currentUser?.uid,
