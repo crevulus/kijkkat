@@ -7,29 +7,35 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 import { primaryColor } from "../../styles/theme";
 
-const StyledRating = styled(Rating)({
+export const StyledRating = styled(Rating)({
   "& .MuiRating-iconFilled": {
     color: primaryColor,
   },
 });
 
 type RatingPropsType = {
+  title: string;
   ratingValue: number;
-  setRatingValue: (value: number) => void;
+  handleRatingValue?: (arg: string, value: number) => void;
+  readOnly?: boolean;
 };
 
 export const RatingPicker = ({
+  title,
   ratingValue,
-  setRatingValue,
+  handleRatingValue,
+  readOnly,
 }: RatingPropsType) => {
   const handleRate = (_: SyntheticEvent, newValue: number) => {
     const chosenRating = newValue ?? 0;
-    setRatingValue(chosenRating);
+    if (handleRatingValue) {
+      handleRatingValue(title, chosenRating);
+    }
   };
 
   return (
-    <Box>
-      <Typography variant="h6">Cuteness</Typography>
+    <Box padding={1}>
+      <Typography variant="h6">{title}</Typography>
       <StyledRating
         size="large"
         value={ratingValue}
@@ -40,6 +46,7 @@ export const RatingPicker = ({
         icon={<FavoriteIcon fontSize="inherit" />}
         emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
         onChange={(event, value = 0) => handleRate(event, value!)}
+        readOnly={readOnly}
       />
     </Box>
   );

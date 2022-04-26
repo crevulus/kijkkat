@@ -3,17 +3,17 @@ import React, { ReactElement } from "react";
 import { ImageList } from "@mui/material";
 
 import PostsGridItem from "./PostsGridItem";
+import { DocsType } from "../../pages/Home";
 
 type PostsGridPropsType = {
-  data: Record<string, any>[];
+  data: DocsType[];
 };
 
 export function PostsGrid({ data }: PostsGridPropsType): ReactElement {
   return (
     <ImageList sx={{ width: "100%" }} cols={3} rowHeight="auto">
-      {/* @ts-ignore */}
       {data.map((item) => (
-        <PostsGridItem item={item} key={item.time} />
+        <PostsGridItem key={item.id} item={item} />
       ))}
     </ImageList>
   );

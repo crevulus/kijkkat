@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 import { Container } from "@mui/material";
 
-import { MapContainer } from "../components";
+// import { MapContainer } from "../components";
 import { useGeographicStore } from "../data/store";
 import { useGeocoder } from "../hooks/useGeocoder";
+import { MapContainer } from "../components/MapContainer/MapContainer";
 
 type CoordsType = {
   lat: number;

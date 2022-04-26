@@ -1,31 +1,26 @@
 import { useEffect, useState } from "react";
 import {
-  getFirestore,
-  collection,
-  DocumentData,
   query,
+  collection,
   orderBy,
   limit,
+  getFirestore,
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { CircularProgress, Container, Typography } from "@mui/material";
+import { Button, Container } from "@mui/material";
 
-import { PostsGrid, Search } from "../components";
-import { firebaseApp } from "../firebase";
-import { useErrorStore } from "../data/store";
+import { FullScreenLoadingSpinner, PostsGrid } from "../../components";
+import { useErrorStore } from "../../data/store";
+import { DocsType } from "../Home";
 
-const db = getFirestore(firebaseApp);
+const db = getFirestore();
 
-export interface DocsType {
-  data: DocumentData;
-  id: string;
-}
-
-export function Home() {
+export function PostsDefault() {
   const setError = useErrorStore((state) => state.setError);
+  const [count, setCount] = useState(1);
   const [result, loading, loadError] = useCollection(
-    query(collection(db, "posts"), orderBy("time", "desc"), limit(12))
+    query(collection(db, "posts"), orderBy("likes", "desc"), limit(count * 2))
   );
   const [docs, setDocs] = useState<DocsType[]>([]);
 
@@ -43,17 +38,16 @@ export function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadError]);
 
-  if (loading) {
-    return <CircularProgress />;
-  }
+  const handleLoadMoreImages = () => {
+    setCount((count) => count + 1);
+  };
+
+  if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h3" padding={2}>
-        Find a cat nearby
-      </Typography>
-      <Search redirect />
       <PostsGrid data={docs} />
+      <Button onClick={handleLoadMoreImages}>Load more</Button>
     </Container>
   );
 }

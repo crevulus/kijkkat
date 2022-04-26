@@ -20,6 +20,7 @@
     "@types/react-dom": "18",
     "autosuggest-highlight": "^3.2.1",
     "firebase": "^9.6.11",
+    "geofire-common": "^5.2.0",
     "lodash.throttle": "^4.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

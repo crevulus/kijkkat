@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import FullScreenLoadingSpinner from './FullScreenLoadingSpinner';
 import LocationPicker from './LocationPicker';
 import RatingPicker from './RatingPicker';
 import CharacteristicChip from "./CharacteristicChip";
@@ -11,6 +12,7 @@ import MapContainer from "./MapContainer";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	FullScreenLoadingSpinner,
 	LocationPicker,
 	RatingPicker,
   CharacteristicChip,

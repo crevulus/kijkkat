@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 
-import { Typography } from "@mui/material";
-
 import { PostsDynamic } from "./PostsDynamic";
+import { PostsDefault } from "./PostsDefault";
 
 export function Posts() {
   const { id } = useParams();
@@ -13,10 +12,7 @@ export function Posts() {
 
   return (
     <>
-      <Typography variant="h1" gutterBottom>
-        Posts
-      </Typography>
-      {id ?? "No id"}
+      <PostsDefault />
     </>
   );
 }
