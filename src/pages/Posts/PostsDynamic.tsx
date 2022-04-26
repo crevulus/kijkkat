@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import LocationOn from "@mui/icons-material/LocationOn";
-import Favorite from "@mui/icons-material/Favorite";
+import ThumbUp from "@mui/icons-material/ThumbUp";
 
 import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
@@ -55,13 +55,17 @@ export function PostsDynamic({ id }: { id: string }) {
   }, [data]);
 
   const getAddress = async () => {
-    const result = await geocodeAddressFromCoords(data?.location);
-    setAddress(result);
+    if (!address) {
+      const result = await geocodeAddressFromCoords(data?.location);
+      setAddress(result);
+    }
   };
 
   const getDate = () => {
-    const date = new Date(data?.time.toDate());
-    setDate(date.toLocaleDateString());
+    if (!date) {
+      const date = new Date(data?.time.toDate());
+      setDate(date.toLocaleDateString());
+    }
   };
 
   const findTags = useCallback(() => {
@@ -121,7 +125,7 @@ export function PostsDynamic({ id }: { id: string }) {
         <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
           <Fragment>
             <IconButton aria-label="Like this cat">
-              <Favorite />
+              <ThumbUp color="secondary" />
             </IconButton>
             <Typography pr={1} variant="body2">
               {data?.likes}

@@ -14,6 +14,7 @@ import { Map } from "./pages/Map";
 import { Account } from "./pages/Account";
 import { Add } from "./pages/Add";
 import { Posts } from "./pages/Posts/Posts";
+import { NotFound } from "./pages/NotFound";
 
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
@@ -50,6 +51,7 @@ function App() {
               <Route path={NavigationRoutes.Posts} element={<Posts />} />
               <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
               <Route path={NavigationRoutes.Account} element={<Account />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Container>
           <BottomNav />

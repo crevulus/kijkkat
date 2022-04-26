@@ -18,7 +18,7 @@ const themeBase = {
       styleOverrides: {
         root: {
           border: 0,
-          borderRadius: 3,
+          borderRadius: 20,
           color: "white",
           height: 40,
           padding: "0 30px",

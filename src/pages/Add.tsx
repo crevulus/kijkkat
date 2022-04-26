@@ -26,7 +26,6 @@ import { useErrorStore, useUserStore } from "../data/store";
 import { CreatePost } from "../components";
 
 const auth = getAuth(firebaseApp);
-// const storage = getStorage(firebaseApp);
 
 const RootContainer = styled(Container)(({ theme }) => ({
   width: "100%",
@@ -35,8 +34,6 @@ const RootContainer = styled(Container)(({ theme }) => ({
     marginTop: theme.spacing(2),
   },
 }));
-
-// const FIREBASE_IMAGE_SUBFOLDER = "cats";
 
 export function Add() {
   const setError = useErrorStore((state) => state.setError);
@@ -52,6 +49,7 @@ export function Add() {
     if (!auth.currentUser) {
       setShowAlert(true);
     }
+    console.log(auth.currentUser);
   };
 
   const handleRedirect = () => {
