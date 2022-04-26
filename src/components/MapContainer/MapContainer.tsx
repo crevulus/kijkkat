@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import * as geofire from "geofire-common";
 
@@ -10,7 +10,6 @@ import {
   getFirestore,
   orderBy,
   query,
-  QueryDocumentSnapshot,
   QuerySnapshot,
   startAt,
 } from "firebase/firestore";
@@ -32,16 +31,15 @@ const db = getFirestore(firebaseApp);
 export function MapContainer({ coords }: MapContainerProps) {
   const googlemapRef = useRef(null);
   const [hasLoadedMarkers, setHasLoadedMarkers] = useState(false);
+  const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
   const [docSnapshots, setDocSnapshots] = useState<
     Promise<QuerySnapshot<DocumentData>>[]
   >([]);
 
-  const handleGeohashingQuery = useCallback(() => {
+  const handleGeohashingQuery = () => {
     const bounds = geofire.geohashQueryBounds(
-      coords
-        ? [coords.lat, coords.lng]
-        : [AMSTERDAM_COORDS.lat, AMSTERDAM_COORDS.lng],
+      [center.lat, center.lng],
       DEFAULT_RADIUS
     );
 
@@ -54,14 +52,13 @@ export function MapContainer({ coords }: MapContainerProps) {
       );
       return getDocs(q);
     });
-
     setDocSnapshots(docSnapshots);
-  }, [coords]);
+  };
 
-  const handleAddMarkers = useCallback(() => {
-    Promise.all(docSnapshots)
+  const handleAddMarkers = async () => {
+    await Promise.all(docSnapshots)
       .then((snapshots) => {
-        const matchingDocs: QueryDocumentSnapshot<DocumentData>[] = [];
+        const matchingDocs: DocumentData[] = [];
         snapshots.forEach((snap) => {
           snap.forEach((doc) => {
             const lat = doc.data().location.latitude;
@@ -69,21 +66,18 @@ export function MapContainer({ coords }: MapContainerProps) {
 
             const distanceInKm = geofire.distanceBetween(
               [lat, lng],
-              coords
-                ? [coords.lat, coords.lng]
-                : [AMSTERDAM_COORDS.lat, AMSTERDAM_COORDS.lng]
+              [center.lat, center.lng]
             );
             const distanceInM = distanceInKm * 1000;
             if (distanceInM <= DEFAULT_RADIUS) {
-              matchingDocs.push(doc);
+              matchingDocs.push(doc.data());
             }
           });
         });
         return matchingDocs;
       })
       .then((matchingDocs) => {
-        matchingDocs.map((doc) => {
-          const data = doc.data();
+        matchingDocs.map((data) => {
           const lat = data.location.latitude;
           const lng = data.location.longitude;
           const marker = new google.maps.Marker({
@@ -106,7 +100,7 @@ export function MapContainer({ coords }: MapContainerProps) {
         });
       });
     setHasLoadedMarkers(true);
-  }, [docSnapshots, mapObject, coords]);
+  };
 
   useEffect(() => {
     // Loading Google Maps JavaScript API
@@ -114,30 +108,30 @@ export function MapContainer({ coords }: MapContainerProps) {
       const loader = new Loader({
         apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
       });
-      let map;
-      loader.load().then(() => {
-        // Setting parameters for embedding Google Maps
-        const initialView = {
-          center: AMSTERDAM_COORDS,
-          zoom: 10,
-        };
-        // Embedding Google Maps
-        const google = window.google;
-        if (googlemapRef.current) {
-          map = new google.maps.Map(googlemapRef.current, {
-            ...initialView,
-            mapTypeControl: false,
-          });
+      let map: google.maps.Map;
+      loader
+        .load()
+        .then(() => {
+          // Setting parameters for embedding Google Maps
+          const initialView = {
+            center: center,
+            zoom: 10,
+          };
+          // Embedding Google Maps
+          if (googlemapRef.current) {
+            map = new google.maps.Map(googlemapRef.current, {
+              ...initialView,
+              mapTypeControl: false,
+            });
 
-          const centerControlDiv = document.createElement("div");
-          // CenterControl(centerControlDiv, map);
-          createMapButton(centerControlDiv, map, coords ?? AMSTERDAM_COORDS);
-          map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-            centerControlDiv
-          );
-          setMapObject(map);
-        }
-      });
+            const centerControlDiv = document.createElement("div");
+            createMapButton(centerControlDiv, map, center);
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+              centerControlDiv
+            );
+          }
+        })
+        .then(() => setMapObject(map));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setMapObject, googlemapRef]);
@@ -148,6 +142,7 @@ export function MapContainer({ coords }: MapContainerProps) {
         mapObject.setCenter(coords);
         mapObject.setZoom(14);
       }
+      setCenter(coords);
     }
   }, [coords, mapObject]);
 
@@ -157,7 +152,7 @@ export function MapContainer({ coords }: MapContainerProps) {
       handleAddMarkers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapObject, hasLoadedMarkers]);
+  }, [hasLoadedMarkers, center.lat]);
 
   return <div ref={googlemapRef} style={{ height: "100%" }} />;
 }
