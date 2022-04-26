@@ -5,6 +5,9 @@ import { createRoot } from "react-dom/client";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty("--vh", `${vh}px`);
+
 const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(<App />);
