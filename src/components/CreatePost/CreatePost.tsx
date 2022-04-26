@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   doc,
@@ -19,6 +19,7 @@ import {
   Button,
   Card,
   CircularProgress,
+  Divider,
   Grid,
   Typography,
 } from "@mui/material";
@@ -30,7 +31,7 @@ import { RatingPicker, CharacteristicChip } from "../";
 import { useErrorStore, useGeographicStore } from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
-import { NavigationRoutes } from "../../data/enums";
+import { NavigationRoutes, RatingCategories } from "../../data/enums";
 
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -64,7 +65,10 @@ export const CreatePost = ({
   const navigate = useNavigate();
 
   const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
-  const [ratingValue, setRatingValue] = useState<number>(0);
+  const [ratingValue, setRatingValue] = useState<{ [key: string]: number }>({
+    [RatingCategories.Cuteness]: 0,
+    [RatingCategories.Friendliness]: 0,
+  });
 
   const [wantsCurrentLocation, setWantsCurrentLocation] = useState(true);
   const [checkedCurrentLocation, setCheckedCurrentLocation] = useState(false);
@@ -87,7 +91,7 @@ export const CreatePost = ({
       (navigator as any).geolocation.getCurrentPosition(
         async (position: GeolocationPosition) => {
           setCurrentLocation(position);
-          const address = await geocodeAddressFromCoords(position);
+          const address = await geocodeAddressFromCoords(position.coords);
           setCurrentAddress(address);
         },
         () => {
@@ -163,6 +167,13 @@ export const CreatePost = ({
     }
   };
 
+  const handleChangeRatingValue = (category: string, value: number) => {
+    setRatingValue({
+      ...ratingValue,
+      [category]: value,
+    });
+  };
+
   const handleSetPreferences = (preferences: { [key: string]: boolean }) => {
     setWantsCurrentLocation(preferences.wantsCurrentLocation);
     setCheckedCurrentLocation(preferences.checkedCurrentLocation);
@@ -198,10 +209,17 @@ export const CreatePost = ({
         </Card>
       )}
       <Card sx={{ p: 2 }}>
-        <RatingPicker
-          ratingValue={ratingValue}
-          setRatingValue={setRatingValue}
-        />
+        {Object.keys(ratingValue).map((category, index) => (
+          <Fragment key={category}>
+            <RatingPicker
+              key={category}
+              title={category}
+              ratingValue={ratingValue[category]}
+              handleRatingValue={handleChangeRatingValue}
+            />
+            {index !== Object.keys(ratingValue).length - 1 && <Divider />}
+          </Fragment>
+        ))}
       </Card>
       <LocationPicker
         wantsCurrentLocation={wantsCurrentLocation}

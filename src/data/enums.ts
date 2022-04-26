@@ -14,3 +14,8 @@ export enum PageNames {
   Posts = "Posts",
   Account = "Account",
 }
+
+export enum RatingCategories {
+  Cuteness = "Cuteness",
+  Friendliness = "Friendliness",
+}

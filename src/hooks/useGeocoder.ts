@@ -8,11 +8,8 @@ export const useGeocoder = () => {
   const setError = useErrorStore((state) => state.setError);
   const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
 
-  const geocodeAddressFromCoords = (position: any) =>
-    Geocode.fromLatLng(
-      position.coords.latitude.toString(),
-      position.coords.longitude.toString()
-    )
+  const geocodeAddressFromCoords = (coords: any) =>
+    Geocode.fromLatLng(coords.latitude.toString(), coords.longitude.toString())
       .then(
         (response) => {
           const address = response.results[0];
