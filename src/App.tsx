@@ -13,7 +13,7 @@ import { Home } from "./pages/Home";
 import { Map } from "./pages/Map";
 import { Account } from "./pages/Account";
 import { Add } from "./pages/Add";
-import { Posts } from "./pages/Posts";
+import { Posts } from "./pages/Posts/Posts";
 
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";

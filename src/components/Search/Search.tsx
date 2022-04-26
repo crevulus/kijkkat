@@ -62,7 +62,10 @@ export function Search({ redirect }: SearchPropsType) {
   const navigate = useNavigate();
 
   if (typeof window !== "undefined" && !loaded.current && !mapLoaded) {
-    if (!document.querySelector("#google-maps-autocomplete-box")) {
+    if (
+      !document.querySelector("#google-maps-autocomplete-box") &&
+      !document.querySelector("#google-maps")
+    ) {
       loadScript(
         `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
         document.querySelector("head"),

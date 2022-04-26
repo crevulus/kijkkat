@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { firebaseApp } from "../../firebase";
 import { createImage, createMapButton } from "../../utils/mapUtils";
+import { useGeographicStore } from "../../data/store";
 
 type MapContainerProps = {
   coords: {
@@ -29,6 +30,7 @@ const DEFAULT_RADIUS = 5000; // in metres
 const db = getFirestore(firebaseApp);
 
 export function MapContainer({ coords }: MapContainerProps) {
+  const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
   const [hasLoadedMarkers, setHasLoadedMarkers] = useState(false);
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
@@ -131,7 +133,10 @@ export function MapContainer({ coords }: MapContainerProps) {
             );
           }
         })
-        .then(() => setMapObject(map));
+        .then(() => {
+          setMapObject(map);
+          setMapLoaded(true);
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setMapObject, googlemapRef]);

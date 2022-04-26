@@ -3,13 +3,11 @@ import { doc, DocumentData, getFirestore } from "firebase/firestore";
 import { useDocumentData, useDocument } from "react-firebase-hooks/firestore";
 
 import {
-  Backdrop,
   Card,
   CardActions,
   CardContent,
   CardMedia,
   Chip,
-  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -19,8 +17,8 @@ import {
 import LocationOn from "@mui/icons-material/LocationOn";
 import Favorite from "@mui/icons-material/Favorite";
 
-import { RatingPicker } from "../components";
-import { useGeocoder } from "../hooks/useGeocoder";
+import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
+import { useGeocoder } from "../../hooks/useGeocoder";
 
 const db = getFirestore();
 
@@ -75,16 +73,7 @@ export function PostsDynamic({ id }: { id: string }) {
     }
   }, [tagsDocData, data?.tags]);
 
-  if (loading) {
-    return (
-      <Backdrop
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress />
-      </Backdrop>
-    );
-  }
+  if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
   return (
     <Container sx={{ p: 2 }}>
