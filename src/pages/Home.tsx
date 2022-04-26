@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { getFirestore, collection } from "firebase/firestore";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useEffect, useState } from "react";
+import { getFirestore, collection, DocumentData } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 import { Container, Typography } from "@mui/material";
 
@@ -10,11 +10,22 @@ import { useErrorStore } from "../data/store";
 
 const db = getFirestore(firebaseApp);
 
+export interface DocsType {
+  data: DocumentData;
+  id: string;
+}
+
 export function Home() {
   const setError = useErrorStore((state) => state.setError);
-  const [values, loading, loadError] = useCollectionData(
-    collection(db, "posts")
-  );
+  const [result, loading, loadError] = useCollection(collection(db, "posts"));
+  const [docs, setDocs] = useState<DocsType[]>([]);
+
+  useEffect(() => {
+    if (result) {
+      const docs = result.docs.map((doc) => ({ data: doc.data(), id: doc.id }));
+      setDocs(docs);
+    }
+  }, [result]);
 
   useEffect(() => {
     if (loadError) {
@@ -33,8 +44,7 @@ export function Home() {
         Find a cat nearby
       </Typography>
       <Search redirect />
-      {/* @ts-ignore  */}
-      <PostsGrid data={values} />
+      <PostsGrid data={docs} />
     </Container>
   );
 }
