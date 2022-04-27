@@ -26,9 +26,15 @@ const themeBase = {
       },
     },
   },
+  typography: {
+    fontFamily: "Poppins, sans-serif;",
+  },
 };
 
 export const light = createTheme({
+  typography: {
+    fontFamily: "Poppins, sans-serif;",
+  },
   palette: {
     primary: {
       main: primaryColor,
@@ -51,6 +57,9 @@ export const light = createTheme({
 });
 
 export const dark = createTheme({
+  typography: {
+    fontFamily: "Poppins, sans-serif;",
+  },
   palette: {
     primary: {
       main: secondaryColor,
