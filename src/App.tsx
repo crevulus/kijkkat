@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { AppBar, Container, ThemeProvider, Toolbar } from "@mui/material";
+import {
+  AppBar,
+  Container,
+  ThemeProvider,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import "./App.css";
 import { light, dark } from "./styles/theme";
 
@@ -40,8 +46,15 @@ function App() {
     <ThemeProvider theme={isDarkMode ? dark : light}>
       <BrowserRouter>
         <div className="App">
-          <AppBar position="static">
-            <Toolbar>Kijkkat</Toolbar>
+          <AppBar
+            position="static"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Toolbar>
+              <Typography variant="h5" color="white">
+                Kijkkat
+              </Typography>
+            </Toolbar>
           </AppBar>
           <Container sx={{ flexGrow: 1, overflowY: "scroll" }} disableGutters>
             <Routes>

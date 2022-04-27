@@ -228,7 +228,9 @@ export const CreatePost = ({
         handleGetLocation={getCurrentLocation}
         handleSetPreferences={handleSetPreferences}
       />
-      <Button onClick={handleFormSubmit}>Submit Post</Button>
+      <Button variant="contained" onClick={handleFormSubmit}>
+        Submit Post
+      </Button>
     </>
   );
 };

@@ -9,9 +9,9 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { CircularProgress, Container, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
-import { PostsGrid, Search } from "../components";
+import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
 import { useErrorStore } from "../data/store";
 
@@ -44,7 +44,7 @@ export function Home() {
   }, [loadError]);
 
   if (loading) {
-    return <CircularProgress />;
+    return <FullScreenLoadingSpinner loading={loading} />;
   }
 
   return (

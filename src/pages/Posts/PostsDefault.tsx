@@ -47,7 +47,9 @@ export function PostsDefault() {
   return (
     <Container maxWidth="sm">
       <PostsGrid data={docs} />
-      <Button onClick={handleLoadMoreImages}>Load more</Button>
+      <Button variant="contained" onClick={handleLoadMoreImages}>
+        Load more
+      </Button>
     </Container>
   );
 }

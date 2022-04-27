@@ -1,4 +1,4 @@
-### TODO
+### TODO: Dev
 
 - [x] Env vars for firebase via github actions
 - [x] current location -> store in zustand
@@ -6,9 +6,18 @@
 - [x] auth login & redirect
 - [x] paginate thumbnails
 - [ ] like, rate functions
-- [ ] geohashed queries
+- [x] geohashed queries
 - [x] one page container - implement scrolling; don't allow pages to overflow
-- [ ] try restoring 75bb8dab26892b962f0d405aa7a20a7aa418d849 to see if markers load correctly
+- [x] try restoring 75bb8dab26892b962f0d405aa7a20a7aa418d849 to see if markers load correctly
 - [ ] create user doc on sign up
 - [ ] add user data to account page
 - [ ] add zustand devtools via redux
+- [ ] clustering
+- [ ] create post from file from camera
+
+### TODO: Design
+
+- [ ] logo
+- [ ] marker icon(s)
+- [ ] map style
+- [ ] colour palette
