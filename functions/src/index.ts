@@ -50,5 +50,54 @@ exports.checkForCats = functions
         SafeSearchLikelihoods.VERY_LIKELY
       ) ||
       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
-    console.log({ isCat, isNSFW });
+    if (isNSFW) {
+      functions.logger.log(`NSFW detected: ${object.bucket}, ${object.name}`);
+      return admin
+        .firestore()
+        .collection("nsfw")
+        .doc(object.bucket)
+        .set(
+          {
+            name: object.name,
+            time: admin.firestore.Timestamp.now(),
+            location: `gs://${object.bucket}/${object.name}`,
+          },
+          { merge: true }
+        );
+    }
+    if (!isCat) {
+      functions.logger.log(`Not a cat: ${object.bucket}, ${object.name}`);
+      return admin
+        .firestore()
+        .collection("dubious")
+        .doc(object.bucket)
+        .set(
+          {
+            name: object.name,
+            time: admin.firestore.Timestamp.now(),
+            location: `gs://${object.bucket}/${object.name}`,
+          },
+          { merge: true }
+        );
+    }
+    return;
+  });
+
+exports.createUserFromGoogle = functions
+  .region("europe-west1")
+  .auth.user()
+  .onCreate((user) => {
+    if (user.providerData[0].providerId === "google.com") {
+      return admin
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .set({
+          email: user.providerData[0].email ?? "",
+          displayName: user.providerData[0].displayName ?? "",
+          photoURL: user.providerData[0].photoURL ?? "",
+          providerId: user.providerData[0].providerId ?? "",
+          time: admin.firestore.Timestamp.now(),
+        });
+    } else return;
   });

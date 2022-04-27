@@ -25,7 +25,6 @@ import { CreatePost } from "../components";
 const auth = getAuth(firebaseApp);
 
 const RootContainer = styled(Container)(({ theme }) => ({
-  width: "100%",
   ...theme.typography.body2,
   "& > :not(style) + :not(style)": {
     marginTop: theme.spacing(2),
@@ -62,7 +61,7 @@ export function Add() {
   };
 
   return (
-    <RootContainer sx={{ mt: 2, mb: 2 }}>
+    <RootContainer sx={{ mt: 2, mb: 2, width: "100%" }}>
       <Dialog
         open={showAlert}
         onClose={() => setShowAlert(false)}

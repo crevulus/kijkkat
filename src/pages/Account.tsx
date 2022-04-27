@@ -1,5 +1,9 @@
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {
+  connectAuthEmulator,
+  getAuth,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { Typography } from "@mui/material";
@@ -8,6 +12,7 @@ import { firebaseApp } from "../firebase";
 import { useUserStore } from "../data/store";
 
 const auth = getAuth(firebaseApp);
+connectAuthEmulator(auth, "http://localhost:9099");
 
 // Configure FirebaseUI.
 const uiConfig = {
