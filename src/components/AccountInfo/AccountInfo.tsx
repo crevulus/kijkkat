@@ -17,9 +17,7 @@ import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
 
 const db = getFirestore();
 
-type AccountInfoPropsType = {};
-
-export function AccountInfo({}: AccountInfoPropsType): ReactElement | null {
+export function AccountInfo(): ReactElement | null {
   const user = useUserStore((state) => state.user);
   const [date, setDate] = useState("");
 
