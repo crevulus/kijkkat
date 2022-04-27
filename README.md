@@ -11,7 +11,7 @@
 - [x] one page container - implement scrolling; don't allow pages to overflow
 - [x] try restoring 75bb8dab26892b962f0d405aa7a20a7aa418d849 to see if markers load correctly
 - [x] create user doc on sign up
-- [ ] add user data to account page
+- [x] add user data to account page
 - [ ] add zustand devtools via redux
 - [ ] clustering
 - [x] create post from file from camera

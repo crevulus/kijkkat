@@ -12,7 +12,12 @@ import {
 import "./App.css";
 import { light, dark } from "./styles/theme";
 
-import { useUserStore } from "./data/store";
+import {
+  connectStoreToReduxDevtools,
+  useErrorStore,
+  useGeographicStore,
+  useUserStore,
+} from "./data/store";
 import { firebaseApp } from "./firebase";
 
 import { Home } from "./pages/Home";
@@ -26,6 +31,10 @@ import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
 
 const auth = getAuth(firebaseApp);
+
+connectStoreToReduxDevtools("userStore", useUserStore);
+connectStoreToReduxDevtools("errorStore", useErrorStore);
+connectStoreToReduxDevtools("geographicStore", useGeographicStore);
 
 function App() {
   const setUser = useUserStore((state) => state.setUser);
