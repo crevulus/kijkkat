@@ -6,10 +6,11 @@ import {
 } from "firebase/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { firebaseApp } from "../firebase";
 import { useUserStore } from "../data/store";
+import { AccountInfo } from "../components";
 
 const auth = getAuth(firebaseApp);
 // connectAuthEmulator(auth, "http://localhost:9099");
@@ -25,6 +26,7 @@ type LocationStateType = {
 
 export function Account() {
   const isSignedIn = useUserStore((state) => state.isSignedIn);
+  const setUser = useUserStore((state) => state.setUser);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -38,6 +40,7 @@ export function Account() {
     ...uiConfig,
     callbacks: {
       signInSuccessWithAuthResult: () => {
+        setUser(auth.currentUser);
         handleRedirect();
         return false;
       },
@@ -45,12 +48,14 @@ export function Account() {
   };
 
   return (
-    <>
-      <Typography variant="h1" gutterBottom>
-        Account
+    <Container sx={{ p: 2 }}>
+      <Typography variant="h6" color="primary" gutterBottom>
+        Your account
       </Typography>
-      <StyledFirebaseAuth uiConfig={amendedUiConfig} firebaseAuth={auth} />
-      {isSignedIn && auth.currentUser?.email}
-    </>
+      {!isSignedIn && (
+        <StyledFirebaseAuth uiConfig={amendedUiConfig} firebaseAuth={auth} />
+      )}
+      {isSignedIn && <AccountInfo />}
+    </Container>
   );
 }

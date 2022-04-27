@@ -154,6 +154,7 @@ export const CreatePost = ({
         tags,
         rating: ratingValue,
         userId: auth.currentUser?.uid,
+        userName: auth.currentUser?.displayName,
         time: Timestamp.now(),
         likes: 0,
         imageUrl,
