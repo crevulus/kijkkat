@@ -1,6 +1,6 @@
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import {
-  connectAuthEmulator,
+  // connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
 } from "firebase/auth";
@@ -14,9 +14,7 @@ import { useUserStore } from "../data/store";
 const auth = getAuth(firebaseApp);
 // connectAuthEmulator(auth, "http://localhost:9099");
 
-// Configure FirebaseUI.
 const uiConfig = {
-  // Popup signin flow rather than redirect flow.
   signInFlow: "popup",
   signInOptions: [GoogleAuthProvider.PROVIDER_ID],
 };

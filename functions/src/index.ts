@@ -28,30 +28,7 @@ const catLabelsArray = [
   "small to medium-sized cats",
 ];
 
-// exports.checkForCats = functions
-//   .region("europe-west1")
-//   .storage.object()
-//   .onFinalize(async (object) => {
-//     const client = new vision.ImageAnnotatorClient();
-//     const [result] = await client.labelDetection(
-//       `gs://${object.bucket}/${object.name}`
-//     );
-//     const [safeSearchResult] = await client.safeSearchDetection(
-//       `gs://${object.bucket}/${object.name}`
-//     );
-//     const labels = result.labelAnnotations;
-//     const safeSearchLabels = safeSearchResult.safeSearchAnnotation;
-//     const isCat = labels.some(
-//       (label: LabelType) =>
-//         catLabelsArray.indexOf(label.description.toLowerCase()) >= 0
-//     );
-//     const isNSFW =
-//       Object.values(safeSearchLabels).includes(
-//         SafeSearchLikelihoods.VERY_LIKELY
-//       ) ||
-//       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
-//     console.log({ isCat, isNSFW });
-//   });
+// blur images: https://github.com/firebase/functions-samples/blob/main/moderate-images/functions/index.js
 
 exports.checkForCats = functions
   .region("europe-west1")
@@ -77,45 +54,37 @@ exports.checkForCats = functions
       ) ||
       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
     const batch = admin.firestore().batch();
-    if (isNSFW) {
-      functions.logger.log(`NSFW detected: ${object.bucket}, ${fileName}`);
-      const nsfwDocRef = admin
-        .firestore()
-        .collection("nsfw")
-        .doc(object.bucket);
+    const folderName = fileName?.split("/")[1];
+    if (isNSFW && folderName) {
+      functions.logger.log(`NSFW detected: ${folderName}, ${fileName}`);
+      const nsfwDocRef = admin.firestore().collection("nsfw").doc(folderName);
       batch.set(
         nsfwDocRef,
-        (data: admin.firestore.DocumentData) => ({
-          flaggedPosts: [
-            ...data.flaggedPosts,
-            {
-              name: fileName,
-              time: admin.firestore.Timestamp.now(),
-              location: `gs://${object.bucket}/${fileName}`,
-            },
-          ],
-        }),
+        {
+          [object.id]: {
+            name: fileName,
+            time: admin.firestore.Timestamp.now(),
+            location: `gs://${object.bucket}/${fileName}`,
+          },
+        },
         { merge: true }
       );
     }
-    if (!isCat) {
-      functions.logger.log(`Not a cat: ${object.bucket}, ${fileName}`);
+    if (!isCat && folderName) {
+      functions.logger.log(`Not a cat: ${folderName}, ${fileName}`);
       const dubiousDocRef = admin
         .firestore()
         .collection("dubious")
-        .doc(object.bucket);
+        .doc(folderName);
       batch.set(
         dubiousDocRef,
-        (data: admin.firestore.DocumentData) => ({
-          flaggedPosts: [
-            ...data.flaggedPosts,
-            {
-              name: fileName,
-              time: admin.firestore.Timestamp.now(),
-              location: `gs://${object.bucket}/${fileName}`,
-            },
-          ],
-        }),
+        {
+          [object.generation ?? fileName ?? "unknown"]: {
+            name: fileName,
+            time: admin.firestore.Timestamp.now(),
+            location: `gs://${object.bucket}/${fileName}`,
+          },
+        },
         { merge: true }
       );
     }
