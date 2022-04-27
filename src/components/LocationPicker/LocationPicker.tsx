@@ -29,7 +29,11 @@ export function LocationPicker({
             Would you like to use your current location?
           </Typography>
           <Stack direction="row" spacing={2} justifyContent="center">
-            <Button startIcon={<LocationOn />} onClick={handleGetLocation}>
+            <Button
+              startIcon={<LocationOn />}
+              onClick={handleGetLocation}
+              variant="outlined"
+            >
               Find me
             </Button>
             <Button
@@ -40,6 +44,7 @@ export function LocationPicker({
                   checkedCurrentLocation: true,
                 });
               }}
+              variant="outlined"
             >
               Search
             </Button>

@@ -17,9 +17,7 @@ const themeBase = {
     MuiButton: {
       styleOverrides: {
         root: {
-          border: 0,
           borderRadius: 20,
-          color: "white",
           height: 40,
           padding: "0 30px",
         },
@@ -48,8 +46,15 @@ export const light = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          ...themeBase.components.MuiButton.styleOverrides.root,
-          background: `linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
+          "&.MuiButton-outlined": {
+            ...themeBase.components.MuiButton.styleOverrides.root,
+          },
+          "&.MuiButton-contained": {
+            ...themeBase.components.MuiButton.styleOverrides.root,
+            color: "white",
+            border: 0,
+            background: `linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
+          },
         },
       },
     },

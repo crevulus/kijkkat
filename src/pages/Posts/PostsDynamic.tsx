@@ -82,11 +82,6 @@ export function PostsDynamic({ id }: { id: string }) {
   return (
     <Container sx={{ p: 2 }}>
       <Card sx={{ maxWidth: "100%" }}>
-        {data && (
-          <Typography variant="body2" color="primary">
-            User: {data.userId}
-          </Typography>
-        )}
         {address && (
           <CardContent>
             <LocationOn color="primary" />
@@ -132,7 +127,7 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </Fragment>
           <Typography pr={1} variant="body2">
-            {date}
+            {date} by {data?.userName ?? "Anonymous"}
           </Typography>
         </CardActions>
       </Card>

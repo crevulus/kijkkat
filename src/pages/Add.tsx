@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-// import { getStorage, ref } from "firebase/storage";
-import { useUploadFile } from "react-firebase-hooks/storage";
 
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Dialog,
   DialogTitle,
@@ -22,13 +19,12 @@ import {
 
 import { firebaseApp } from "../firebase";
 import { NavigationRoutes } from "../data/enums";
-import { useErrorStore, useUserStore } from "../data/store";
+import { useUserStore } from "../data/store";
 import { CreatePost } from "../components";
 
 const auth = getAuth(firebaseApp);
 
 const RootContainer = styled(Container)(({ theme }) => ({
-  width: "100%",
   ...theme.typography.body2,
   "& > :not(style) + :not(style)": {
     marginTop: theme.spacing(2),
@@ -36,12 +32,9 @@ const RootContainer = styled(Container)(({ theme }) => ({
 }));
 
 export function Add() {
-  const setError = useErrorStore((state) => state.setError);
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const navigate = useNavigate();
   const location = useLocation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [uploadFile, uploading, snapshot, loadError] = useUploadFile();
   const [chosenFile, setChosenFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -49,7 +42,6 @@ export function Add() {
     if (!auth.currentUser) {
       setShowAlert(true);
     }
-    console.log(auth.currentUser);
   };
 
   const handleRedirect = () => {
@@ -60,7 +52,7 @@ export function Add() {
     }
   };
 
-  const handleCapture = async (eventTarget: HTMLInputElement) => {
+  const handleAddPicture = async (eventTarget: HTMLInputElement) => {
     if (eventTarget.files) {
       setChosenFile(null);
       const imageForUpload = eventTarget.files[0];
@@ -68,15 +60,8 @@ export function Add() {
     }
   };
 
-  useEffect(() => {
-    if (loadError) {
-      setError(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
-
   return (
-    <RootContainer sx={{ mt: 2, mb: 2 }}>
+    <RootContainer sx={{ mt: 2, mb: 2, width: "100%" }}>
       <Dialog
         open={showAlert}
         onClose={() => setShowAlert(false)}
@@ -107,18 +92,24 @@ export function Add() {
           type="file"
           capture="environment"
           disabled={!isSignedIn}
-          onChange={(e) => handleCapture(e.target)}
+          onChange={(e) => handleAddPicture(e.target)}
         />
       </Box>
       <Divider>
         <Typography variant="overline">OR</Typography>
       </Divider>
-      <Button variant="contained">Upload from gallery</Button>
-      {uploading && (
-        <Container>
-          <CircularProgress />
-        </Container>
-      )}
+      <Button variant="contained" onClick={checkSignedIn}>
+        <label htmlFor="upload-button">Upload from gallery</label>
+      </Button>
+      <Box display="none">
+        <input
+          accept="image/*"
+          id="upload-button"
+          type="file"
+          disabled={!isSignedIn}
+          onChange={(e) => handleAddPicture(e.target)}
+        />
+      </Box>
       {chosenFile && <CreatePost chosenFile={chosenFile} />}
     </RootContainer>
   );

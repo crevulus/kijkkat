@@ -154,6 +154,7 @@ export const CreatePost = ({
         tags,
         rating: ratingValue,
         userId: auth.currentUser?.uid,
+        userName: auth.currentUser?.displayName,
         time: Timestamp.now(),
         likes: 0,
         imageUrl,
@@ -228,7 +229,9 @@ export const CreatePost = ({
         handleGetLocation={getCurrentLocation}
         handleSetPreferences={handleSetPreferences}
       />
-      <Button onClick={handleFormSubmit}>Submit Post</Button>
+      <Button variant="contained" onClick={handleFormSubmit}>
+        Submit Post
+      </Button>
     </>
   );
 };
