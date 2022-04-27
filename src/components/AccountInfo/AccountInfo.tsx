@@ -21,9 +21,7 @@ export function AccountInfo(): ReactElement | null {
   const user = useUserStore((state) => state.user);
   const [date, setDate] = useState("");
 
-  const [result, loading, error] = useDocumentData(
-    doc(db, "users", user?.uid ?? "")
-  );
+  const [result, loading] = useDocumentData(doc(db, "users", user?.uid ?? ""));
 
   const getDate = () => {
     if (!date) {
