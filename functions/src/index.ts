@@ -28,16 +28,42 @@ const catLabelsArray = [
   "small to medium-sized cats",
 ];
 
+// exports.checkForCats = functions
+//   .region("europe-west1")
+//   .storage.object()
+//   .onFinalize(async (object) => {
+//     const client = new vision.ImageAnnotatorClient();
+//     const [result] = await client.labelDetection(
+//       `gs://${object.bucket}/${object.name}`
+//     );
+//     const [safeSearchResult] = await client.safeSearchDetection(
+//       `gs://${object.bucket}/${object.name}`
+//     );
+//     const labels = result.labelAnnotations;
+//     const safeSearchLabels = safeSearchResult.safeSearchAnnotation;
+//     const isCat = labels.some(
+//       (label: LabelType) =>
+//         catLabelsArray.indexOf(label.description.toLowerCase()) >= 0
+//     );
+//     const isNSFW =
+//       Object.values(safeSearchLabels).includes(
+//         SafeSearchLikelihoods.VERY_LIKELY
+//       ) ||
+//       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
+//     console.log({ isCat, isNSFW });
+//   });
+
 exports.checkForCats = functions
   .region("europe-west1")
   .storage.object()
   .onFinalize(async (object) => {
+    const fileName = object.name?.replace(" ", "_");
     const client = new vision.ImageAnnotatorClient();
     const [result] = await client.labelDetection(
-      `gs://${object.bucket}/${object.name}`
+      `gs://${object.bucket}/${fileName}`
     );
     const [safeSearchResult] = await client.safeSearchDetection(
-      `gs://${object.bucket}/${object.name}`
+      `gs://${object.bucket}/${fileName}`
     );
     const labels = result.labelAnnotations;
     const safeSearchLabels = safeSearchResult.safeSearchAnnotation;
@@ -50,37 +76,52 @@ exports.checkForCats = functions
         SafeSearchLikelihoods.VERY_LIKELY
       ) ||
       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
+    const batch = admin.firestore().batch();
     if (isNSFW) {
-      functions.logger.log(`NSFW detected: ${object.bucket}, ${object.name}`);
-      return admin
+      functions.logger.log(`NSFW detected: ${object.bucket}, ${fileName}`);
+      const nsfwDocRef = admin
         .firestore()
         .collection("nsfw")
-        .doc(object.bucket)
-        .set(
-          {
-            name: object.name,
-            time: admin.firestore.Timestamp.now(),
-            location: `gs://${object.bucket}/${object.name}`,
-          },
-          { merge: true }
-        );
+        .doc(object.bucket);
+      batch.set(
+        nsfwDocRef,
+        (data: admin.firestore.DocumentData) => ({
+          flaggedPosts: [
+            ...data.flaggedPosts,
+            {
+              name: fileName,
+              time: admin.firestore.Timestamp.now(),
+              location: `gs://${object.bucket}/${fileName}`,
+            },
+          ],
+        }),
+        { merge: true }
+      );
     }
     if (!isCat) {
-      functions.logger.log(`Not a cat: ${object.bucket}, ${object.name}`);
-      return admin
+      functions.logger.log(`Not a cat: ${object.bucket}, ${fileName}`);
+      const dubiousDocRef = admin
         .firestore()
         .collection("dubious")
-        .doc(object.bucket)
-        .set(
-          {
-            name: object.name,
-            time: admin.firestore.Timestamp.now(),
-            location: `gs://${object.bucket}/${object.name}`,
-          },
-          { merge: true }
-        );
+        .doc(object.bucket);
+      batch.set(
+        dubiousDocRef,
+        (data: admin.firestore.DocumentData) => ({
+          flaggedPosts: [
+            ...data.flaggedPosts,
+            {
+              name: fileName,
+              time: admin.firestore.Timestamp.now(),
+              location: `gs://${object.bucket}/${fileName}`,
+            },
+          ],
+        }),
+        { merge: true }
+      );
     }
-    return;
+    return batch
+      .commit()
+      .then(() => functions.logger.log(`Batched: ${fileName}`));
   });
 
 exports.createUserFromGoogle = functions

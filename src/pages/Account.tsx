@@ -12,7 +12,7 @@ import { firebaseApp } from "../firebase";
 import { useUserStore } from "../data/store";
 
 const auth = getAuth(firebaseApp);
-connectAuthEmulator(auth, "http://localhost:9099");
+// connectAuthEmulator(auth, "http://localhost:9099");
 
 // Configure FirebaseUI.
 const uiConfig = {
