@@ -10,9 +10,9 @@ import {
   getFirestore,
   orderBy,
   query,
-  QuerySnapshot,
   startAt,
 } from "firebase/firestore";
+
 import { firebaseApp } from "../../firebase";
 import { createImage, createMapButton } from "../../utils/mapUtils";
 import { useGeographicStore } from "../../data/store";
@@ -32,20 +32,29 @@ const db = getFirestore(firebaseApp);
 export function MapContainer({ coords }: MapContainerProps) {
   const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
-  const [hasLoadedMarkers, setHasLoadedMarkers] = useState(false);
-  const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
-  const [docSnapshots, setDocSnapshots] = useState<
-    Promise<QuerySnapshot<DocumentData>>[]
-  >([]);
+  const [center, setCenter] = useState(AMSTERDAM_COORDS);
 
-  const handleGeohashingQuery = () => {
+  useEffect(() => {
+    if (coords) {
+      if (mapObject) {
+        mapObject.setCenter(coords);
+        mapObject.setZoom(14);
+      }
+      setCenter(coords);
+    }
+  }, [coords, mapObject]);
+
+  useEffect(() => {
+    if (!mapObject) {
+      return;
+    }
     const bounds = geofire.geohashQueryBounds(
       [center.lat, center.lng],
       DEFAULT_RADIUS
     );
 
-    const docSnapshots = bounds.map((bound) => {
+    const geohashes = bounds.map((bound) => {
       const q = query(
         collection(db, "posts"),
         orderBy("geohash"),
@@ -54,11 +63,8 @@ export function MapContainer({ coords }: MapContainerProps) {
       );
       return getDocs(q);
     });
-    setDocSnapshots(docSnapshots);
-  };
 
-  const handleAddMarkers = async () => {
-    await Promise.all(docSnapshots)
+    Promise.all(geohashes)
       .then((snapshots) => {
         const matchingDocs: DocumentData[] = [];
         snapshots.forEach((snap) => {
@@ -101,63 +107,36 @@ export function MapContainer({ coords }: MapContainerProps) {
           return marker;
         });
       });
-    setHasLoadedMarkers(true);
-  };
+  }, [center, mapObject]);
 
   useEffect(() => {
-    // Loading Google Maps JavaScript API
     if (!mapObject) {
       const loader = new Loader({
         apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
       });
-      let map: google.maps.Map;
-      loader
-        .load()
-        .then(() => {
-          // Setting parameters for embedding Google Maps
-          const initialView = {
-            center: center,
-            zoom: 10,
-          };
-          // Embedding Google Maps
-          if (googlemapRef.current) {
-            map = new google.maps.Map(googlemapRef.current, {
-              ...initialView,
-              mapTypeControl: false,
-            });
-
-            const centerControlDiv = document.createElement("div");
-            createMapButton(centerControlDiv, map, center);
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-              centerControlDiv
-            );
-          }
-        })
-        .then(() => {
+      let map;
+      loader.load().then(() => {
+        const initialView = {
+          center,
+          zoom: 10,
+        };
+        const google = window.google;
+        if (googlemapRef.current) {
+          map = new google.maps.Map(googlemapRef.current, {
+            ...initialView,
+            mapTypeControl: false,
+          });
+          const centerControlDiv = document.createElement("div");
+          createMapButton(centerControlDiv, map, center);
+          map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+            centerControlDiv
+          );
           setMapObject(map);
           setMapLoaded(true);
-        });
+        }
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setMapObject, googlemapRef]);
-
-  useEffect(() => {
-    if (coords) {
-      if (mapObject) {
-        mapObject.setCenter(coords);
-        mapObject.setZoom(14);
-      }
-      setCenter(coords);
-    }
-  }, [coords, mapObject]);
-
-  useEffect(() => {
-    if (mapObject) {
-      handleGeohashingQuery();
-      handleAddMarkers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasLoadedMarkers, center.lat]);
+  }, [setMapLoaded, setMapObject, mapObject, googlemapRef, center]);
 
   return <div ref={googlemapRef} style={{ height: "100%" }} />;
 }
