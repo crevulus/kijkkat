@@ -111,3 +111,21 @@ exports.createUserFromGoogle = functions
         });
     } else return;
   });
+
+exports.likePost = functions
+  .region("europe-west1")
+  .https.onCall((data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        "You've got to be logged in to do that!"
+      );
+    }
+    const batch = admin.firestore().batch();
+    const postRef = admin.firestore().collection("posts").doc(data.postId);
+    batch.update(postRef, {
+      likes: admin.firestore.FieldValue.increment(1),
+      likedBy: admin.firestore.FieldValue.arrayUnion(context.auth.uid),
+    });
+    return batch.commit();
+  });

@@ -15,13 +15,12 @@ import {
 
 import { firebaseApp } from "../../firebase";
 import { createImage, createMapButton } from "../../utils/mapUtils";
-import { useGeographicStore } from "../../data/store";
+import { useErrorStore, useGeographicStore } from "../../data/store";
+import { CoordsType } from "../../pages/Map";
 
 type MapContainerProps = {
-  coords: {
-    lat: number;
-    lng: number;
-  } | null;
+  coords: CoordsType | null;
+  forceTriggerQuery?: boolean;
 };
 
 const AMSTERDAM_COORDS = { lat: 52.356, lng: 4.896 };
@@ -29,23 +28,26 @@ const DEFAULT_RADIUS = 5000; // in metres
 
 const db = getFirestore(firebaseApp);
 
-export function MapContainer({ coords }: MapContainerProps) {
+export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
+  const setError = useErrorStore((state) => state.setError);
+  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
+  const [triggerQuery, setTriggerQuery] = useState(forceTriggerQuery);
 
   useEffect(() => {
     if (coords) {
       if (mapObject) {
         mapObject.setCenter(coords);
-        mapObject.setZoom(14);
       }
+      setTriggerQuery(true);
       setCenter(coords);
     }
   }, [coords, mapObject]);
 
-  useEffect(() => {
+  const performGeoQuery = () => {
     if (!mapObject) {
       return;
     }
@@ -85,6 +87,10 @@ export function MapContainer({ coords }: MapContainerProps) {
         return matchingDocs;
       })
       .then((matchingDocs) => {
+        if (matchingDocs.length === 0) {
+          setError(true);
+          setErrorMessage("No cats found within 5km");
+        }
         matchingDocs.map((data) => {
           const lat = data.location.latitude;
           const lng = data.location.longitude;
@@ -107,18 +113,25 @@ export function MapContainer({ coords }: MapContainerProps) {
           return marker;
         });
       });
-  }, [center, mapObject]);
+  };
+
+  useEffect(() => {
+    if (triggerQuery) {
+      performGeoQuery();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center, mapObject, triggerQuery]);
 
   useEffect(() => {
     if (!mapObject) {
       const loader = new Loader({
         apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
       });
-      let map;
+      let map: google.maps.Map;
       loader.load().then(() => {
         const initialView = {
           center,
-          zoom: 10,
+          zoom: 14,
         };
         const google = window.google;
         if (googlemapRef.current) {
@@ -127,10 +140,25 @@ export function MapContainer({ coords }: MapContainerProps) {
             mapTypeControl: false,
           });
           const centerControlDiv = document.createElement("div");
-          createMapButton(centerControlDiv, map, center);
+          createMapButton(centerControlDiv);
           map.controls[google.maps.ControlPosition.TOP_CENTER].push(
             centerControlDiv
           );
+          const centerControlButton: HTMLButtonElement | null =
+            centerControlDiv.querySelector(".search-button");
+          centerControlButton!.addEventListener("click", () => {
+            setTriggerQuery(true);
+          });
+          map.addListener("center_changed", () => {
+            centerControlButton!.disabled = false;
+            setTriggerQuery(false);
+            // @ts-ignore
+            const newCenter = {
+              lat: map.getCenter()!.lat(),
+              lng: map.getCenter()!.lng(),
+            };
+            setCenter(newCenter);
+          });
           setMapObject(map);
           setMapLoaded(true);
         }

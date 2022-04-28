@@ -32,6 +32,7 @@ import { useErrorStore, useGeographicStore } from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { NavigationRoutes, RatingCategories } from "../../data/enums";
+import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
 
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -74,6 +75,8 @@ export const CreatePost = ({
   const [checkedCurrentLocation, setCheckedCurrentLocation] = useState(false);
   const [currentAddress, setCurrentAddress] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (chipsLoadError) {
       setError(true);
@@ -113,6 +116,7 @@ export const CreatePost = ({
   };
 
   const handleFormSubmit = async () => {
+    setLoading(true);
     let location;
     let geohash;
     let imageUrl;
@@ -157,6 +161,7 @@ export const CreatePost = ({
         userName: auth.currentUser?.displayName,
         time: Timestamp.now(),
         likes: 0,
+        likedBy: [],
         imageUrl,
       };
       await addDoc(collection(db, "posts"), post)
@@ -165,6 +170,7 @@ export const CreatePost = ({
           setError(true);
           setErrorMessage(error.message);
         });
+      setLoading(false);
     }
   };
 
@@ -182,6 +188,7 @@ export const CreatePost = ({
 
   return (
     <>
+      {loading && <FullScreenLoadingSpinner loading={loading} />}
       <Box maxWidth="sm" className={styles.CreatePost}>
         <img
           src={URL.createObjectURL(chosenFile)}

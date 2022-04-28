@@ -1,8 +1,11 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { doc, DocumentData, getFirestore } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { getAuth } from "firebase/auth";
 import { useDocumentData, useDocument } from "react-firebase-hooks/firestore";
 
 import {
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -12,6 +15,7 @@ import {
   Divider,
   IconButton,
   Stack,
+  styled,
   Typography,
 } from "@mui/material";
 import LocationOn from "@mui/icons-material/LocationOn";
@@ -19,8 +23,20 @@ import ThumbUp from "@mui/icons-material/ThumbUp";
 
 import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
+import { useErrorStore } from "../../data/store";
+import { firebaseApp } from "../../firebase";
 
+const auth = getAuth();
 const db = getFirestore();
+const functions = getFunctions(firebaseApp, "europe-west1");
+const likePost = httpsCallable(functions, "likePost");
+
+const CustomisedIconButton = styled(IconButton)(({ theme }) => ({
+  "&.Mui-disabled": {
+    backgroundColor: theme.palette.primary.main,
+    color: "#fff",
+  },
+}));
 
 export interface TagsType {
   id: number;
@@ -29,10 +45,14 @@ export interface TagsType {
 
 // TODO: Error handling
 export function PostsDynamic({ id }: { id: string }) {
+  const setError = useErrorStore((state) => state.setError);
+  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
+
   const [data, setData] = useState<DocumentData>();
   const [date, setDate] = useState("");
   const [address, setAddress] = useState<string>();
   const [tags, setTags] = useState<TagsType[] | null>(null);
+  const [liked, setLiked] = useState(false);
 
   const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
   const [result, loading] = useDocument(doc(db, "posts", id));
@@ -52,6 +72,16 @@ export function PostsDynamic({ id }: { id: string }) {
       setTags(findTags());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    if (!data.likes || data.likedBy.length < 1) {
+      return;
+    }
+    setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
 
   const getAddress = async () => {
@@ -76,6 +106,16 @@ export function PostsDynamic({ id }: { id: string }) {
       return tagsArray;
     }
   }, [tagsDocData, data?.tags]);
+
+  const handleLike = () => {
+    if (data && data.likedBy.includes(auth.currentUser?.uid)) {
+      return;
+    }
+    likePost({ postId: id }).catch((error) => {
+      setError(true);
+      setErrorMessage(error.message);
+    });
+  };
 
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
@@ -118,15 +158,27 @@ export function PostsDynamic({ id }: { id: string }) {
           )}
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Fragment>
-            <IconButton aria-label="Like this cat">
-              <ThumbUp color="secondary" />
-            </IconButton>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <CustomisedIconButton
+              disabled={liked}
+              color={liked ? "primary" : "default"}
+              aria-label="Like this cat"
+              onClick={handleLike}
+            >
+              <ThumbUp />
+            </CustomisedIconButton>
             <Typography pr={1} variant="body2">
               {data?.likes}
             </Typography>
-          </Fragment>
-          <Typography pr={1} variant="body2">
+          </Box>
+          <Typography pr={1} variant="body1">
             {date} by {data?.userName ?? "Anonymous"}
           </Typography>
         </CardActions>

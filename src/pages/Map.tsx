@@ -7,7 +7,7 @@ import { useGeographicStore } from "../data/store";
 import { useGeocoder } from "../hooks/useGeocoder";
 import { MapContainer } from "../components/MapContainer/MapContainer";
 
-type CoordsType = {
+export type CoordsType = {
   lat: number;
   lng: number;
 };
@@ -35,7 +35,7 @@ export function Map() {
 
   return (
     <Container sx={{ height: "100%" }} disableGutters>
-      <MapContainer coords={latLng} />
+      <MapContainer coords={latLng} forceTriggerQuery={true} />
     </Container>
   );
 }
