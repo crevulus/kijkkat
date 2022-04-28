@@ -1,4 +1,4 @@
-import create from "zustand";
+import create, { StoreApi, UseBoundStore } from "zustand";
 
 import type { User } from "firebase/auth";
 import { PlaceType } from "../components/Search/Search";
@@ -55,3 +55,30 @@ export const useErrorStore = create<ErrorStateType>((set) => ({
   setErrorMessage: (message = defaultErrorMessage) =>
     set((state) => ({ ...state, errorMessage: message })),
 }));
+
+export const connectStoreToReduxDevtools = (
+  name: string,
+  store: UseBoundStore<StoreApi<object>>
+) => {
+  // @ts-ignore
+  const connection = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
+    name: "Form fields",
+  });
+  connection?.init(store.getState());
+
+  let isUpdateFromDevtools = false;
+  connection?.subscribe((evt: any) => {
+    if (evt.type === "DISPATCH") {
+      const newState = JSON.parse(evt.state);
+      isUpdateFromDevtools = true;
+      store.setState(newState);
+      isUpdateFromDevtools = false;
+    }
+  });
+
+  return store.subscribe((newState) => {
+    if (!isUpdateFromDevtools) {
+      connection?.send(name, newState);
+    }
+  });
+};
