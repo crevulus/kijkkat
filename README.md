@@ -15,6 +15,7 @@
 - [x] add zustand devtools via redux
 - [ ] clustering
 - [x] create post from file not camera
+- [ ] figure out how to do geoqueries based on moved map
 
 ### TODO: Design
 
