@@ -82,6 +82,9 @@ export function Add() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Typography variant="h6" color="primary" gutterBottom>
+        Add a new post
+      </Typography>
       <Button variant="contained" onClick={checkSignedIn}>
         <label htmlFor="capture-button">Take a photo</label>
       </Button>

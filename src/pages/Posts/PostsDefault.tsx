@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { Button, Container } from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid } from "../../components";
 import { useErrorStore } from "../../data/store";
@@ -45,7 +45,10 @@ export function PostsDefault() {
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ p: 2 }}>
+      <Typography variant="h6" color="primary" gutterBottom>
+        Posts
+      </Typography>
       <PostsGrid data={docs} />
       <Button variant="contained" onClick={handleLoadMoreImages}>
         Load more

@@ -15,7 +15,7 @@ import {
 
 import { firebaseApp } from "../../firebase";
 import { createImage, createMapButton } from "../../utils/mapUtils";
-import { useGeographicStore } from "../../data/store";
+import { useErrorStore, useGeographicStore } from "../../data/store";
 import { CoordsType } from "../../pages/Map";
 
 type MapContainerProps = {
@@ -29,6 +29,8 @@ const DEFAULT_RADIUS = 5000; // in metres
 const db = getFirestore(firebaseApp);
 
 export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
+  const setError = useErrorStore((state) => state.setError);
+  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
@@ -85,6 +87,10 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
         return matchingDocs;
       })
       .then((matchingDocs) => {
+        if (matchingDocs.length === 0) {
+          setError(true);
+          setErrorMessage("No cats found within 5km");
+        }
         matchingDocs.map((data) => {
           const lat = data.location.latitude;
           const lng = data.location.longitude;
