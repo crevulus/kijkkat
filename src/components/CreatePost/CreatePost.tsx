@@ -38,6 +38,18 @@ const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 const storage = getStorage();
 
+const editThumbnailFileName = (
+  fileName: string,
+  fileFormat: string,
+  userId: string | undefined
+) => {
+  const editedFilename = fileName.replace(
+    /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i,
+    `_200x200.${fileFormat}`
+  );
+  return `gs://kijkkat-meow.appspot.com/cats/${userId}/thumbnails/${editedFilename}`;
+};
+
 type CreatePostPropsType = {
   chosenFile: File;
 };
@@ -144,11 +156,22 @@ export const CreatePost = ({
     }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
+      const fileName = chosenFile.name?.replace(" ", "_");
       const storageRef = ref(
         storage,
-        `cats/${auth.currentUser?.uid}/${chosenFile.name}`
+        `cats/${auth.currentUser?.uid}/${fileName}`
       );
       await uploadFile(storageRef, chosenFile);
+      const thumbnailUrlWebp = editThumbnailFileName(
+        fileName,
+        "webp",
+        auth.currentUser?.uid
+      );
+      const thumbnailUrlJpeg = editThumbnailFileName(
+        fileName,
+        "jpeg",
+        auth.currentUser?.uid
+      );
       imageUrl = await getDownloadURL(storageRef).then((downloadURL) => {
         return downloadURL;
       });
@@ -163,6 +186,8 @@ export const CreatePost = ({
         likes: 0,
         likedBy: [],
         imageUrl,
+        thumbnailUrlWebp,
+        thumbnailUrlJpeg,
       };
       await addDoc(collection(db, "posts"), post)
         .then((doc) => navigate(`${NavigationRoutes.Posts}/${doc.id}`))

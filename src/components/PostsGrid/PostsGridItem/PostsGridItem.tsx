@@ -16,17 +16,23 @@ const storage = getStorage(firebaseApp);
 export function PostsGridItem({ item }: any): ReactElement {
   const setError = useErrorStore((state) => state.setError);
 
-  const [value, loading, loadError] = useDownloadURL(
+  const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
+    ref(storage, item.data.thumbnailUrlWebp)
+  );
+  const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
+    ref(storage, item.data.thumbnailUrlJpeg)
+  );
+  const [fallbackValue, fallbackLoading, fallbackLoadError] = useDownloadURL(
     ref(storage, item.data.imageUrl)
   );
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loadError) {
+    if (webpLoadError && jpegLoadError && fallbackLoadError) {
       setError(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+  }, [webpLoadError, jpegLoadError, fallbackLoadError]);
 
   const path = useMemo(() => {
     return generatePath(NavigationRoutes.PostsDynamic, { id: item.id });
@@ -38,16 +44,15 @@ export function PostsGridItem({ item }: any): ReactElement {
 
   return (
     <ImageListItem sx={{ alignItems: "center", justifyContent: "center" }}>
-      {loading ? (
+      {webpLoading && jpegLoading && fallbackLoading ? (
         <CircularProgress color="secondary" />
       ) : (
         <img
-          className={styles.image}
-          src={value}
-          srcSet={value}
-          alt={item.data.time}
+          src={webpValue || jpegValue}
+          srcSet={fallbackValue}
+          alt={item.title}
           loading="lazy"
-          aria-label="Click here to check out this cat"
+          className={styles.image}
           onClick={handleClick}
         />
       )}
