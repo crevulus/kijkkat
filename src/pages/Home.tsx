@@ -51,7 +51,7 @@ export function Home() {
 
   return (
     <Container maxWidth="sm" sx={{ p: 2 }}>
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", m: 3 }}>
         <Icon
           sx={{
             width: "100%",

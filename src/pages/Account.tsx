@@ -6,7 +6,7 @@ import { Container, Typography } from "@mui/material";
 
 import { firebaseApp } from "../firebase";
 import { useUserStore } from "../data/store";
-import { AccountInfo } from "../components";
+import { AccountInfo, FullScreenLoadingSpinner } from "../components";
 
 const auth = getAuth(firebaseApp);
 
@@ -22,6 +22,7 @@ type LocationStateType = {
 export function Account() {
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const setUser = useUserStore((state) => state.setUser);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ export function Account() {
         handleRedirect();
         return false;
       },
+      uiShown: () => <FullScreenLoadingSpinner loading={true} />,
     },
   };
 

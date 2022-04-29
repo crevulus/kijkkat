@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { doc, DocumentData, getFirestore } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { getAuth } from "firebase/auth";
@@ -11,6 +12,7 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -25,6 +27,7 @@ import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { useErrorStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
+import { NavigationRoutes } from "../../data/enums";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -53,11 +56,13 @@ export function PostsDynamic({ id }: { id: string }) {
   const [address, setAddress] = useState<string>();
   const [tags, setTags] = useState<TagsType[] | null>(null);
   const [liked, setLiked] = useState(false);
+  const [loadingLiked, setLoadingLiked] = useState(false);
+
+  const { geocodeAddressFromCoords } = useGeocoder();
 
   const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
   const [result, loading] = useDocument(doc(db, "posts", id));
-
-  const { geocodeAddressFromCoords } = useGeocoder();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (result) {
@@ -107,14 +112,24 @@ export function PostsDynamic({ id }: { id: string }) {
     }
   }, [tagsDocData, data?.tags]);
 
+  const handleLocationClick = () => {
+    if (data?.location) {
+      const params = `lat=${data.location.latitude}&lng=${data.location.longitude}`;
+      navigate(`${NavigationRoutes.Map}?${params}`);
+    }
+  };
+
   const handleLike = () => {
+    setLoadingLiked(true);
     if (data && data.likedBy.includes(auth.currentUser?.uid)) {
+      setLoadingLiked(false);
       return;
     }
     likePost({ postId: id }).catch((error) => {
       setError(true);
       setErrorMessage(error.message);
     });
+    setLoadingLiked(false);
   };
 
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
@@ -124,8 +139,12 @@ export function PostsDynamic({ id }: { id: string }) {
       <Card sx={{ maxWidth: "100%" }}>
         {address && (
           <CardContent>
-            <LocationOn color="primary" />
-            <Typography variant="body2">{address}</Typography>
+            <IconButton onClick={handleLocationClick}>
+              <LocationOn color="primary" />
+            </IconButton>
+            <Typography variant="body2" onClick={handleLocationClick}>
+              {address}
+            </Typography>
           </CardContent>
         )}{" "}
         <CardMedia
@@ -166,17 +185,27 @@ export function PostsDynamic({ id }: { id: string }) {
               gap: 1,
             }}
           >
-            <CustomisedIconButton
-              disabled={liked}
-              color={liked ? "primary" : "default"}
-              aria-label="Like this cat"
-              onClick={handleLike}
-            >
-              <ThumbUp />
-            </CustomisedIconButton>
-            <Typography pr={1} variant="body2">
-              {data?.likes}
-            </Typography>
+            {loadingLiked ? (
+              <CircularProgress />
+            ) : (
+              <>
+                <CustomisedIconButton
+                  disabled={liked || loadingLiked}
+                  color={liked ? "primary" : "default"}
+                  aria-label="Like this cat"
+                  onClick={handleLike}
+                >
+                  <ThumbUp />
+                </CustomisedIconButton>
+                <Typography
+                  pr={1}
+                  variant="body2"
+                  color={liked ? "primary" : "default"}
+                >
+                  {data?.likes}
+                </Typography>
+              </>
+            )}
           </Box>
           <Typography pr={1} variant="body1">
             {date} by {data?.userName ?? "Anonymous"}
