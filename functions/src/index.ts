@@ -38,7 +38,7 @@ exports.checkForCats = functions
     const fileSlug = fileNameWithPath?.match(/[ \w-]+?(?=\.)/gi)?.[0];
     const userId = fileNameWithPath?.split("/")[1];
     if (!fileSlug || fileNameWithPath?.indexOf("/resizes") !== -1) {
-      console.warn("No fileSlug present!");
+      console.warn("Skipping file: ", fileNameWithPath);
       return;
     }
     const client = new vision.ImageAnnotatorClient();

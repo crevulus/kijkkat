@@ -153,9 +153,13 @@ export const CreatePost = ({
     }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
+      const extension = chosenFile.name.substring(
+        chosenFile.name.lastIndexOf(".") + 1,
+        chosenFile.name.length
+      );
       const storageRef = ref(
         storage,
-        `cats/${auth.currentUser?.uid}/${uuid}.jpeg`
+        `cats/${auth.currentUser?.uid}/${uuid}.${extension}`
       );
       await uploadFile(storageRef, chosenFile);
       const thumbnailUrlWebpSmall = editThumbnailFileName(
