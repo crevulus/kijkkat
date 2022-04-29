@@ -85,3 +85,5 @@ export const dark = createTheme({
     },
   },
 });
+
+// theme: https://coolors.co/00bcd4-ba9fe3-99f7ab-abdf75-60695c

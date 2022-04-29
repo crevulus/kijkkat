@@ -148,6 +148,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             centerControlDiv.querySelector(".search-button");
           centerControlButton!.addEventListener("click", () => {
             setTriggerQuery(true);
+            centerControlButton!.disabled = true;
           });
           map.addListener("center_changed", () => {
             centerControlButton!.disabled = false;
