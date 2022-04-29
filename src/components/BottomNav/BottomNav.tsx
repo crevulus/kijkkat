@@ -10,6 +10,10 @@ import FaceIcon from "@mui/icons-material/Face";
 
 import { NavigationRoutes, PageNames } from "../../data/enums";
 
+const CustomisedBottomNavigationAction = (props: any) => (
+  <BottomNavigationAction sx={{ minWidth: "70px" }} {...props} />
+);
+
 const pagesArray = Object.keys(PageNames);
 
 const getPageIndex = (route: string): number => {
@@ -33,31 +37,31 @@ export function BottomNav(): ReactElement {
       }}
       sx={{ maxWidth: "100vw" }}
     >
-      <BottomNavigationAction
+      <CustomisedBottomNavigationAction
         label={PageNames.Home}
         icon={<HomeIcon />}
         component={RouterLink}
         to={NavigationRoutes.Home}
       />
-      <BottomNavigationAction
+      <CustomisedBottomNavigationAction
         label={PageNames.Map}
         icon={<LocationOnIcon />}
         component={RouterLink}
         to={NavigationRoutes.Map}
       />
-      <BottomNavigationAction
+      <CustomisedBottomNavigationAction
         label={PageNames.Add}
         icon={<CameraIcon />}
         component={RouterLink}
         to={NavigationRoutes.Add}
       />
-      <BottomNavigationAction
+      <CustomisedBottomNavigationAction
         label={PageNames.Posts}
         icon={<PetsIcon />}
         component={RouterLink}
         to={NavigationRoutes.Posts}
       />
-      <BottomNavigationAction
+      <CustomisedBottomNavigationAction
         label={PageNames.Account}
         icon={<FaceIcon />}
         component={RouterLink}

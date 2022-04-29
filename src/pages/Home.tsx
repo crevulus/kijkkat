@@ -9,11 +9,13 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
-import { Container, Typography } from "@mui/material";
+import { Box, Container, Icon, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
 import { useErrorStore } from "../data/store";
+import KijkkatLogo from "../icons/kijkkat-blue.svg";
+import { primaryColor, secondaryColor } from "../styles/theme";
 
 const db = getFirestore(firebaseApp);
 
@@ -48,10 +50,40 @@ export function Home() {
   }
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h3" padding={2}>
-        Find a cat nearby
-      </Typography>
+    <Container maxWidth="sm" sx={{ p: 2 }}>
+      <Box sx={{ position: "relative" }}>
+        <Icon
+          sx={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <img
+            src={KijkkatLogo}
+            alt="Kijkkat Logo"
+            style={{
+              color: `linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
+            }}
+          />
+        </Icon>
+        <Typography
+          variant="h2"
+          sx={{
+            width: "100%",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontWeight: 600,
+            background: `-webkit-linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            // filter: "drop-shadow(2px 2px 2px #aaa)",
+          }}
+        >
+          Find a cat nearby
+        </Typography>
+      </Box>
       <Search redirect />
       <PostsGrid data={docs} />
     </Container>
