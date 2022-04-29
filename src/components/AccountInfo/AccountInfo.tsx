@@ -43,7 +43,14 @@ export function AccountInfo(): ReactElement | null {
 
   if (user && result)
     return (
-      <Card>
+      <Card
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          p: 2,
+        }}
+      >
         <CardMedia>
           <Avatar
             src={result.photoURL ?? ""}

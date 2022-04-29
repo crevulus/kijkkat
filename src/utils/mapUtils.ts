@@ -13,4 +13,4 @@ export function createMapButton(controlDiv: Element) {
 }
 
 export const createImage = (url: string) =>
-  `<img src="${url}" alt="post" style="width: 100px;" />`;
+  `<img class="info-window-image" src="${url}" alt="post" style="width: 100px;" />`;
