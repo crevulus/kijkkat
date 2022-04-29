@@ -39,6 +39,10 @@ export function PostsGridItem({ item }: any): ReactElement {
     navigate(path);
   };
 
+  if (item.isNSFW) {
+    return <p>NSFW!</p>;
+  }
+
   return (
     <ImageListItem sx={{ alignItems: "center", justifyContent: "center" }}>
       {webpLoading && jpegLoading ? (
