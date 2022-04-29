@@ -28,9 +28,12 @@ import { useGeocoder } from "../../hooks/useGeocoder";
 import { useErrorStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
+import { useDownloadURL } from "react-firebase-hooks/storage";
+import { getStorage, ref } from "firebase/storage";
 
 const auth = getAuth();
 const db = getFirestore();
+const storage = getStorage();
 const functions = getFunctions(firebaseApp, "europe-west1");
 const likePost = httpsCallable(functions, "likePost");
 
@@ -63,6 +66,13 @@ export function PostsDynamic({ id }: { id: string }) {
   const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
   const [result, loading] = useDocument(doc(db, "posts", id));
   const navigate = useNavigate();
+
+  const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
+    ref(storage, data?.thumbnailUrlWebp)
+  );
+  const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
+    ref(storage, data?.thumbnailUrlJpeg)
+  );
 
   useEffect(() => {
     if (result) {
@@ -147,12 +157,21 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </CardContent>
         )}{" "}
-        <CardMedia
-          component="img"
-          image={data?.imageUrl ?? ""}
-          alt="Someone kijk'd a cat!"
-          height={400}
-        />
+        {!webpValue && jpegValue ? (
+          <>
+            <CircularProgress />
+            <Typography variant="body2">
+              One moment, just optimising your image
+            </Typography>
+          </>
+        ) : (
+          <CardMedia
+            component="img"
+            image={webpValue || jpegValue}
+            alt="Someone kijk'd a cat!"
+            height={400}
+          />
+        )}
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {

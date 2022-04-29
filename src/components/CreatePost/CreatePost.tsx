@@ -4,15 +4,15 @@ import {
   doc,
   GeoPoint,
   getFirestore,
-  addDoc,
   Timestamp,
-  collection,
+  setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import * as geofire from "geofire-common";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Box,
@@ -43,12 +43,10 @@ const editThumbnailFileName = (
   fileFormat: string,
   userId: string | undefined
 ) => {
-  const editedFilename = fileName.replace(
-    /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i,
-    `_200x200.${fileFormat}`
-  );
-  return `gs://kijkkat-meow.appspot.com/cats/${userId}/thumbnails/${editedFilename}`;
+  return `gs://kijkkat-meow.appspot.com/cats/${userId}/resizes/${fileName}${fileFormat}`;
 };
+
+const uuid = uuidv4();
 
 type CreatePostPropsType = {
   chosenFile: File;
@@ -131,7 +129,6 @@ export const CreatePost = ({
     setLoading(true);
     let location;
     let geohash;
-    let imageUrl;
     if (currentLocation) {
       location = new GeoPoint(
         currentLocation.coords.latitude,
@@ -156,25 +153,28 @@ export const CreatePost = ({
     }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
-      const fileName = chosenFile.name?.replace(" ", "_");
-      const storageRef = ref(
-        storage,
-        `cats/${auth.currentUser?.uid}/${fileName}`
-      );
+      const storageRef = ref(storage, `cats/${auth.currentUser?.uid}/${uuid}`);
       await uploadFile(storageRef, chosenFile);
-      const thumbnailUrlWebp = editThumbnailFileName(
-        fileName,
-        "webp",
+      const thumbnailUrlWebpSmall = editThumbnailFileName(
+        uuid,
+        "_200x200.webp",
         auth.currentUser?.uid
       );
-      const thumbnailUrlJpeg = editThumbnailFileName(
-        fileName,
-        "jpeg",
+      const thumbnailUrlJpegSmall = editThumbnailFileName(
+        uuid,
+        "_200x200.jpeg",
         auth.currentUser?.uid
       );
-      imageUrl = await getDownloadURL(storageRef).then((downloadURL) => {
-        return downloadURL;
-      });
+      const thumbnailUrlWebpLarge = editThumbnailFileName(
+        uuid,
+        "_400x400.webp",
+        auth.currentUser?.uid
+      );
+      const thumbnailUrlJpegLarge = editThumbnailFileName(
+        uuid,
+        "_400x400.jpeg",
+        auth.currentUser?.uid
+      );
       const post = {
         location,
         geohash,
@@ -185,12 +185,13 @@ export const CreatePost = ({
         time: Timestamp.now(),
         likes: 0,
         likedBy: [],
-        imageUrl,
-        thumbnailUrlWebp,
-        thumbnailUrlJpeg,
+        thumbnailUrlWebpSmall,
+        thumbnailUrlJpegSmall,
+        thumbnailUrlWebpLarge,
+        thumbnailUrlJpegLarge,
       };
-      await addDoc(collection(db, "posts"), post)
-        .then((doc) => navigate(`${NavigationRoutes.Posts}/${doc.id}`))
+      await setDoc(doc(db, "posts", uuid), post)
+        .then((doc) => navigate(`${NavigationRoutes.Posts}/${uuid}`))
         .catch((error) => {
           setError(true);
           setErrorMessage(error.message);

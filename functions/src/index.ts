@@ -34,13 +34,19 @@ exports.checkForCats = functions
   .region("europe-west1")
   .storage.object()
   .onFinalize(async (object) => {
-    const fileName = object.name?.replace(" ", "_");
+    const fileNameWithPath = object.name;
+    const fileSlug = fileNameWithPath?.match(/[ \w-]+?(?=\.)/gi)?.[0];
+    const userId = fileNameWithPath?.split("/")[1];
+    if (!fileSlug || fileNameWithPath?.indexOf("/resizes") !== -1) {
+      console.warn("No fileSlug present!");
+      return;
+    }
     const client = new vision.ImageAnnotatorClient();
     const [result] = await client.labelDetection(
-      `gs://${object.bucket}/${fileName}`
+      `gs://${object.bucket}/${fileNameWithPath}`
     );
     const [safeSearchResult] = await client.safeSearchDetection(
-      `gs://${object.bucket}/${fileName}`
+      `gs://${object.bucket}/${fileNameWithPath}`
     );
     const labels = result.labelAnnotations;
     const safeSearchLabels = safeSearchResult.safeSearchAnnotation;
@@ -54,35 +60,36 @@ exports.checkForCats = functions
       ) ||
       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
     const batch = admin.firestore().batch();
-    const folderName = fileName?.split("/")[1];
-    if (isNSFW && folderName) {
-      functions.logger.log(`NSFW detected: ${folderName}, ${fileName}`);
-      const nsfwDocRef = admin.firestore().collection("nsfw").doc(folderName);
+    const originalPostDocRef = admin
+      .firestore()
+      .collection("posts")
+      .doc(fileSlug);
+    if (isNSFW && userId) {
+      functions.logger.log(`NSFW detected: ${userId}, ${fileSlug}`);
+      const nsfwDocRef = admin.firestore().collection("nsfw").doc(userId);
       batch.set(
         nsfwDocRef,
         {
-          [object.id]: {
-            name: fileName,
+          [fileSlug]: {
+            name: fileSlug,
             time: admin.firestore.Timestamp.now(),
-            location: `gs://${object.bucket}/${fileName}`,
+            location: `gs://${object.bucket}/${fileNameWithPath}`,
           },
         },
         { merge: true }
       );
+      batch.set(originalPostDocRef, { isNSFW }, { merge: true });
     }
-    if (!isCat && folderName) {
-      functions.logger.log(`Not a cat: ${folderName}, ${fileName}`);
-      const dubiousDocRef = admin
-        .firestore()
-        .collection("dubious")
-        .doc(folderName);
+    if (!isCat && userId) {
+      functions.logger.log(`Not a cat: ${userId}, ${fileSlug}`);
+      const dubiousDocRef = admin.firestore().collection("dubious").doc(userId);
       batch.set(
         dubiousDocRef,
         {
-          [object.generation ?? fileName ?? "unknown"]: {
-            name: fileName,
+          [fileSlug]: {
+            name: fileSlug,
             time: admin.firestore.Timestamp.now(),
-            location: `gs://${object.bucket}/${fileName}`,
+            location: `gs://${object.bucket}/${fileNameWithPath}`,
           },
         },
         { merge: true }
@@ -90,7 +97,7 @@ exports.checkForCats = functions
     }
     return batch
       .commit()
-      .then(() => functions.logger.log(`Batched: ${fileName}`));
+      .then(() => functions.logger.log(`Batched: ${fileNameWithPath}`));
   });
 
 exports.createUserFromGoogle = functions
