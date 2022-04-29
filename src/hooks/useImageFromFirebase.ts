@@ -8,7 +8,9 @@ export const useImageFromFirebase = (urlString: string) => {
   const [errorMsg, setErrorMsg] = useState("");
 
   const trimFilepath = (filepath: string) => {
-    return filepath.replace("gs://kijkkat-meow.appspot.com/", "");
+    if (urlString) {
+      return filepath.replace("gs://kijkkat-meow.appspot.com/", "");
+    }
   };
 
   const storageRef = ref(storage, trimFilepath(urlString));

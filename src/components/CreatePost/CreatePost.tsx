@@ -153,7 +153,10 @@ export const CreatePost = ({
     }
     const tags = chosenTags.map((t) => t.id);
     if (chosenFile) {
-      const storageRef = ref(storage, `cats/${auth.currentUser?.uid}/${uuid}`);
+      const storageRef = ref(
+        storage,
+        `cats/${auth.currentUser?.uid}/${uuid}.jpeg`
+      );
       await uploadFile(storageRef, chosenFile);
       const thumbnailUrlWebpSmall = editThumbnailFileName(
         uuid,
@@ -191,7 +194,7 @@ export const CreatePost = ({
         thumbnailUrlJpegLarge,
       };
       await setDoc(doc(db, "posts", uuid), post)
-        .then((doc) => navigate(`${NavigationRoutes.Posts}/${uuid}`))
+        .then(() => navigate(`${NavigationRoutes.Posts}/${uuid}`))
         .catch((error) => {
           setError(true);
           setErrorMessage(error.message);

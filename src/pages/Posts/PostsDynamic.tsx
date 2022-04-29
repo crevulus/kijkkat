@@ -28,12 +28,10 @@ import { useGeocoder } from "../../hooks/useGeocoder";
 import { useErrorStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
-import { useDownloadURL } from "react-firebase-hooks/storage";
-import { getStorage, ref } from "firebase/storage";
+import { useImageFromFirebase } from "../../hooks/useImageFromFirebase";
 
 const auth = getAuth();
 const db = getFirestore();
-const storage = getStorage();
 const functions = getFunctions(firebaseApp, "europe-west1");
 const likePost = httpsCallable(functions, "likePost");
 
@@ -67,12 +65,12 @@ export function PostsDynamic({ id }: { id: string }) {
   const [result, loading] = useDocument(doc(db, "posts", id));
   const navigate = useNavigate();
 
-  const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
-    ref(storage, data?.thumbnailUrlWebp)
-  );
-  const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
-    ref(storage, data?.thumbnailUrlJpeg)
-  );
+  // const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlWebpLarge)
+  // );
+  // const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlJpegLarge)
+  // );
 
   useEffect(() => {
     if (result) {
@@ -98,6 +96,9 @@ export function PostsDynamic({ id }: { id: string }) {
     }
     setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
+
+  const [webpValue] = useImageFromFirebase(data?.thumbnailUrlWebpLarge);
+  const [jpegValue] = useImageFromFirebase(data?.thumbnailUrlJpegLarge);
 
   const getAddress = async () => {
     if (!address) {
