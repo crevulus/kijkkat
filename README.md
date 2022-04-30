@@ -5,7 +5,7 @@
 - [x] page for capturing photos & post creation
 - [x] auth login & redirect
 - [x] paginate thumbnails
-- [ ] like, rate functions
+- [x] like, rate functions
 - [x] auto-moderation of content & blurring images
 - [x] geohashed queries
 - [x] one page container - implement scrolling; don't allow pages to overflow
@@ -19,7 +19,13 @@
 - [ ] merge in nsfw moderation branch
 - [ ] change map button to textContent
 - [ ] log out button
-- [ ] diable load more posts if length of query arrays match
+- [ ] disable load more posts if length of query arrays match
+- [ ] comment functions and map
+- [ ] consistent styling (css or sx, preferably not both)
+- [ ] Add perf/crashlytics
+- [ ] Add ads
+- [ ] Share via navigator
+- [ ] Cookie banner
 
 ### TODO: Design
 
