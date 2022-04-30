@@ -26,6 +26,7 @@
 - [ ] Add ads
 - [ ] Share via navigator
 - [ ] Cookie banner
+- [ ] Self-host Google Fonts
 
 ### TODO: Design
 
