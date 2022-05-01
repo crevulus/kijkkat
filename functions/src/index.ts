@@ -34,13 +34,19 @@ exports.checkForCats = functions
   .region("europe-west1")
   .storage.object()
   .onFinalize(async (object) => {
+    // get details from file name
     const fileNameWithPath = object.name;
     const fileSlug = fileNameWithPath?.match(/[ \w-]+?(?=\.)/gi)?.[0];
     const userId = fileNameWithPath?.split("/")[1];
+
+    // don't perform on undefined or resized images
     if (!fileSlug || fileNameWithPath?.indexOf("/resizes") !== -1) {
       console.warn("Skipping file: ", fileNameWithPath);
       return;
     }
+
+    // perform vision api labelling
+    // call package methods for labelling
     const client = new vision.ImageAnnotatorClient();
     const [result] = await client.labelDetection(
       `gs://${object.bucket}/${fileNameWithPath}`
@@ -48,8 +54,10 @@ exports.checkForCats = functions
     const [safeSearchResult] = await client.safeSearchDetection(
       `gs://${object.bucket}/${fileNameWithPath}`
     );
+    // extract labels
     const labels = result.labelAnnotations;
     const safeSearchLabels = safeSearchResult.safeSearchAnnotation;
+    // assign values
     const isCat = labels.some(
       (label: LabelType) =>
         catLabelsArray.indexOf(label.description.toLowerCase()) >= 0
@@ -59,12 +67,15 @@ exports.checkForCats = functions
         SafeSearchLikelihoods.VERY_LIKELY
       ) ||
       Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
+
+    // update firestore
     const batch = admin.firestore().batch();
     const originalPostDocRef = admin
       .firestore()
       .collection("posts")
       .doc(fileSlug);
     if (isNSFW && userId) {
+      // add to nsfw collection
       functions.logger.log(`NSFW detected: ${userId}, ${fileSlug}`);
       const nsfwDocRef = admin.firestore().collection("nsfw").doc(userId);
       batch.set(
@@ -78,9 +89,12 @@ exports.checkForCats = functions
         },
         { merge: true }
       );
+      // update original doc
       batch.set(originalPostDocRef, { isNSFW }, { merge: true });
     }
-    if (!isCat && userId) {
+    const isDubious = !isCat;
+    if (isDubious && userId) {
+      // add to dubious collection
       functions.logger.log(`Not a cat: ${userId}, ${fileSlug}`);
       const dubiousDocRef = admin.firestore().collection("dubious").doc(userId);
       batch.set(
@@ -94,6 +108,8 @@ exports.checkForCats = functions
         },
         { merge: true }
       );
+      // update original doc
+      batch.set(originalPostDocRef, { isDubious }, { merge: true });
     }
     return batch
       .commit()

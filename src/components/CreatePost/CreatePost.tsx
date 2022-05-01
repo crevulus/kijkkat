@@ -8,7 +8,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getStorage, ref } from "firebase/storage";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import * as geofire from "geofire-common";
@@ -28,7 +28,7 @@ import styles from "./CreatePost.module.css";
 
 import { firebaseApp } from "../../firebase";
 import { RatingPicker, CharacteristicChip } from "../";
-import { useErrorStore, useGeographicStore } from "../../data/store";
+import { TagsType, useErrorStore, useGeographicStore } from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { NavigationRoutes, RatingCategories } from "../../data/enums";
@@ -38,6 +38,8 @@ const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 const storage = getStorage();
 
+const uuid = uuidv4();
+
 const editThumbnailFileName = (
   fileName: string,
   fileFormat: string,
@@ -46,15 +48,8 @@ const editThumbnailFileName = (
   return `gs://kijkkat-meow.appspot.com/cats/${userId}/resizes/${fileName}${fileFormat}`;
 };
 
-const uuid = uuidv4();
-
 type CreatePostPropsType = {
   chosenFile: File;
-};
-
-export type CharacteristicsTagsType = {
-  id: number;
-  text: string;
 };
 
 export const CreatePost = ({
@@ -75,7 +70,7 @@ export const CreatePost = ({
   const [uploadFile] = useUploadFile();
   const navigate = useNavigate();
 
-  const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
+  const [chosenTags, setChosenTags] = useState<TagsType[]>([]);
   const [ratingValue, setRatingValue] = useState<{ [key: string]: number }>({
     [RatingCategories.Cuteness]: 0,
     [RatingCategories.Friendliness]: 0,
@@ -116,7 +111,7 @@ export const CreatePost = ({
     }
   };
 
-  const handleTagClick = (tag: CharacteristicsTagsType) => {
+  const handleTagClick = (tag: TagsType) => {
     const index = chosenTags.findIndex((t) => t.id === tag.id);
     if (index === -1) {
       setChosenTags([...chosenTags, tag]);
@@ -162,6 +157,11 @@ export const CreatePost = ({
         `cats/${auth.currentUser?.uid}/${uuid}.${extension}`
       );
       await uploadFile(storageRef, chosenFile);
+
+      const imageUrl = await getDownloadURL(storageRef).then((downloadURL) => {
+        return downloadURL;
+      });
+      await uploadFile(storageRef, chosenFile);
       const thumbnailUrlWebpSmall = editThumbnailFileName(
         uuid,
         "_200x200.webp",
@@ -182,6 +182,7 @@ export const CreatePost = ({
         "_400x400.jpeg",
         auth.currentUser?.uid
       );
+
       const post = {
         location,
         geohash,
@@ -190,12 +191,13 @@ export const CreatePost = ({
         userId: auth.currentUser?.uid,
         userName: auth.currentUser?.displayName,
         time: Timestamp.now(),
-        likes: 0,
-        likedBy: [],
+        imageUrl,
         thumbnailUrlWebpSmall,
         thumbnailUrlJpegSmall,
         thumbnailUrlWebpLarge,
         thumbnailUrlJpegLarge,
+        likes: 0,
+        likedBy: [],
       };
       await setDoc(doc(db, "posts", uuid), post)
         .then(() => navigate(`${NavigationRoutes.Posts}/${uuid}`))
@@ -239,7 +241,7 @@ export const CreatePost = ({
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 6, sm: 9, md: 12 }}
           >
-            {values?.data()?.tags.map((tag: CharacteristicsTagsType) => (
+            {values?.data()?.tags.map((tag: TagsType) => (
               <CharacteristicChip
                 tag={tag}
                 key={tag.id}

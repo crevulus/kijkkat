@@ -8,7 +8,7 @@ export function createMapButton(controlDiv: Element) {
 
   // Set CSS for the control interior.
   const controlText = document.createElement("div");
-  controlText.innerHTML = "Search this area";
+  controlText.textContent = "Search this area";
   controlUI.appendChild(controlText);
 }
 

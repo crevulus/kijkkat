@@ -3,11 +3,11 @@ import React, { ReactElement, useState } from "react";
 import { Chip, Grid } from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 
-import { CharacteristicsTagsType } from "../CreatePost/CreatePost";
+import { TagsType } from "../../data/store";
 
 type CharacteristicChipPropsType = {
-  handleTagClick: (tag: CharacteristicsTagsType) => void;
-  tag: CharacteristicsTagsType;
+  handleTagClick: (tag: TagsType) => void;
+  tag: TagsType;
 };
 
 export function CharacteristicChip({
@@ -16,7 +16,7 @@ export function CharacteristicChip({
 }: CharacteristicChipPropsType): ReactElement {
   const [selected, setSelected] = useState(false);
 
-  const handleClick = (tag: CharacteristicsTagsType) => {
+  const handleClick = (tag: TagsType) => {
     handleTagClick(tag);
     setSelected(!selected);
   };

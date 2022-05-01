@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { getAuth, GoogleAuthProvider, signOut } from "firebase/auth";
 import {
   collection,
   getFirestore,
@@ -12,16 +11,15 @@ import {
   where,
 } from "firebase/firestore";
 
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
 import { firebaseApp } from "../firebase";
-import { useErrorStore, useUserStore } from "../data/store";
+import { useUserStore } from "../data/store";
 import {
   AccountInfo,
   FullScreenLoadingSpinner,
   PostsGrid,
 } from "../components";
-import { DocsType } from "./Home";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -36,37 +34,26 @@ type LocationStateType = {
 };
 
 export function Account() {
-  const setError = useErrorStore((state) => state.setError);
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const setUser = useUserStore((state) => state.setUser);
   const [count, setCount] = useState(1);
-  const [docs, setDocs] = useState<DocsType[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [result, loading, loadError] = useCollection(
-    query(
-      collection(db, "posts"),
-      where("userId", "==", auth.currentUser?.uid || ""),
-      orderBy("likes", "desc"),
-      limit(count * 2)
-    )
+  const q = query(
+    collection(db, "posts"),
+    where("userId", "==", auth.currentUser?.uid || ""),
+    orderBy("likes", "desc"),
+    limit(count * 2)
   );
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (result) {
-      const docs = result.docs.map((doc) => ({ data: doc.data(), id: doc.id }));
-      setDocs(docs);
-    }
-  }, [result]);
-
-  useEffect(() => {
-    if (loadError) {
-      setError(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+  const handleSignOut = () => {
+    signOut(auth);
+    setUser(null);
+    navigate("/");
+  };
 
   const handleRedirect = () => {
     if (location.state && (location.state as LocationStateType).path) {
@@ -78,7 +65,9 @@ export function Account() {
     setCount((count) => count + 1);
   };
 
-  if (loading) <FullScreenLoadingSpinner loading={loading} />;
+  const handleLoading = (loadingPosts: boolean) => {
+    setLoading(loadingPosts);
+  };
 
   const amendedUiConfig = {
     ...uiConfig,
@@ -92,7 +81,9 @@ export function Account() {
     },
   };
 
-  return (
+  return loading ? (
+    <FullScreenLoadingSpinner loading={loading} />
+  ) : (
     <Container sx={{ p: 2 }}>
       <Typography variant="h6" color="primary" gutterBottom>
         Your account
@@ -100,17 +91,20 @@ export function Account() {
       {!isSignedIn && (
         <StyledFirebaseAuth uiConfig={amendedUiConfig} firebaseAuth={auth} />
       )}
-      {isSignedIn && <AccountInfo />}
       {isSignedIn && (
-        <Box sx={{ paddingY: 2 }}>
-          <Typography variant="h6" color="primary" gutterBottom>
-            Cats you've kijk'd
-          </Typography>
-          <PostsGrid data={docs} />
-          <Button variant="contained" onClick={handleLoadMoreImages}>
-            Load more
-          </Button>
-        </Box>
+        <>
+          <AccountInfo handleSignOut={handleSignOut} />
+          <Box sx={{ paddingY: 2 }}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Cats you've kijk'd
+            </Typography>
+            <PostsGrid
+              q={q}
+              loadMoreCallback={handleLoadMoreImages}
+              handleLoading={handleLoading}
+            />
+          </Box>
+        </>
       )}
     </Container>
   );

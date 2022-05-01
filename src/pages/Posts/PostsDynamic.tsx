@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { doc, DocumentData, getFirestore } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { getAuth } from "firebase/auth";
-import { useDocumentData, useDocument } from "react-firebase-hooks/firestore";
+import { useDocument } from "react-firebase-hooks/firestore";
 
 import {
   Box,
@@ -25,10 +25,9 @@ import ThumbUp from "@mui/icons-material/ThumbUp";
 
 import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
-import { useErrorStore } from "../../data/store";
+import { TagsType, useErrorStore, useSiteDataStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
-import { useImageFromFirebase } from "../../hooks/useImageFromFirebase";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -42,35 +41,23 @@ const CustomisedIconButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-export interface TagsType {
-  id: number;
-  text: string;
-}
-
 // TODO: Error handling
 export function PostsDynamic({ id }: { id: string }) {
   const setError = useErrorStore((state) => state.setError);
   const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
+  const tagsDocData = useSiteDataStore((state) => state.tagsDocData);
 
   const [data, setData] = useState<DocumentData>();
   const [date, setDate] = useState("");
   const [address, setAddress] = useState<string>();
-  const [tags, setTags] = useState<TagsType[] | null>(null);
   const [liked, setLiked] = useState(false);
   const [loadingLiked, setLoadingLiked] = useState(false);
+  const [tags, setTags] = useState<TagsType[]>([]);
 
   const { geocodeAddressFromCoords } = useGeocoder();
 
-  const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
   const [result, loading] = useDocument(doc(db, "posts", id));
   const navigate = useNavigate();
-
-  // const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
-  //   ref(storage, data?.thumbnailUrlWebpLarge)
-  // );
-  // const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
-  //   ref(storage, data?.thumbnailUrlJpegLarge)
-  // );
 
   useEffect(() => {
     if (result) {
@@ -96,9 +83,6 @@ export function PostsDynamic({ id }: { id: string }) {
     }
     setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
-
-  const [webpValue] = useImageFromFirebase(data?.thumbnailUrlWebpLarge);
-  const [jpegValue] = useImageFromFirebase(data?.thumbnailUrlJpegLarge);
 
   const getAddress = async () => {
     if (!address) {
@@ -158,21 +142,12 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </CardContent>
         )}{" "}
-        {!webpValue && jpegValue ? (
-          <>
-            <CircularProgress />
-            <Typography variant="body2">
-              One moment, just optimising your image
-            </Typography>
-          </>
-        ) : (
-          <CardMedia
-            component="img"
-            image={webpValue || jpegValue}
-            alt="Someone kijk'd a cat!"
-            height={400}
-          />
-        )}
+        <CardMedia
+          component="img"
+          image={data?.imageUrl}
+          alt="Someone kijk'd a cat!"
+          height={400}
+        />
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { doc, getFirestore } from "firebase/firestore";
 
 import {
   AppBar,
@@ -16,6 +18,7 @@ import {
   connectStoreToReduxDevtools,
   useErrorStore,
   useGeographicStore,
+  useSiteDataStore,
   useUserStore,
 } from "./data/store";
 import { firebaseApp } from "./firebase";
@@ -31,6 +34,7 @@ import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
 
 const auth = getAuth(firebaseApp);
+const db = getFirestore();
 
 connectStoreToReduxDevtools("userStore", useUserStore);
 connectStoreToReduxDevtools("errorStore", useErrorStore);
@@ -39,7 +43,17 @@ connectStoreToReduxDevtools("geographicStore", useGeographicStore);
 function App() {
   const setUser = useUserStore((state) => state.setUser);
   const setIsSignedIn = useUserStore((state) => state.setIsSignedIn);
+  const setTagsDocData = useSiteDataStore((state) => state.setTagsDocData);
   const [isDarkMode] = useState(false);
+
+  const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
+
+  useEffect(() => {
+    if (tagsDocData) {
+      setTagsDocData(tagsDocData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tagsDocData]);
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {

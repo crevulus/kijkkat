@@ -4,6 +4,7 @@ import { useDocumentData } from "react-firebase-hooks/firestore";
 
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -17,7 +18,13 @@ import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
 
 const db = getFirestore();
 
-export function AccountInfo(): ReactElement | null {
+type AccountInfoProps = {
+  handleSignOut: () => void;
+};
+
+export function AccountInfo({
+  handleSignOut,
+}: AccountInfoProps): ReactElement | null {
   const user = useUserStore((state) => state.user);
   const [date, setDate] = useState("");
 
@@ -61,6 +68,14 @@ export function AccountInfo(): ReactElement | null {
           <CardHeader color="primary" title={user.displayName} />
           <Typography>Email: {user.email}</Typography>
           <Typography>Kijking cats since {date}</Typography>
+          <Button
+            sx={{ mt: 2 }}
+            variant="outlined"
+            color="error"
+            onClick={handleSignOut}
+          >
+            Sign out
+          </Button>
         </CardContent>
       </Card>
     );

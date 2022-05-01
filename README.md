@@ -16,17 +16,19 @@
 - [ ] clustering
 - [x] create post from file not camera
 - [x] figure out how to do geoqueries based on moved map
-- [ ] merge in nsfw moderation branch
-- [ ] change map button to textContent
-- [ ] log out button
-- [ ] disable load more posts if length of query arrays match
-- [ ] comment functions and map
+- [x] merge in nsfw moderation branch
+- [x] change map button to textContent
+- [x] log out button
+- [x] disable load more posts if length of query arrays match
+- [x] comment functions and map
 - [ ] consistent styling (css or sx, preferably not both)
 - [ ] Add perf/crashlytics
 - [ ] Add ads
 - [ ] Share via navigator
 - [ ] Cookie banner
 - [ ] Self-host Google Fonts
+- [x] Static map centering
+- [x] Move tags call to App and store in state
 
 ### TODO: Design
 
