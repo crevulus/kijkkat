@@ -21,6 +21,7 @@
     "autosuggest-highlight": "^3.2.1",
     "firebase": "^9.6.11",
     "geofire-common": "^5.2.0",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -75,6 +76,7 @@
   "devDependencies": {
     "@types/autosuggest-highlight": "^3.2.0",
     "@types/google.maps": "^3.48.6",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",
     "@types/react-geocode": "^0.2.0",
     "@types/uuid": "^8.3.4",

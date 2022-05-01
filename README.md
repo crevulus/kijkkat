@@ -16,8 +16,8 @@
 - [ ] clustering
 - [x] create post from file not camera
 - [x] figure out how to do geoqueries based on moved map
-- [ ] merge in nsfw moderation branch
-- [ ] change map button to textContent
+- [x] merge in nsfw moderation branch
+- [x] change map button to textContent
 - [ ] log out button
 - [ ] disable load more posts if length of query arrays match
 - [ ] comment functions and map
@@ -27,6 +27,8 @@
 - [ ] Share via navigator
 - [ ] Cookie banner
 - [ ] Self-host Google Fonts
+- [ ] Static map centering
+- [ ] Move tags call to App and store in state
 
 ### TODO: Design
 

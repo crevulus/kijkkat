@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "@googlemaps/js-api-loader";
 import * as geofire from "geofire-common";
+import debounce from "lodash.debounce";
 
 import {
   collection,
@@ -19,6 +20,7 @@ import { createImage, createMapButton } from "../../utils/mapUtils";
 import { useErrorStore, useGeographicStore } from "../../data/store";
 import { CoordsType } from "../../pages/Map";
 import { NavigationRoutes } from "../../data/enums";
+import { secondaryColor } from "../../styles/theme";
 
 type MapContainerProps = {
   coords: CoordsType | null;
@@ -141,13 +143,22 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
       loader.load().then(() => {
         const initialView = {
           center,
-          zoom: 14,
+          zoom: 12,
         };
         const google = window.google;
         if (googlemapRef.current) {
           map = new google.maps.Map(googlemapRef.current, {
             ...initialView,
             mapTypeControl: false,
+          });
+          const radiusCircle = new google.maps.Circle({
+            strokeColor: secondaryColor,
+            strokeWeight: 2,
+            fillColor: secondaryColor,
+            fillOpacity: 0.2,
+            map,
+            center,
+            radius: DEFAULT_RADIUS,
           });
           const performSearchDiv = document.createElement("div");
           createMapButton(performSearchDiv);
@@ -160,16 +171,20 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             setTriggerQuery(true);
             centerControlButton!.disabled = true;
           });
-          map.addListener("center_changed", () => {
-            centerControlButton!.disabled = false;
-            setTriggerQuery(false);
-            // @ts-ignore
-            const newCenter = {
-              lat: map.getCenter()!.lat(),
-              lng: map.getCenter()!.lng(),
-            };
-            setCenter(newCenter);
-          });
+          map.addListener(
+            "center_changed",
+            debounce(() => {
+              centerControlButton!.disabled = false;
+              setTriggerQuery(false);
+              // @ts-ignore
+              const newCenter = {
+                lat: map.getCenter()!.lat(),
+                lng: map.getCenter()!.lng(),
+              };
+              radiusCircle.setCenter(newCenter);
+              setCenter(newCenter);
+            }, 200)
+          );
           setMapObject(map);
           setMapLoaded(true);
         }
