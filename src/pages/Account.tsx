@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signOut } from "firebase/auth";
 import {
   collection,
   getFirestore,
@@ -49,6 +49,12 @@ export function Account() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const handleSignOut = () => {
+    signOut(auth);
+    setUser(null);
+    navigate("/");
+  };
+
   const handleRedirect = () => {
     if (location.state && (location.state as LocationStateType).path) {
       navigate((location.state as LocationStateType).path);
@@ -85,18 +91,20 @@ export function Account() {
       {!isSignedIn && (
         <StyledFirebaseAuth uiConfig={amendedUiConfig} firebaseAuth={auth} />
       )}
-      {isSignedIn && <AccountInfo />}
       {isSignedIn && (
-        <Box sx={{ paddingY: 2 }}>
-          <Typography variant="h6" color="primary" gutterBottom>
-            Cats you've kijk'd
-          </Typography>
-          <PostsGrid
-            q={q}
-            loadMoreCallback={handleLoadMoreImages}
-            handleLoading={handleLoading}
-          />
-        </Box>
+        <>
+          <AccountInfo handleSignOut={handleSignOut} />
+          <Box sx={{ paddingY: 2 }}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Cats you've kijk'd
+            </Typography>
+            <PostsGrid
+              q={q}
+              loadMoreCallback={handleLoadMoreImages}
+              handleLoading={handleLoading}
+            />
+          </Box>
+        </>
       )}
     </Container>
   );

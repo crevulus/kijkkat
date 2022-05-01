@@ -43,6 +43,13 @@ export const light = createTheme({
     mode: "light",
   },
   components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          elevation: 3,
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

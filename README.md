@@ -18,7 +18,7 @@
 - [x] figure out how to do geoqueries based on moved map
 - [x] merge in nsfw moderation branch
 - [x] change map button to textContent
-- [ ] log out button
+- [x] log out button
 - [x] disable load more posts if length of query arrays match
 - [x] comment functions and map
 - [ ] consistent styling (css or sx, preferably not both)
