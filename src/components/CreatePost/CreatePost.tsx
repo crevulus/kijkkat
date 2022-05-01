@@ -8,7 +8,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getStorage, ref } from "firebase/storage";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import * as geofire from "geofire-common";
@@ -38,6 +38,8 @@ const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 const storage = getStorage();
 
+const uuid = uuidv4();
+
 const editThumbnailFileName = (
   fileName: string,
   fileFormat: string,
@@ -45,8 +47,6 @@ const editThumbnailFileName = (
 ) => {
   return `gs://kijkkat-meow.appspot.com/cats/${userId}/resizes/${fileName}${fileFormat}`;
 };
-
-const uuid = uuidv4();
 
 type CreatePostPropsType = {
   chosenFile: File;
@@ -162,6 +162,11 @@ export const CreatePost = ({
         `cats/${auth.currentUser?.uid}/${uuid}.${extension}`
       );
       await uploadFile(storageRef, chosenFile);
+
+      const imageUrl = await getDownloadURL(storageRef).then((downloadURL) => {
+        return downloadURL;
+      });
+      await uploadFile(storageRef, chosenFile);
       const thumbnailUrlWebpSmall = editThumbnailFileName(
         uuid,
         "_200x200.webp",
@@ -182,6 +187,7 @@ export const CreatePost = ({
         "_400x400.jpeg",
         auth.currentUser?.uid
       );
+
       const post = {
         location,
         geohash,
@@ -190,12 +196,13 @@ export const CreatePost = ({
         userId: auth.currentUser?.uid,
         userName: auth.currentUser?.displayName,
         time: Timestamp.now(),
-        likes: 0,
-        likedBy: [],
+        imageUrl,
         thumbnailUrlWebpSmall,
         thumbnailUrlJpegSmall,
         thumbnailUrlWebpLarge,
         thumbnailUrlJpegLarge,
+        likes: 0,
+        likedBy: [],
       };
       await setDoc(doc(db, "posts", uuid), post)
         .then(() => navigate(`${NavigationRoutes.Posts}/${uuid}`))

@@ -27,7 +27,7 @@
 - [ ] Share via navigator
 - [ ] Cookie banner
 - [ ] Self-host Google Fonts
-- [ ] Static map centering
+- [x] Static map centering
 - [ ] Move tags call to App and store in state
 
 ### TODO: Design
