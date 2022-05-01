@@ -17,22 +17,19 @@ export function PostsGridItem({ item }: any): ReactElement {
   const setError = useErrorStore((state) => state.setError);
 
   const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
-    ref(storage, item.data.thumbnailUrlWebp)
+    ref(storage, item.data.thumbnailUrlWebpSmall)
   );
   const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
-    ref(storage, item.data.thumbnailUrlJpeg)
-  );
-  const [fallbackValue, fallbackLoading, fallbackLoadError] = useDownloadURL(
-    ref(storage, item.data.imageUrl)
+    ref(storage, item.data.thumbnailUrlJpegSmall)
   );
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (webpLoadError && jpegLoadError && fallbackLoadError) {
+    if (webpLoadError && jpegLoadError) {
       setError(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [webpLoadError, jpegLoadError, fallbackLoadError]);
+  }, [webpLoadError, jpegLoadError]);
 
   const path = useMemo(() => {
     return generatePath(NavigationRoutes.PostsDynamic, { id: item.id });
@@ -42,14 +39,18 @@ export function PostsGridItem({ item }: any): ReactElement {
     navigate(path);
   };
 
+  if (item.isNSFW) {
+    return <p>NSFW!</p>;
+  }
+
   return (
     <ImageListItem sx={{ alignItems: "center", justifyContent: "center" }}>
-      {webpLoading && jpegLoading && fallbackLoading ? (
+      {webpLoading && jpegLoading ? (
         <CircularProgress color="secondary" />
       ) : (
         <img
           src={webpValue || jpegValue}
-          srcSet={fallbackValue}
+          srcSet={jpegValue}
           alt={item.title}
           loading="lazy"
           className={styles.image}

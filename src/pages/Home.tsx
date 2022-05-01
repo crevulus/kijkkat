@@ -74,7 +74,6 @@ export function Home() {
             background: `-webkit-linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            // filter: "drop-shadow(2px 2px 2px #aaa)",
           }}
         >
           Find a cat nearby

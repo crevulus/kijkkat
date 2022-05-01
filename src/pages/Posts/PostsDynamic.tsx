@@ -28,6 +28,7 @@ import { useGeocoder } from "../../hooks/useGeocoder";
 import { useErrorStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
+import { useImageFromFirebase } from "../../hooks/useImageFromFirebase";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -64,6 +65,13 @@ export function PostsDynamic({ id }: { id: string }) {
   const [result, loading] = useDocument(doc(db, "posts", id));
   const navigate = useNavigate();
 
+  // const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlWebpLarge)
+  // );
+  // const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlJpegLarge)
+  // );
+
   useEffect(() => {
     if (result) {
       setData(result.data());
@@ -88,6 +96,9 @@ export function PostsDynamic({ id }: { id: string }) {
     }
     setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
+
+  const [webpValue] = useImageFromFirebase(data?.thumbnailUrlWebpLarge);
+  const [jpegValue] = useImageFromFirebase(data?.thumbnailUrlJpegLarge);
 
   const getAddress = async () => {
     if (!address) {
@@ -147,12 +158,21 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </CardContent>
         )}{" "}
-        <CardMedia
-          component="img"
-          image={data?.imageUrl ?? ""}
-          alt="Someone kijk'd a cat!"
-          height={400}
-        />
+        {!webpValue && jpegValue ? (
+          <>
+            <CircularProgress />
+            <Typography variant="body2">
+              One moment, just optimising your image
+            </Typography>
+          </>
+        ) : (
+          <CardMedia
+            component="img"
+            image={webpValue || jpegValue}
+            alt="Someone kijk'd a cat!"
+            height={400}
+          />
+        )}
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {
