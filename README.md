@@ -5,8 +5,8 @@
 - [x] page for capturing photos & post creation
 - [x] auth login & redirect
 - [x] paginate thumbnails
-- [ ] like, rate functions
-- [ ] auto-moderation of content & blurring images
+- [x] like, rate functions
+- [x] auto-moderation of content & blurring images
 - [x] geohashed queries
 - [x] one page container - implement scrolling; don't allow pages to overflow
 - [x] try restoring 75bb8dab26892b962f0d405aa7a20a7aa418d849 to see if markers load correctly
@@ -15,7 +15,18 @@
 - [x] add zustand devtools via redux
 - [ ] clustering
 - [x] create post from file not camera
-- [ ] figure out how to do geoqueries based on moved map
+- [x] figure out how to do geoqueries based on moved map
+- [ ] merge in nsfw moderation branch
+- [ ] change map button to textContent
+- [ ] log out button
+- [ ] disable load more posts if length of query arrays match
+- [ ] comment functions and map
+- [ ] consistent styling (css or sx, preferably not both)
+- [ ] Add perf/crashlytics
+- [ ] Add ads
+- [ ] Share via navigator
+- [ ] Cookie banner
+- [ ] Self-host Google Fonts
 
 ### TODO: Design
 
