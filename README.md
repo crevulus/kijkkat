@@ -20,7 +20,7 @@
 - [x] change map button to textContent
 - [ ] log out button
 - [x] disable load more posts if length of query arrays match
-- [ ] comment functions and map
+- [x] comment functions and map
 - [ ] consistent styling (css or sx, preferably not both)
 - [ ] Add perf/crashlytics
 - [ ] Add ads
@@ -28,7 +28,7 @@
 - [ ] Cookie banner
 - [ ] Self-host Google Fonts
 - [x] Static map centering
-- [ ] Move tags call to App and store in state
+- [x] Move tags call to App and store in state
 
 ### TODO: Design
 

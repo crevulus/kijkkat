@@ -28,7 +28,7 @@ import styles from "./CreatePost.module.css";
 
 import { firebaseApp } from "../../firebase";
 import { RatingPicker, CharacteristicChip } from "../";
-import { useErrorStore, useGeographicStore } from "../../data/store";
+import { TagsType, useErrorStore, useGeographicStore } from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { NavigationRoutes, RatingCategories } from "../../data/enums";
@@ -52,11 +52,6 @@ type CreatePostPropsType = {
   chosenFile: File;
 };
 
-export type CharacteristicsTagsType = {
-  id: number;
-  text: string;
-};
-
 export const CreatePost = ({
   chosenFile,
 }: CreatePostPropsType): ReactElement => {
@@ -75,7 +70,7 @@ export const CreatePost = ({
   const [uploadFile] = useUploadFile();
   const navigate = useNavigate();
 
-  const [chosenTags, setChosenTags] = useState<CharacteristicsTagsType[]>([]);
+  const [chosenTags, setChosenTags] = useState<TagsType[]>([]);
   const [ratingValue, setRatingValue] = useState<{ [key: string]: number }>({
     [RatingCategories.Cuteness]: 0,
     [RatingCategories.Friendliness]: 0,
@@ -116,7 +111,7 @@ export const CreatePost = ({
     }
   };
 
-  const handleTagClick = (tag: CharacteristicsTagsType) => {
+  const handleTagClick = (tag: TagsType) => {
     const index = chosenTags.findIndex((t) => t.id === tag.id);
     if (index === -1) {
       setChosenTags([...chosenTags, tag]);
@@ -246,7 +241,7 @@ export const CreatePost = ({
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 6, sm: 9, md: 12 }}
           >
-            {values?.data()?.tags.map((tag: CharacteristicsTagsType) => (
+            {values?.data()?.tags.map((tag: TagsType) => (
               <CharacteristicChip
                 tag={tag}
                 key={tag.id}

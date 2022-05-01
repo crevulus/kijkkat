@@ -57,11 +57,13 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
     if (!mapObject) {
       return;
     }
+    // get the current counds of the map/query
     const bounds = geofire.geohashQueryBounds(
       [center.lat, center.lng],
       DEFAULT_RADIUS
     );
 
+    // iterate over all bounds returned from query
     const geohashes = bounds.map((bound) => {
       const q = query(
         collection(db, "posts"),
@@ -75,6 +77,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
     Promise.all(geohashes)
       .then((snapshots) => {
         const matchingDocs: DocumentData[] = [];
+        // check each doc to see if it is in the current geohash bounds
         snapshots.forEach((snap) => {
           snap.forEach((doc) => {
             const lat = doc.data().location.latitude;
@@ -98,6 +101,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
           setErrorMessage("No cats found within 5km");
         }
         matchingDocs.map((data) => {
+          // apply markers to map if existing in geohash bounds
           const lat = data.location.latitude;
           const lng = data.location.longitude;
           const marker = new google.maps.Marker({
@@ -128,6 +132,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
   };
 
   useEffect(() => {
+    // set triggerQuery prop because we don't want to trigger on every map move
     if (triggerQuery) {
       performGeoQuery();
     }
@@ -136,6 +141,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
 
   useEffect(() => {
     if (!mapObject) {
+      // map loading logic
       const loader = new Loader({
         apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
       });
@@ -147,10 +153,12 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
         };
         const google = window.google;
         if (googlemapRef.current) {
+          // adding map elements
           map = new google.maps.Map(googlemapRef.current, {
             ...initialView,
             mapTypeControl: false,
           });
+          // center circle
           const radiusCircle = new google.maps.Circle({
             strokeColor: secondaryColor,
             strokeWeight: 2,
@@ -160,6 +168,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             center,
             radius: DEFAULT_RADIUS,
           });
+          // trigger query button
           const performSearchDiv = document.createElement("div");
           createMapButton(performSearchDiv);
           map.controls[google.maps.ControlPosition.TOP_CENTER].push(
@@ -171,6 +180,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             setTriggerQuery(true);
             centerControlButton!.disabled = true;
           });
+
           map.addListener(
             "center_changed",
             debounce(() => {

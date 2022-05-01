@@ -56,6 +56,21 @@ export const useErrorStore = create<ErrorStateType>((set) => ({
     set((state) => ({ ...state, errorMessage: message })),
 }));
 
+export interface TagsType {
+  id: number;
+  text: string;
+}
+
+type SiteDataStoreType = {
+  tagsDocData: any;
+  setTagsDocData: (tags: any) => void;
+};
+
+export const useSiteDataStore = create<SiteDataStoreType>((set) => ({
+  tagsDocData: [],
+  setTagsDocData: (tags) => set((state) => ({ ...state, tagsDocData: tags })),
+}));
+
 export const connectStoreToReduxDevtools = (
   name: string,
   store: UseBoundStore<StoreApi<object>>
