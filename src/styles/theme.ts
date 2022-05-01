@@ -55,6 +55,10 @@ export const light = createTheme({
             border: 0,
             background: `linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
           },
+          "&.Mui-disabled": {
+            background: "#f5f5f5",
+            color: "#bdbdbd",
+          },
         },
       },
     },

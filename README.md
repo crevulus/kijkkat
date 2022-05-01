@@ -19,7 +19,7 @@
 - [x] merge in nsfw moderation branch
 - [x] change map button to textContent
 - [ ] log out button
-- [ ] disable load more posts if length of query arrays match
+- [x] disable load more posts if length of query arrays match
 - [ ] comment functions and map
 - [ ] consistent styling (css or sx, preferably not both)
 - [ ] Add perf/crashlytics

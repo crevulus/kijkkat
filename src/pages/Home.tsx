@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   getFirestore,
   collection,
@@ -7,13 +7,11 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { useCollection } from "react-firebase-hooks/firestore";
 
 import { Box, Container, Icon, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
-import { useErrorStore } from "../data/store";
 import KijkkatLogo from "../icons/kijkkat-violet.svg";
 import { primaryColor, secondaryColor } from "../styles/theme";
 
@@ -25,31 +23,17 @@ export interface DocsType {
 }
 
 export function Home() {
-  const setError = useErrorStore((state) => state.setError);
-  const [result, loading, loadError] = useCollection(
-    query(collection(db, "posts"), orderBy("time", "desc"), limit(12))
-  );
-  const [docs, setDocs] = useState<DocsType[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (result) {
-      const docs = result.docs.map((doc) => ({ data: doc.data(), id: doc.id }));
-      setDocs(docs);
-    }
-  }, [result]);
+  const q = query(collection(db, "posts"), orderBy("time", "desc"), limit(12));
 
-  useEffect(() => {
-    if (loadError) {
-      setError(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+  const handleLoading = (loadingPosts: boolean) => {
+    setLoading(loadingPosts);
+  };
 
-  if (loading) {
-    return <FullScreenLoadingSpinner loading={loading} />;
-  }
-
-  return (
+  return loading ? (
+    <FullScreenLoadingSpinner loading={loading} />
+  ) : (
     <Container maxWidth="sm" sx={{ p: 2 }}>
       <Box sx={{ position: "relative", m: 3 }}>
         <Icon
@@ -80,7 +64,7 @@ export function Home() {
         </Typography>
       </Box>
       <Search redirect />
-      <PostsGrid data={docs} />
+      <PostsGrid q={q} handleLoading={handleLoading} />
     </Container>
   );
 }
