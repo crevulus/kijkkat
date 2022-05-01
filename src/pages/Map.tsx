@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { Container } from "@mui/material";
 
-// import { MapContainer } from "../components";
 import { useGeographicStore } from "../data/store";
 import { useGeocoder } from "../hooks/useGeocoder";
 import { MapContainer } from "../components/MapContainer/MapContainer";
@@ -15,6 +15,7 @@ export type CoordsType = {
 export function Map() {
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const [latLng, setLatLng] = useState<CoordsType | null>(null);
+  const [searchParams] = useSearchParams();
 
   const { geocodeCoordsFromAddress } = useGeocoder();
 
@@ -32,6 +33,15 @@ export function Map() {
     getLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chosenLocation?.description]);
+
+  useEffect(() => {
+    if (searchParams.get("lat") && searchParams.get("lng")) {
+      setLatLng({
+        lat: parseFloat(searchParams.get("lat") as string),
+        lng: parseFloat(searchParams.get("lng") as string),
+      });
+    }
+  }, [searchParams]);
 
   return (
     <Container sx={{ height: "100%" }} disableGutters>

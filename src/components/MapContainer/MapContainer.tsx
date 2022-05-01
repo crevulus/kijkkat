@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Loader } from "@googlemaps/js-api-loader";
 import * as geofire from "geofire-common";
 
@@ -17,6 +18,7 @@ import { firebaseApp } from "../../firebase";
 import { createImage, createMapButton } from "../../utils/mapUtils";
 import { useErrorStore, useGeographicStore } from "../../data/store";
 import { CoordsType } from "../../pages/Map";
+import { NavigationRoutes } from "../../data/enums";
 
 type MapContainerProps = {
   coords: CoordsType | null;
@@ -36,6 +38,8 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
   const [center, setCenter] = useState(AMSTERDAM_COORDS);
   const [triggerQuery, setTriggerQuery] = useState(forceTriggerQuery);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (coords) {
@@ -80,7 +84,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             );
             const distanceInM = distanceInKm * 1000;
             if (distanceInM <= DEFAULT_RADIUS) {
-              matchingDocs.push(doc.data());
+              matchingDocs.push({ ...doc.data(), id: doc.id });
             }
           });
         });
@@ -107,6 +111,12 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
               anchor: marker,
               map: mapObject,
               shouldFocus: true,
+            });
+          });
+          infowindow.addListener("domready", () => {
+            const image = document.querySelector(".info-window-image");
+            image?.addEventListener("click", () => {
+              navigate(`${NavigationRoutes.Posts}/${data.id}`);
             });
           });
           marker.setMap(mapObject);
@@ -139,15 +149,16 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
             ...initialView,
             mapTypeControl: false,
           });
-          const centerControlDiv = document.createElement("div");
-          createMapButton(centerControlDiv);
+          const performSearchDiv = document.createElement("div");
+          createMapButton(performSearchDiv);
           map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-            centerControlDiv
+            performSearchDiv
           );
           const centerControlButton: HTMLButtonElement | null =
-            centerControlDiv.querySelector(".search-button");
+            performSearchDiv.querySelector(".search-button");
           centerControlButton!.addEventListener("click", () => {
             setTriggerQuery(true);
+            centerControlButton!.disabled = true;
           });
           map.addListener("center_changed", () => {
             centerControlButton!.disabled = false;

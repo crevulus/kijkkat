@@ -14,7 +14,7 @@ import { Box, Container, Icon, Typography } from "@mui/material";
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
 import { useErrorStore } from "../data/store";
-import KijkkatLogo from "../icons/kijkkat-blue.svg";
+import KijkkatLogo from "../icons/kijkkat-violet.svg";
 import { primaryColor, secondaryColor } from "../styles/theme";
 
 const db = getFirestore(firebaseApp);
@@ -51,20 +51,16 @@ export function Home() {
 
   return (
     <Container maxWidth="sm" sx={{ p: 2 }}>
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", m: 3 }}>
         <Icon
           sx={{
             width: "100%",
             height: "100%",
+            opacity: 0.1,
+            filter: "blur(2px)",
           }}
         >
-          <img
-            src={KijkkatLogo}
-            alt="Kijkkat Logo"
-            style={{
-              color: `linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
-            }}
-          />
+          <img src={KijkkatLogo} alt="Kijkkat Logo" />
         </Icon>
         <Typography
           variant="h2"
@@ -78,7 +74,6 @@ export function Home() {
             background: `-webkit-linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            // filter: "drop-shadow(2px 2px 2px #aaa)",
           }}
         >
           Find a cat nearby

@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { doc, DocumentData, getFirestore } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { getAuth } from "firebase/auth";
@@ -11,6 +12,7 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -25,6 +27,8 @@ import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { useErrorStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
+import { NavigationRoutes } from "../../data/enums";
+import { useImageFromFirebase } from "../../hooks/useImageFromFirebase";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -53,11 +57,20 @@ export function PostsDynamic({ id }: { id: string }) {
   const [address, setAddress] = useState<string>();
   const [tags, setTags] = useState<TagsType[] | null>(null);
   const [liked, setLiked] = useState(false);
+  const [loadingLiked, setLoadingLiked] = useState(false);
+
+  const { geocodeAddressFromCoords } = useGeocoder();
 
   const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
   const [result, loading] = useDocument(doc(db, "posts", id));
+  const navigate = useNavigate();
 
-  const { geocodeAddressFromCoords } = useGeocoder();
+  // const [webpValue, webpLoading, webpLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlWebpLarge)
+  // );
+  // const [jpegValue, jpegLoading, jpegLoadError] = useDownloadURL(
+  //   ref(storage, data?.thumbnailUrlJpegLarge)
+  // );
 
   useEffect(() => {
     if (result) {
@@ -84,6 +97,9 @@ export function PostsDynamic({ id }: { id: string }) {
     setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
 
+  const [webpValue] = useImageFromFirebase(data?.thumbnailUrlWebpLarge);
+  const [jpegValue] = useImageFromFirebase(data?.thumbnailUrlJpegLarge);
+
   const getAddress = async () => {
     if (!address) {
       const result = await geocodeAddressFromCoords(data?.location);
@@ -107,14 +123,24 @@ export function PostsDynamic({ id }: { id: string }) {
     }
   }, [tagsDocData, data?.tags]);
 
+  const handleLocationClick = () => {
+    if (data?.location) {
+      const params = `lat=${data.location.latitude}&lng=${data.location.longitude}`;
+      navigate(`${NavigationRoutes.Map}?${params}`);
+    }
+  };
+
   const handleLike = () => {
+    setLoadingLiked(true);
     if (data && data.likedBy.includes(auth.currentUser?.uid)) {
+      setLoadingLiked(false);
       return;
     }
     likePost({ postId: id }).catch((error) => {
       setError(true);
       setErrorMessage(error.message);
     });
+    setLoadingLiked(false);
   };
 
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
@@ -124,16 +150,29 @@ export function PostsDynamic({ id }: { id: string }) {
       <Card sx={{ maxWidth: "100%" }}>
         {address && (
           <CardContent>
-            <LocationOn color="primary" />
-            <Typography variant="body2">{address}</Typography>
+            <IconButton onClick={handleLocationClick}>
+              <LocationOn color="primary" />
+            </IconButton>
+            <Typography variant="body2" onClick={handleLocationClick}>
+              {address}
+            </Typography>
           </CardContent>
         )}{" "}
-        <CardMedia
-          component="img"
-          image={data?.imageUrl ?? ""}
-          alt="Someone kijk'd a cat!"
-          height={400}
-        />
+        {!webpValue && jpegValue ? (
+          <>
+            <CircularProgress />
+            <Typography variant="body2">
+              One moment, just optimising your image
+            </Typography>
+          </>
+        ) : (
+          <CardMedia
+            component="img"
+            image={webpValue || jpegValue}
+            alt="Someone kijk'd a cat!"
+            height={400}
+          />
+        )}
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {
@@ -166,17 +205,27 @@ export function PostsDynamic({ id }: { id: string }) {
               gap: 1,
             }}
           >
-            <CustomisedIconButton
-              disabled={liked}
-              color={liked ? "primary" : "default"}
-              aria-label="Like this cat"
-              onClick={handleLike}
-            >
-              <ThumbUp />
-            </CustomisedIconButton>
-            <Typography pr={1} variant="body2">
-              {data?.likes}
-            </Typography>
+            {loadingLiked ? (
+              <CircularProgress />
+            ) : (
+              <>
+                <CustomisedIconButton
+                  disabled={liked || loadingLiked}
+                  color={liked ? "primary" : "default"}
+                  aria-label="Like this cat"
+                  onClick={handleLike}
+                >
+                  <ThumbUp />
+                </CustomisedIconButton>
+                <Typography
+                  pr={1}
+                  variant="body2"
+                  color={liked ? "primary" : "default"}
+                >
+                  {data?.likes}
+                </Typography>
+              </>
+            )}
           </Box>
           <Typography pr={1} variant="body1">
             {date} by {data?.userName ?? "Anonymous"}
