@@ -11,7 +11,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import "./App.css";
 import { light, dark } from "./styles/theme";
 
 import {
@@ -32,6 +31,7 @@ import { NotFound } from "./pages/NotFound";
 
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
+import styles from "./App.styles";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -69,17 +69,14 @@ function App() {
     <ThemeProvider theme={isDarkMode ? dark : light}>
       <BrowserRouter>
         <div className="App">
-          <AppBar
-            position="static"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
+          <AppBar position="static" sx={styles.appBar}>
             <Toolbar>
               <Typography variant="h5" color="white">
                 Kijkkat
               </Typography>
             </Toolbar>
           </AppBar>
-          <Container sx={{ flexGrow: 1, overflowY: "scroll" }} disableGutters>
+          <Container sx={styles.container} disableGutters>
             <Routes>
               <Route path={NavigationRoutes.Home} element={<Home />} />
               <Route path={NavigationRoutes.Map} element={<Map />} />

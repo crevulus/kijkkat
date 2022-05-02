@@ -24,8 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 
-import styles from "./CreatePost.module.css";
-
 import { firebaseApp } from "../../firebase";
 import { RatingPicker, CharacteristicChip } from "../";
 import { TagsType, useErrorStore, useGeographicStore } from "../../data/store";
@@ -33,6 +31,7 @@ import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { NavigationRoutes, RatingCategories } from "../../data/enums";
 import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
+import styles from "./CreatePost.styles";
 
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -224,7 +223,7 @@ export const CreatePost = ({
   return (
     <>
       {loading && <FullScreenLoadingSpinner loading={loading} />}
-      <Box maxWidth="sm" className={styles.CreatePost}>
+      <Box maxWidth="sm">
         <img
           src={URL.createObjectURL(chosenFile)}
           alt="A cat you kijked"
@@ -234,7 +233,7 @@ export const CreatePost = ({
       {loadingChips ? (
         <CircularProgress />
       ) : (
-        <Card sx={{ p: 2 }}>
+        <Card sx={styles.card}>
           <Typography variant="h6">Tags</Typography>
           <Grid
             container
@@ -251,7 +250,7 @@ export const CreatePost = ({
           </Grid>
         </Card>
       )}
-      <Card sx={{ p: 2 }}>
+      <Card sx={styles.card}>
         {Object.keys(ratingValue).map((category, index) => (
           <Fragment key={category}>
             <RatingPicker

@@ -9,9 +9,10 @@ import PetsIcon from "@mui/icons-material/Pets";
 import FaceIcon from "@mui/icons-material/Face";
 
 import { NavigationRoutes, PageNames } from "../../data/enums";
+import styles from "./BottomNav.styles";
 
 const CustomisedBottomNavigationAction = (props: any) => (
-  <BottomNavigationAction sx={{ minWidth: "70px" }} {...props} />
+  <BottomNavigationAction sx={styles.bottomNavigationAction} {...props} />
 );
 
 const pagesArray = Object.keys(PageNames);
@@ -35,7 +36,7 @@ export function BottomNav(): ReactElement {
       onChange={(_, index) => {
         getPageIndex(index);
       }}
-      sx={{ maxWidth: "100vw" }}
+      sx={styles.bottomNavigation}
     >
       <CustomisedBottomNavigationAction
         label={PageNames.Home}

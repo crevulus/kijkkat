@@ -12,6 +12,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import styles from "./Search.styles";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -146,7 +147,7 @@ export function Search({ redirect }: SearchPropsType) {
   return (
     <Autocomplete
       id="google-maps-autocomplete-box"
-      sx={{ width: "100%" }}
+      sx={styles.autocomplete}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.description
       }
@@ -181,10 +182,7 @@ export function Search({ redirect }: SearchPropsType) {
           <li {...props}>
             <Grid container alignItems="center">
               <Grid item>
-                <Box
-                  component={LocationOnIcon}
-                  sx={{ color: "text.secondary", mr: 2 }}
-                />
+                <Box component={LocationOnIcon} sx={styles.box} />
               </Grid>
               <Grid item xs>
                 {parts.map((part, index) => (

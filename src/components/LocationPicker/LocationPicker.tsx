@@ -5,6 +5,7 @@ import LocationOn from "@mui/icons-material/LocationOn";
 import Search from "@mui/icons-material/Search";
 
 import { Search as SearchBox } from "../index";
+import styles from "./LocationPicker.styles";
 
 type LocationPickerPropsType = {
   handleSetPreferences: (preferences: any) => void;
@@ -22,7 +23,7 @@ export function LocationPicker({
   currentAddress,
 }: LocationPickerPropsType): ReactElement {
   return (
-    <Card sx={{ p: 2 }}>
+    <Card sx={styles.card}>
       {!checkedCurrentLocation && (
         <>
           <Typography variant="body1" padding={2}>
