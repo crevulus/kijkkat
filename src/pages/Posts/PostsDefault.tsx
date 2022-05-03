@@ -10,6 +10,7 @@ import {
 import { Container, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid } from "../../components";
+import { postsStyles } from "../Pages.styles";
 
 const db = getFirestore();
 
@@ -34,7 +35,7 @@ export function PostsDefault() {
   return loading ? (
     <FullScreenLoadingSpinner loading={loading} />
   ) : (
-    <Container maxWidth="sm" sx={{ p: 2 }}>
+    <Container maxWidth="sm" sx={postsStyles.postsDefault.container}>
       <Typography variant="h6" color="primary" gutterBottom>
         Posts
       </Typography>

@@ -28,6 +28,7 @@ import { useGeocoder } from "../../hooks/useGeocoder";
 import { TagsType, useErrorStore, useSiteDataStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
+import { postsStyles } from "../Pages.styles";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -130,8 +131,8 @@ export function PostsDynamic({ id }: { id: string }) {
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
   return (
-    <Container sx={{ p: 2 }}>
-      <Card sx={{ maxWidth: "100%" }}>
+    <Container sx={postsStyles.postsDynamic.container}>
+      <Card sx={postsStyles.postsDynamic.card}>
         {address && (
           <CardContent>
             <IconButton onClick={handleLocationClick}>
@@ -171,15 +172,8 @@ export function PostsDynamic({ id }: { id: string }) {
             </Stack>
           )}
         </CardContent>
-        <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
+        <CardActions sx={postsStyles.postsDynamic.cardActions}>
+          <Box sx={postsStyles.postsDynamic.box}>
             {loadingLiked ? (
               <CircularProgress />
             ) : (

@@ -6,6 +6,7 @@ import { Container } from "@mui/material";
 import { useGeographicStore } from "../data/store";
 import { useGeocoder } from "../hooks/useGeocoder";
 import { MapContainer } from "../components/MapContainer/MapContainer";
+import { mapStyles } from "./Pages.styles";
 
 export type CoordsType = {
   lat: number;
@@ -44,7 +45,7 @@ export function Map() {
   }, [searchParams]);
 
   return (
-    <Container sx={{ height: "100%" }} disableGutters>
+    <Container sx={mapStyles.container} disableGutters>
       <MapContainer coords={latLng} forceTriggerQuery={true} />
     </Container>
   );

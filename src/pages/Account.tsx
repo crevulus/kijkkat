@@ -20,6 +20,7 @@ import {
   FullScreenLoadingSpinner,
   PostsGrid,
 } from "../components";
+import { accountStyles } from "./Pages.styles";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -84,7 +85,7 @@ export function Account() {
   return loading ? (
     <FullScreenLoadingSpinner loading={loading} />
   ) : (
-    <Container sx={{ p: 2 }}>
+    <Container sx={accountStyles.container}>
       <Typography variant="h6" color="primary" gutterBottom>
         Your account
       </Typography>
@@ -94,7 +95,7 @@ export function Account() {
       {isSignedIn && (
         <>
           <AccountInfo handleSignOut={handleSignOut} />
-          <Box sx={{ paddingY: 2 }}>
+          <Box sx={accountStyles.box}>
             <Typography variant="h6" color="primary" gutterBottom>
               Cats you've kijk'd
             </Typography>

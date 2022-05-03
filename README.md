@@ -21,7 +21,7 @@
 - [x] log out button
 - [x] disable load more posts if length of query arrays match
 - [x] comment functions and map
-- [ ] consistent styling (css or sx, preferably not both)
+- [x] consistent styling (css or sx, preferably not both)
 - [ ] Add perf/crashlytics
 - [ ] Share via navigator
 - [ ] Cookie banner

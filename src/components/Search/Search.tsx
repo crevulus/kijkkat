@@ -6,13 +6,15 @@ import { useNavigate } from "react-router-dom";
 import { NavigationRoutes } from "../../data/enums";
 import { useGeographicStore } from "../../data/store";
 
+// TODO: named imports
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import styles from "./Search.styles";
+
+import styles, { StyledSpan } from "./Search.styles";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -186,14 +188,9 @@ export function Search({ redirect }: SearchPropsType) {
               </Grid>
               <Grid item xs>
                 {parts.map((part, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      fontWeight: part.highlight ? 700 : 400,
-                    }}
-                  >
+                  <StyledSpan key={index} highlighted={part.highlight}>
                     {part.text}
-                  </span>
+                  </StyledSpan>
                 ))}
                 <Typography variant="body2" color="text.secondary">
                   {option.structured_formatting.secondary_text}

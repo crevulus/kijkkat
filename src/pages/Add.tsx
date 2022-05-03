@@ -21,6 +21,7 @@ import { firebaseApp } from "../firebase";
 import { NavigationRoutes } from "../data/enums";
 import { useUserStore } from "../data/store";
 import { CreatePost } from "../components";
+import { addStyles } from "./Pages.styles";
 
 const auth = getAuth(firebaseApp);
 
@@ -61,7 +62,7 @@ export function Add() {
   };
 
   return (
-    <RootContainer sx={{ mt: 2, mb: 2, width: "100%" }}>
+    <RootContainer sx={addStyles.rootContainer}>
       <Dialog
         open={showAlert}
         onClose={() => setShowAlert(false)}
@@ -76,7 +77,7 @@ export function Add() {
             are.
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center" }}>
+        <DialogActions sx={addStyles.dialogActions}>
           <Button onClick={handleRedirect} variant="outlined">
             Login
           </Button>

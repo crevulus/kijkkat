@@ -2,14 +2,14 @@ import React, { ReactElement, useEffect, useMemo } from "react";
 import { getStorage, ref } from "firebase/storage";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 
-import { ImageListItem, CircularProgress } from "@mui/material";
-
-import styles from "./PostsGridItem.module.css";
+import { ImageListItem, CircularProgress, Typography } from "@mui/material";
 
 import { firebaseApp } from "../../../firebase";
 import { useErrorStore } from "../../../data/store";
 import { generatePath, useNavigate } from "react-router-dom";
 import { NavigationRoutes } from "../../../data/enums";
+
+import styles, { StyledImage } from "./PostsGridItem.styles";
 
 const storage = getStorage(firebaseApp);
 
@@ -40,20 +40,23 @@ export function PostsGridItem({ item }: any): ReactElement {
   };
 
   if (item.isNSFW) {
-    return <p>NSFW!</p>;
+    return (
+      <Typography variant="body2" color="error">
+        NSFW!
+      </Typography>
+    );
   }
 
   return (
-    <ImageListItem sx={{ alignItems: "center", justifyContent: "center" }}>
+    <ImageListItem sx={styles.imageListItem}>
       {webpLoading && jpegLoading ? (
         <CircularProgress color="secondary" />
       ) : (
-        <img
+        <StyledImage
           src={webpValue || jpegValue}
           srcSet={jpegValue}
           alt={item.title}
           loading="lazy"
-          className={styles.image}
           onClick={handleClick}
         />
       )}
