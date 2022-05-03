@@ -4,6 +4,12 @@ export const primaryColor = "#00bcd4";
 
 export const secondaryColor = "#BA9FE3";
 
+declare module "@mui/material/Button" {
+  interface ButtonPropsVariantOverrides {
+    ["white-outlined"]: true;
+  }
+}
+
 const themeBase = {
   palette: {
     primary: {
@@ -51,6 +57,16 @@ export const light = createTheme({
       },
     },
     MuiButton: {
+      variants: [
+        {
+          props: { variant: "white-outlined" },
+          style: {
+            ...themeBase.components.MuiButton.styleOverrides.root,
+            color: "white",
+            border: "1px solid white",
+          },
+        },
+      ],
       styleOverrides: {
         root: {
           "&.MuiButton-outlined": {

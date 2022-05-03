@@ -4,9 +4,22 @@ import App from "./App";
 import { createRoot } from "react-dom/client";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
+import debounce from "lodash.debounce";
+
+const DEBOUNCE_TIMER = 150;
 
 let vh = window.innerHeight * 0.01;
 document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+// We listen to the resize event
+window.addEventListener(
+  "resize",
+  debounce(() => {
+    // We execute the same script as before
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }, DEBOUNCE_TIMER)
+);
 
 const container = document.getElementById("root");
 const root = createRoot(container!);

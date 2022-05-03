@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Container,
   Divider,
+  Icon,
   IconButton,
   Stack,
   styled,
@@ -21,6 +22,7 @@ import {
 } from "@mui/material";
 import LocationOn from "@mui/icons-material/LocationOn";
 import ThumbUp from "@mui/icons-material/ThumbUp";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
 import { useGeocoder } from "../../hooks/useGeocoder";
@@ -137,9 +139,9 @@ export function PostsDynamic({ id }: { id: string }) {
   if (data?.isNSFW) {
     return (
       <Container sx={postsStyles.postsDynamic.nsfwContainer}>
-        <Typography variant="body2" color="error">
-          NSFW!
-        </Typography>
+        <Icon color="error">
+          <CancelIcon />
+        </Icon>
       </Container>
     );
   }
