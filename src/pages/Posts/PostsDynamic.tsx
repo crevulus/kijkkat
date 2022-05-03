@@ -10,7 +10,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardMedia,
   Chip,
   CircularProgress,
   Container,
@@ -29,6 +28,7 @@ import { TagsType, useErrorStore, useSiteDataStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
 import { postsStyles } from "../Pages.styles";
+import MainImage from "../../components/MainImage";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -132,9 +132,11 @@ export function PostsDynamic({ id }: { id: string }) {
 
   if (data?.isNSFW) {
     return (
-      <Typography variant="body2" color="error">
-        NSFW!
-      </Typography>
+      <Container sx={postsStyles.postsDynamic.nsfwContainer}>
+        <Typography variant="body2" color="error">
+          NSFW!
+        </Typography>
+      </Container>
     );
   }
 
@@ -151,12 +153,13 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </CardContent>
         )}{" "}
-        <CardMedia
-          component="img"
-          image={data?.imageUrl}
-          alt="Someone kijk'd a cat!"
-          height={400}
-        />
+        {data?.thumbnailUrlWebpLarge && (
+          <MainImage
+            webpUrl={data.thumbnailUrlWebpLarge}
+            jpegUrl={data.thumbnailUrlJpegLarge}
+            fallbackUrl={data.imageUrl}
+          />
+        )}
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {

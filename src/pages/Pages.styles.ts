@@ -48,6 +48,12 @@ export const postsStyles = {
   },
   postsDynamic: {
     container: { p: 2 },
+    nsfwContainer: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100%",
+    },
     card: { maxWidth: "100%" },
     cardActions: { display: "flex", justifyContent: "space-between" },
     box: {

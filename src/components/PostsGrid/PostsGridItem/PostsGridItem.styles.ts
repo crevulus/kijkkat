@@ -2,6 +2,11 @@ import styled from "@emotion/styled";
 
 const styles = {
   imageListItem: { alignItems: "center", justifyContent: "center" },
+  nsfwContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 };
 
 export const StyledImage = styled.img`
