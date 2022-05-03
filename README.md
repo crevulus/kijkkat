@@ -27,7 +27,7 @@
 - [ ] Cookie banner
 - [ ] Self-host Google Fonts
 - [x] Static map centering
-- [ ] Move tags call to App and store in state (EDIT: Still need to do it in create post)
+- [x] Move tags call to App and store in state (EDIT: Still need to do it in create post)
 - [ ] Refactor map to always use url param coords, not `chosenLocation`
 
 ### TODO: Design

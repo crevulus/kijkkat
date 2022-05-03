@@ -130,6 +130,14 @@ export function PostsDynamic({ id }: { id: string }) {
 
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
+  if (data?.isNSFW) {
+    return (
+      <Typography variant="body2" color="error">
+        NSFW!
+      </Typography>
+    );
+  }
+
   return (
     <Container sx={postsStyles.postsDynamic.container}>
       <Card sx={postsStyles.postsDynamic.card}>

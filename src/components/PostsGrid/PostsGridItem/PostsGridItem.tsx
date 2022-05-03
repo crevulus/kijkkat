@@ -39,7 +39,7 @@ export function PostsGridItem({ item }: any): ReactElement {
     navigate(path);
   };
 
-  if (item.isNSFW) {
+  if (item.data.isNSFW) {
     return (
       <Typography variant="body2" color="error">
         NSFW!

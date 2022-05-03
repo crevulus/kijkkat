@@ -39,6 +39,7 @@ const db = getFirestore();
 connectStoreToReduxDevtools("userStore", useUserStore);
 connectStoreToReduxDevtools("errorStore", useErrorStore);
 connectStoreToReduxDevtools("geographicStore", useGeographicStore);
+connectStoreToReduxDevtools("siteDataStore", useSiteDataStore);
 
 function App() {
   const setUser = useUserStore((state) => state.setUser);
