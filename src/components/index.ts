@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import MainImage from './MainImage';
 import AccountInfo from './AccountInfo';
 import FullScreenLoadingSpinner from './FullScreenLoadingSpinner';
 import LocationPicker from './LocationPicker';
@@ -13,6 +14,7 @@ import MapContainer from "./MapContainer";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	MainImage,
 	AccountInfo,
 	FullScreenLoadingSpinner,
 	LocationPicker,

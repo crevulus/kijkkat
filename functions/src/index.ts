@@ -62,11 +62,9 @@ exports.checkForCats = functions
       (label: LabelType) =>
         catLabelsArray.indexOf(label.description.toLowerCase()) >= 0
     );
-    const isNSFW =
-      Object.values(safeSearchLabels).includes(
-        SafeSearchLikelihoods.VERY_LIKELY
-      ) ||
-      Object.values(safeSearchLabels).includes(SafeSearchLikelihoods.LIKELY);
+    const isNSFW = Object.values(safeSearchLabels).includes(
+      SafeSearchLikelihoods.VERY_LIKELY
+    );
 
     // update firestore
     const batch = admin.firestore().batch();

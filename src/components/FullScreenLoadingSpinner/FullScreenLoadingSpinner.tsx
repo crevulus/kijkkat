@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
+import styles from "./FullScreenLoadingSpinner.styles";
 
 type FullScreenLoadingSpinnerPropsType = {
   loading: boolean;
@@ -9,10 +10,7 @@ export function FullScreenLoadingSpinner({
   loading,
 }: FullScreenLoadingSpinnerPropsType): ReactElement {
   return (
-    <Backdrop
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      open={loading}
-    >
+    <Backdrop sx={styles.backdrop} open={loading}>
       <CircularProgress />
     </Backdrop>
   );

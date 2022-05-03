@@ -1,4 +1,5 @@
 import { Grid, Typography } from "@mui/material";
+import { notFoundStyles } from "./Pages.styles";
 
 export function NotFound() {
   return (
@@ -7,7 +8,7 @@ export function NotFound() {
       spacing={0}
       direction="column"
       height={1}
-      sx={{ p: 2, alignItems: "center", justifyContent: "center" }}
+      sx={notFoundStyles.grid}
     >
       <Grid item>
         <Typography variant="h6" color="primary">

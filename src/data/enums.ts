@@ -5,6 +5,7 @@ export enum NavigationRoutes {
   Posts = "/posts",
   PostsDynamic = "/posts/:id",
   Account = "/account",
+  NotFound = "*",
 }
 
 export enum PageNames {

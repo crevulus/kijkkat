@@ -10,7 +10,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardMedia,
   Chip,
   CircularProgress,
   Container,
@@ -28,6 +27,8 @@ import { useGeocoder } from "../../hooks/useGeocoder";
 import { TagsType, useErrorStore, useSiteDataStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
+import { postsStyles } from "../Pages.styles";
+import MainImage from "../../components/MainImage";
 
 const auth = getAuth();
 const db = getFirestore();
@@ -60,9 +61,13 @@ export function PostsDynamic({ id }: { id: string }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (result && !result?.exists()) {
+      navigate(NavigationRoutes.NotFound);
+    }
     if (result) {
       setData(result.data());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
   useEffect(() => {
@@ -129,9 +134,19 @@ export function PostsDynamic({ id }: { id: string }) {
 
   if (loading) <FullScreenLoadingSpinner loading={loading} />;
 
+  if (data?.isNSFW) {
+    return (
+      <Container sx={postsStyles.postsDynamic.nsfwContainer}>
+        <Typography variant="body2" color="error">
+          NSFW!
+        </Typography>
+      </Container>
+    );
+  }
+
   return (
-    <Container sx={{ p: 2 }}>
-      <Card sx={{ maxWidth: "100%" }}>
+    <Container sx={postsStyles.postsDynamic.container}>
+      <Card sx={postsStyles.postsDynamic.card}>
         {address && (
           <CardContent>
             <IconButton onClick={handleLocationClick}>
@@ -142,12 +157,13 @@ export function PostsDynamic({ id }: { id: string }) {
             </Typography>
           </CardContent>
         )}{" "}
-        <CardMedia
-          component="img"
-          image={data?.imageUrl}
-          alt="Someone kijk'd a cat!"
-          height={400}
-        />
+        {data?.thumbnailUrlWebpLarge && (
+          <MainImage
+            webpUrl={data.thumbnailUrlWebpLarge}
+            jpegUrl={data.thumbnailUrlJpegLarge}
+            fallbackUrl={data.imageUrl}
+          />
+        )}
         <CardContent>
           {data &&
             Object.keys(data.rating).map((category, index) => {
@@ -171,15 +187,8 @@ export function PostsDynamic({ id }: { id: string }) {
             </Stack>
           )}
         </CardContent>
-        <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
+        <CardActions sx={postsStyles.postsDynamic.cardActions}>
+          <Box sx={postsStyles.postsDynamic.box}>
             {loadingLiked ? (
               <CircularProgress />
             ) : (

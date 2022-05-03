@@ -4,6 +4,7 @@ import { Chip, Grid } from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 
 import { TagsType } from "../../data/store";
+import { styles } from "./CharacteristicChip.styles";
 
 type CharacteristicChipPropsType = {
   handleTagClick: (tag: TagsType) => void;
@@ -24,7 +25,7 @@ export function CharacteristicChip({
   return (
     <Grid item xs={2} sm={4} md={4}>
       <Chip
-        sx={{ width: "100%" }}
+        sx={styles.chip}
         label={tag.text}
         color={selected ? "primary" : "default"}
         variant="outlined"

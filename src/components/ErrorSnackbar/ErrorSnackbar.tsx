@@ -3,6 +3,7 @@ import { ReactElement } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
 import { useErrorStore } from "../../data/store";
+import styles from "./ErrorSnackbar.styles";
 
 export function ErrorSnackbar(): ReactElement {
   const error = useErrorStore((state) => state.error);
@@ -22,7 +23,7 @@ export function ErrorSnackbar(): ReactElement {
       autoHideDuration={6000}
       message={errorMessage}
     >
-      <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+      <Alert onClose={handleClose} severity="error" sx={styles.alert}>
         {errorMessage}
       </Alert>
     </Snackbar>

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import { doc, getFirestore } from "firebase/firestore";
+import { getPerformance } from "firebase/performance";
 
 import {
   AppBar,
@@ -11,7 +12,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import "./App.css";
 import { light, dark } from "./styles/theme";
 
 import {
@@ -32,13 +32,16 @@ import { NotFound } from "./pages/NotFound";
 
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
+import styles from "./App.styles";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
+process.env.NODE_ENV === "production" && getPerformance(firebaseApp);
 
 connectStoreToReduxDevtools("userStore", useUserStore);
 connectStoreToReduxDevtools("errorStore", useErrorStore);
 connectStoreToReduxDevtools("geographicStore", useGeographicStore);
+connectStoreToReduxDevtools("siteDataStore", useSiteDataStore);
 
 function App() {
   const setUser = useUserStore((state) => state.setUser);
@@ -69,17 +72,14 @@ function App() {
     <ThemeProvider theme={isDarkMode ? dark : light}>
       <BrowserRouter>
         <div className="App">
-          <AppBar
-            position="static"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
+          <AppBar position="static" sx={styles.appBar}>
             <Toolbar>
               <Typography variant="h5" color="white">
                 Kijkkat
               </Typography>
             </Toolbar>
           </AppBar>
-          <Container sx={{ flexGrow: 1, overflowY: "scroll" }} disableGutters>
+          <Container sx={styles.container} disableGutters>
             <Routes>
               <Route path={NavigationRoutes.Home} element={<Home />} />
               <Route path={NavigationRoutes.Map} element={<Map />} />
@@ -87,7 +87,7 @@ function App() {
               <Route path={NavigationRoutes.Posts} element={<Posts />} />
               <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
               <Route path={NavigationRoutes.Account} element={<Account />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path={NavigationRoutes.NotFound} element={<NotFound />} />
             </Routes>
           </Container>
           <BottomNav />

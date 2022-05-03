@@ -12,8 +12,8 @@ import { Box, Container, Icon, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
-import KijkkatLogo from "../icons/kijkkat-violet.svg";
-import { primaryColor, secondaryColor } from "../styles/theme";
+import KijkkatLogo from "../assets/icons/kijkkat-violet.svg";
+import { homeStyles } from "./Pages.styles";
 
 const db = getFirestore(firebaseApp);
 
@@ -34,33 +34,13 @@ export function Home() {
   return loading ? (
     <FullScreenLoadingSpinner loading={loading} />
   ) : (
-    <Container maxWidth="sm" sx={{ p: 2 }}>
-      <Box sx={{ position: "relative", m: 3 }}>
-        <Icon
-          sx={{
-            width: "100%",
-            height: "100%",
-            opacity: 0.1,
-            filter: "blur(2px)",
-          }}
-        >
+    <Container maxWidth="sm" sx={homeStyles.container}>
+      <Box sx={homeStyles.box}>
+        <Icon sx={homeStyles.icon}>
           <img src={KijkkatLogo} alt="Kijkkat Logo" />
         </Icon>
-        <Typography
-          variant="h2"
-          sx={{
-            width: "100%",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontWeight: 600,
-            background: `-webkit-linear-gradient(45deg, ${primaryColor} 10%, ${secondaryColor} 90%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Find a cat nearby
+        <Typography variant="h2" sx={homeStyles.typography}>
+          Explore the city with cats
         </Typography>
       </Box>
       <Search redirect />

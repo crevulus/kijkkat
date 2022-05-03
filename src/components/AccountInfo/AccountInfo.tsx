@@ -15,6 +15,7 @@ import {
 import { stringAvatar } from "../../styles/utils";
 import { useUserStore } from "../../data/store";
 import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
+import styles from "./AccountInfo.styles";
 
 const db = getFirestore();
 
@@ -50,14 +51,7 @@ export function AccountInfo({
 
   if (user && result)
     return (
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 2,
-        }}
-      >
+      <Card sx={styles.card}>
         <CardMedia>
           <Avatar
             src={result.photoURL ?? ""}
@@ -69,7 +63,7 @@ export function AccountInfo({
           <Typography>Email: {user.email}</Typography>
           <Typography>Kijking cats since {date}</Typography>
           <Button
-            sx={{ mt: 2 }}
+            sx={styles.button}
             variant="outlined"
             color="error"
             onClick={handleSignOut}

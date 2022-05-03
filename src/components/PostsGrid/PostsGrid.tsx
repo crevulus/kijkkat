@@ -6,6 +6,7 @@ import PostsGridItem from "./PostsGridItem";
 import { DocsType } from "../../pages/Home";
 import { useErrorStore } from "../../data/store";
 import { useCollection } from "react-firebase-hooks/firestore";
+import styles from "./PostsGrid.styles";
 
 type PostsGridPropsType = {
   q: any;
@@ -61,7 +62,7 @@ export function PostsGrid({
 
   return (
     <>
-      <ImageList sx={{ width: "100%" }} cols={3} rowHeight="auto">
+      <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
         {docs.map((item) => (
           <PostsGridItem key={item.id} item={item} />
         ))}

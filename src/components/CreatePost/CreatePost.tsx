@@ -1,4 +1,4 @@
-import { Fragment, ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   doc,
@@ -9,30 +9,25 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
-import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import * as geofire from "geofire-common";
 import { v4 as uuidv4 } from "uuid";
 
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  Divider,
-  Grid,
-  Typography,
-} from "@mui/material";
-
-import styles from "./CreatePost.module.css";
+import { Box, Button, Card, Divider, Grid, Typography } from "@mui/material";
 
 import { firebaseApp } from "../../firebase";
 import { RatingPicker, CharacteristicChip } from "../";
-import { TagsType, useErrorStore, useGeographicStore } from "../../data/store";
+import {
+  TagsType,
+  useErrorStore,
+  useGeographicStore,
+  useSiteDataStore,
+} from "../../data/store";
 import { LocationPicker } from "../index";
 import { useGeocoder } from "../../hooks/useGeocoder";
 import { NavigationRoutes, RatingCategories } from "../../data/enums";
 import FullScreenLoadingSpinner from "../FullScreenLoadingSpinner";
+import styles from "./CreatePost.styles";
 
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -62,11 +57,9 @@ export const CreatePost = ({
   const setCurrentLocation = useGeographicStore(
     (state) => state.setCurrentLocation
   );
+  const tagsDocData = useSiteDataStore((state) => state.tagsDocData);
   const { geocodeCoordsFromAddress, geocodeAddressFromCoords } = useGeocoder();
 
-  const [values, loadingChips, chipsLoadError] = useDocument(
-    doc(db, "tags", "appearance")
-  );
   const [uploadFile] = useUploadFile();
   const navigate = useNavigate();
 
@@ -81,13 +74,6 @@ export const CreatePost = ({
   const [currentAddress, setCurrentAddress] = useState("");
 
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (chipsLoadError) {
-      setError(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chipsLoadError]);
 
   const getCurrentLocation = () => {
     setCheckedCurrentLocation(true);
@@ -205,8 +191,8 @@ export const CreatePost = ({
           setError(true);
           setErrorMessage(error.message);
         });
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleChangeRatingValue = (category: string, value: number) => {
@@ -224,34 +210,30 @@ export const CreatePost = ({
   return (
     <>
       {loading && <FullScreenLoadingSpinner loading={loading} />}
-      <Box maxWidth="sm" className={styles.CreatePost}>
+      <Box maxWidth="sm">
         <img
           src={URL.createObjectURL(chosenFile)}
           alt="A cat you kijked"
           width="100%"
         />
       </Box>
-      {loadingChips ? (
-        <CircularProgress />
-      ) : (
-        <Card sx={{ p: 2 }}>
-          <Typography variant="h6">Tags</Typography>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 6, sm: 9, md: 12 }}
-          >
-            {values?.data()?.tags.map((tag: TagsType) => (
-              <CharacteristicChip
-                tag={tag}
-                key={tag.id}
-                handleTagClick={handleTagClick}
-              />
-            ))}
-          </Grid>
-        </Card>
-      )}
-      <Card sx={{ p: 2 }}>
+      <Card sx={styles.card}>
+        <Typography variant="h6">Tags</Typography>
+        <Grid
+          container
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 6, sm: 9, md: 12 }}
+        >
+          {tagsDocData.tags.map((tag: TagsType) => (
+            <CharacteristicChip
+              tag={tag}
+              key={tag.id}
+              handleTagClick={handleTagClick}
+            />
+          ))}
+        </Grid>
+      </Card>
+      <Card sx={styles.card}>
         {Object.keys(ratingValue).map((category, index) => (
           <Fragment key={category}>
             <RatingPicker
