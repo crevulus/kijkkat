@@ -61,9 +61,13 @@ export function PostsDynamic({ id }: { id: string }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (result && !result?.exists()) {
+      navigate(NavigationRoutes.NotFound);
+    }
     if (result) {
       setData(result.data());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
   useEffect(() => {

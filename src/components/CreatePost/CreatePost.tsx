@@ -191,8 +191,8 @@ export const CreatePost = ({
           setError(true);
           setErrorMessage(error.message);
         });
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleChangeRatingValue = (category: string, value: number) => {

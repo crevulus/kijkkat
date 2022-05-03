@@ -85,7 +85,7 @@ function App() {
               <Route path={NavigationRoutes.Posts} element={<Posts />} />
               <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
               <Route path={NavigationRoutes.Account} element={<Account />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path={NavigationRoutes.NotFound} element={<NotFound />} />
             </Routes>
           </Container>
           <BottomNav />
