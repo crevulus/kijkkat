@@ -8,7 +8,6 @@ import { getPerformance } from "firebase/performance";
 import {
   AppBar,
   Box,
-  Button,
   Container,
   IconButton,
   ThemeProvider,
@@ -37,6 +36,7 @@ import { NotFound } from "./pages/NotFound";
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
 import styles from "./App.styles";
+import InstallButton from "./components/InstallButton";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -48,6 +48,8 @@ connectStoreToReduxDevtools("geographicStore", useGeographicStore);
 connectStoreToReduxDevtools("siteDataStore", useSiteDataStore);
 
 function App() {
+  const setError = useErrorStore((state) => state.setError);
+  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setUser = useUserStore((state) => state.setUser);
   const setIsSignedIn = useUserStore((state) => state.setIsSignedIn);
   const setTagsDocData = useSiteDataStore((state) => state.setTagsDocData);
@@ -74,11 +76,14 @@ function App() {
 
   const shareUrl = () => {
     if (!window.navigator.canShare) {
+      setError(true);
+      setErrorMessage("Your browser does not support sharing");
       return;
     }
     window.navigator.share({
+      title: "Kijkkat",
       url: window.location.href,
-      text: "Check out this cat!",
+      text: "Explore the city with cats",
     });
   };
 
@@ -92,9 +97,7 @@ function App() {
                 Kijkkat
               </Typography>
               <Box sx={styles.box}>
-                <Button variant="white-outlined" color="info">
-                  Install
-                </Button>
+                <InstallButton />
                 <IconButton onClick={shareUrl}>
                   <ShareIcon sx={styles.icon} />
                 </IconButton>
