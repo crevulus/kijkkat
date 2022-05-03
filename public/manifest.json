@@ -3,7 +3,7 @@
   "name": "Explore the city with cats",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "favicons/favicon.ico",
       "sizes": "48x48",
       "type": "image/x-icon"
     },
@@ -26,6 +26,5 @@
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone",
-  "start_url": "/",
-  "scope": "/"
+  "start_url": "."
 }
