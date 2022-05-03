@@ -37,5 +37,5 @@
 - [ ] marker icon(s)
 - [ ] map style
 - [ ] colour palette
-- [ ] cookie consent shit
+- [ ] cookie consent details
 - [ ] Ads/tags
