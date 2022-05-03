@@ -7,11 +7,15 @@ import { getPerformance } from "firebase/performance";
 
 import {
   AppBar,
+  Box,
+  Button,
   Container,
+  IconButton,
   ThemeProvider,
   Toolbar,
   Typography,
 } from "@mui/material";
+import ShareIcon from "@mui/icons-material/Share";
 import { light, dark } from "./styles/theme";
 
 import {
@@ -68,15 +72,33 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const shareUrl = () => {
+    if (!window.navigator.canShare) {
+      return;
+    }
+    window.navigator.share({
+      url: window.location.href,
+      text: "Check out this cat!",
+    });
+  };
+
   return (
     <ThemeProvider theme={isDarkMode ? dark : light}>
       <BrowserRouter>
         <div className="App">
-          <AppBar position="static" sx={styles.appBar}>
-            <Toolbar>
+          <AppBar position="static">
+            <Toolbar sx={styles.toolbar}>
               <Typography variant="h5" color="white">
                 Kijkkat
               </Typography>
+              <Box sx={styles.box}>
+                <Button variant="white-outlined" color="info">
+                  Install
+                </Button>
+                <IconButton onClick={shareUrl}>
+                  <ShareIcon sx={styles.icon} />
+                </IconButton>
+              </Box>
             </Toolbar>
           </AppBar>
           <Container sx={styles.container} disableGutters>

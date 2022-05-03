@@ -24,11 +24,13 @@
 - [x] consistent styling (css or sx, preferably not both)
 - [x] Add perf/crashlytics
 - [ ] Share via navigator
+- [ ] Install button
 - [ ] Cookie banner
 - [x] Self-host Google Fonts
 - [x] Static map centering
 - [x] Move tags call to App and store in state (EDIT: Still need to do it in create post)
 - [ ] Refactor map to always use url param coords, not `chosenLocation`
+- [ ] Redirect/alert on like if user is not logged in
 
 ### TODO: Design
 

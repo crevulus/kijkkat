@@ -1,11 +1,18 @@
 const styles = {
-  appBar: {
+  toolbar: {
     display: "flex",
-    alignItems: "center",
+    justifyContent: "space-between",
   },
   container: {
     flexGrow: 1,
     overflowY: "scroll",
+  },
+  box: {
+    display: "flex",
+    gap: 1,
+  },
+  icon: {
+    color: "white",
   },
 };
 

@@ -1,13 +1,14 @@
-import React, { ReactElement, useEffect, useMemo } from "react";
+import { ReactElement, useEffect, useMemo } from "react";
 import { getStorage, ref } from "firebase/storage";
 import { useDownloadURL } from "react-firebase-hooks/storage";
 
 import {
   ImageListItem,
   CircularProgress,
-  Typography,
   Container,
+  Icon,
 } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 import { firebaseApp } from "../../../firebase";
 import { useErrorStore } from "../../../data/store";
@@ -47,9 +48,9 @@ export function PostsGridItem({ item }: any): ReactElement {
   if (item.data.isNSFW) {
     return (
       <Container sx={styles.nsfwContainer}>
-        <Typography variant="body2" color="error">
-          NSFW!
-        </Typography>
+        <Icon color="error">
+          <CancelIcon />
+        </Icon>
       </Container>
     );
   }
