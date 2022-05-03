@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import { doc, getFirestore } from "firebase/firestore";
+import { getPerformance } from "firebase/performance";
 
 import {
   AppBar,
@@ -35,6 +36,7 @@ import styles from "./App.styles";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
+process.env.NODE_ENV === "production" && getPerformance(firebaseApp);
 
 connectStoreToReduxDevtools("userStore", useUserStore);
 connectStoreToReduxDevtools("errorStore", useErrorStore);

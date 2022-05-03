@@ -22,10 +22,10 @@
 - [x] disable load more posts if length of query arrays match
 - [x] comment functions and map
 - [x] consistent styling (css or sx, preferably not both)
-- [ ] Add perf/crashlytics
+- [x] Add perf/crashlytics
 - [ ] Share via navigator
 - [ ] Cookie banner
-- [ ] Self-host Google Fonts
+- [x] Self-host Google Fonts
 - [x] Static map centering
 - [x] Move tags call to App and store in state (EDIT: Still need to do it in create post)
 - [ ] Refactor map to always use url param coords, not `chosenLocation`

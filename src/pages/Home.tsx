@@ -12,7 +12,7 @@ import { Box, Container, Icon, Typography } from "@mui/material";
 
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
-import KijkkatLogo from "../icons/kijkkat-violet.svg";
+import KijkkatLogo from "../assets/icons/kijkkat-violet.svg";
 import { homeStyles } from "./Pages.styles";
 
 const db = getFirestore(firebaseApp);
