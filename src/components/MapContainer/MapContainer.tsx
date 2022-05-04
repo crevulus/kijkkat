@@ -34,7 +34,6 @@ const db = getFirestore(firebaseApp);
 
 export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
@@ -97,8 +96,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
       })
       .then((matchingDocs) => {
         if (matchingDocs.length === 0) {
-          setError(true);
-          setErrorMessage("No cats found within 5km");
+          setError(true, "No cats found within 5km");
         }
         matchingDocs.map((data) => {
           // apply markers to map if existing in geohash bounds

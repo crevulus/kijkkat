@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDocumentData } from "react-firebase-hooks/firestore";
@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
-import { light, dark } from "./styles/theme";
+import { light } from "./styles/theme";
 
 import {
   connectStoreToReduxDevtools,
@@ -49,11 +49,9 @@ connectStoreToReduxDevtools("siteDataStore", useSiteDataStore);
 
 function App() {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setUser = useUserStore((state) => state.setUser);
   const setIsSignedIn = useUserStore((state) => state.setIsSignedIn);
   const setTagsDocData = useSiteDataStore((state) => state.setTagsDocData);
-  const [isDarkMode] = useState(false);
 
   const [tagsDocData] = useDocumentData(doc(db, "tags", "appearance"));
 
@@ -76,8 +74,7 @@ function App() {
 
   const shareUrl = () => {
     if (!window.navigator.canShare) {
-      setError(true);
-      setErrorMessage("Your browser does not support sharing");
+      setError(true, "Your browser does not support sharing");
       return;
     }
     window.navigator.share({
@@ -88,7 +85,7 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={isDarkMode ? dark : light}>
+    <ThemeProvider theme={light}>
       <BrowserRouter>
         <div className="App">
           <AppBar position="static">

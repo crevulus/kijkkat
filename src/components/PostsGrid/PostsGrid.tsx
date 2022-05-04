@@ -20,7 +20,6 @@ export function PostsGrid({
   loadMoreCallback,
 }: PostsGridPropsType): ReactElement {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const [disableLoadMore, setDisableLoadMore] = useState(false);
   const [docsLength, setDocsLength] = useState<number>(0);
   const [docs, setDocs] = useState<DocsType[]>([]);
@@ -29,8 +28,7 @@ export function PostsGrid({
 
   useEffect(() => {
     if (docs && docsLength && docs.length === docsLength) {
-      setError(true);
-      setErrorMessage("No more posts to load!");
+      setError(true, "No more posts to load!");
       setDisableLoadMore(true);
     } else {
       setDocsLength(docs.length);

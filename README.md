@@ -31,6 +31,7 @@
 - [x] Move tags call to App and store in state (EDIT: Still need to do it in create post)
 - [ ] Refactor map to always use url param coords, not `chosenLocation`
 - [ ] Redirect/alert on like if user is not logged in
+- [ ] Store geocoded address as string so don't need to geocode every time
 
 ### TODO: Design
 

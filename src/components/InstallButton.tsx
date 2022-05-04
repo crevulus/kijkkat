@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { Button } from "@mui/material";
 
 const InstallButton = () => {
   const [supportsPWA, setSupportsPWA] = useState(false);
@@ -28,15 +30,15 @@ const InstallButton = () => {
   }
 
   return (
-    <button
-      className="link-button"
+    <Button
+      variant="white-outlined"
       id="setup_button"
       aria-label="Install app"
       title="Install app"
       onClick={onClick}
     >
       Install
-    </button>
+    </Button>
   );
 };
 

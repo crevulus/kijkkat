@@ -9,19 +9,28 @@ import styles from "./LocationPicker.styles";
 
 type LocationPickerPropsType = {
   handleSetPreferences: (preferences: any) => void;
-  checkedCurrentLocation: boolean;
   handleGetLocation: () => void;
+  handleResetAddress: (string: string) => void;
+  checkedCurrentLocation: boolean;
   wantsCurrentLocation: boolean;
   currentAddress: string;
 };
 
 export function LocationPicker({
   handleSetPreferences,
-  checkedCurrentLocation,
   handleGetLocation,
+  handleResetAddress,
+  checkedCurrentLocation,
   wantsCurrentLocation,
   currentAddress,
 }: LocationPickerPropsType): ReactElement {
+  const switchToSearch = () => {
+    handleSetPreferences({
+      wantsCurrentLocation: false,
+      checkedCurrentLocation: true,
+    });
+    handleResetAddress("");
+  };
   return (
     <Card sx={styles.card}>
       {!checkedCurrentLocation && (
@@ -29,7 +38,7 @@ export function LocationPicker({
           <Typography variant="body1" padding={2}>
             Would you like to use your current location?
           </Typography>
-          <Stack direction="row" spacing={2} justifyContent="center">
+          <Stack direction="row" spacing={1} justifyContent="center">
             <Button
               startIcon={<LocationOn />}
               onClick={handleGetLocation}
@@ -55,7 +64,16 @@ export function LocationPicker({
       {checkedCurrentLocation && wantsCurrentLocation && currentAddress && (
         <CardContent>
           <LocationOn color="primary" />
-          <Typography variant="body2">{currentAddress}</Typography>
+          <Typography variant="body2" padding={2}>
+            {currentAddress}
+          </Typography>
+          <Button
+            variant="outlined"
+            endIcon={<Search />}
+            onClick={switchToSearch}
+          >
+            Search Instead
+          </Button>
         </CardContent>
       )}
       {checkedCurrentLocation && !wantsCurrentLocation && !currentAddress && (

@@ -9,11 +9,9 @@ export function ErrorSnackbar(): ReactElement {
   const error = useErrorStore((state) => state.error);
   const setError = useErrorStore((state) => state.setError);
   const errorMessage = useErrorStore((state) => state.errorMessage);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
 
   const handleClose = () => {
     setError(false);
-    setErrorMessage("");
   };
 
   return (

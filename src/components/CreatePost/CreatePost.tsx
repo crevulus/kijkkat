@@ -51,7 +51,6 @@ export const CreatePost = ({
   chosenFile,
 }: CreatePostPropsType): ReactElement => {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const currentLocation = useGeographicStore((state) => state.currentLocation);
   const setCurrentLocation = useGeographicStore(
@@ -78,8 +77,7 @@ export const CreatePost = ({
   const getCurrentLocation = () => {
     setCheckedCurrentLocation(true);
     if (!(navigator as any).geolocation) {
-      setError(true);
-      setErrorMessage("Geolocation is not supported by your browser");
+      setError(true, "Geolocation is not supported by your browser");
       setWantsCurrentLocation(false);
     } else {
       (navigator as any).geolocation.getCurrentPosition(
@@ -89,8 +87,7 @@ export const CreatePost = ({
           setCurrentAddress(address);
         },
         () => {
-          setError(true);
-          setErrorMessage("Unable to retrieve your location");
+          setError(true, "Unable to retrieve your location");
           setWantsCurrentLocation(false);
         }
       );
@@ -106,25 +103,46 @@ export const CreatePost = ({
     }
   };
 
+  const validateForm = () => {
+    if (!chosenFile) {
+      setError(true, "Please choose a file");
+      return;
+    }
+    if (chosenTags.length === 0) {
+      setError(true, "Please choose at least one tag");
+      return;
+    }
+    if (Object.values(ratingValue).some((v) => v === 0)) {
+      setError(true, "Please rate the cat you kijk'd");
+      return;
+    }
+    if (!chosenLocation && !currentLocation) {
+      setError(true, "Please choose a location");
+      return;
+    }
+    setError(false);
+    handleFormSubmit();
+  };
+
   const handleFormSubmit = async () => {
     setLoading(true);
     let location;
     let geohash;
+    let address;
     if (currentLocation) {
+      address = await geocodeAddressFromCoords(currentLocation.coords);
       location = new GeoPoint(
         currentLocation.coords.latitude,
         currentLocation.coords.longitude
       );
     } else if (chosenLocation) {
-      const {
-        structured_formatting: { main_text, secondary_text },
-      } = chosenLocation;
-      const address = `${main_text}, ${secondary_text}`;
+      const { description } = chosenLocation;
+      address = description;
       const coords = await geocodeCoordsFromAddress(address);
       location = new GeoPoint(coords!.lat, coords!.lng);
     } else {
-      setError(true);
-      setErrorMessage("You must choose a location");
+      setError(true, "You must choose a location!");
+      return;
     }
     if (location) {
       geohash = geofire.geohashForLocation([
@@ -170,6 +188,7 @@ export const CreatePost = ({
       );
 
       const post = {
+        address,
         location,
         geohash,
         tags,
@@ -188,8 +207,7 @@ export const CreatePost = ({
       await setDoc(doc(db, "posts", uuid), post)
         .then(() => navigate(`${NavigationRoutes.Posts}/${uuid}`))
         .catch((error) => {
-          setError(true);
-          setErrorMessage(error.message);
+          setError(true, error.message);
         });
     }
     setLoading(false);
@@ -252,8 +270,9 @@ export const CreatePost = ({
         currentAddress={currentAddress}
         handleGetLocation={getCurrentLocation}
         handleSetPreferences={handleSetPreferences}
+        handleResetAddress={setCurrentAddress}
       />
-      <Button variant="contained" onClick={handleFormSubmit}>
+      <Button variant="contained" onClick={validateForm}>
         Submit Post
       </Button>
     </>
