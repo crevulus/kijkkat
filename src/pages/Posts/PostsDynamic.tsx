@@ -25,7 +25,6 @@ import ThumbUp from "@mui/icons-material/ThumbUp";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import { FullScreenLoadingSpinner, RatingPicker } from "../../components";
-import { useGeocoder } from "../../hooks/useGeocoder";
 import { TagsType, useErrorStore, useSiteDataStore } from "../../data/store";
 import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
@@ -52,12 +51,9 @@ export function PostsDynamic({ id }: { id: string }) {
 
   const [data, setData] = useState<DocumentData>();
   const [date, setDate] = useState("");
-  const [address, setAddress] = useState<string>();
   const [liked, setLiked] = useState(false);
   const [loadingLiked, setLoadingLiked] = useState(false);
   const [tags, setTags] = useState<TagsType[]>([]);
-
-  const { geocodeAddressFromCoords } = useGeocoder();
 
   const [result, loading] = useDocument(doc(db, "posts", id));
   const navigate = useNavigate();
@@ -74,7 +70,6 @@ export function PostsDynamic({ id }: { id: string }) {
 
   useEffect(() => {
     if (data) {
-      getAddress();
       getDate();
       setTags(findTags());
     }
@@ -90,13 +85,6 @@ export function PostsDynamic({ id }: { id: string }) {
     }
     setLiked(data.likedBy.includes(auth.currentUser?.uid));
   }, [data]);
-
-  const getAddress = async () => {
-    if (!address) {
-      const result = await geocodeAddressFromCoords(data?.location);
-      setAddress(result);
-    }
-  };
 
   const getDate = () => {
     if (!date) {
@@ -149,13 +137,13 @@ export function PostsDynamic({ id }: { id: string }) {
   return (
     <Container sx={postsStyles.postsDynamic.container}>
       <Card sx={postsStyles.postsDynamic.card}>
-        {address && (
+        {data?.address && (
           <CardContent>
             <IconButton onClick={handleLocationClick}>
               <LocationOn color="primary" />
             </IconButton>
             <Typography variant="body2" onClick={handleLocationClick}>
-              {address}
+              {data?.address}
             </Typography>
           </CardContent>
         )}{" "}

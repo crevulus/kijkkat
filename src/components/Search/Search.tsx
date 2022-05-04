@@ -3,9 +3,6 @@ import parse from "autosuggest-highlight/parse";
 import throttle from "lodash.throttle";
 import { useNavigate } from "react-router-dom";
 
-import { NavigationRoutes } from "../../data/enums";
-import { useGeographicStore } from "../../data/store";
-
 // TODO: named imports
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -13,6 +10,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+
+import { NavigationRoutes } from "../../data/enums";
+import { useGeographicStore } from "../../data/store";
 
 import styles, { StyledSpan } from "./Search.styles";
 

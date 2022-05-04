@@ -42,13 +42,6 @@ export const light = createTheme({
     mode: "light",
   },
   components: {
-    MuiAutocomplete: {
-      styleOverrides: {
-        endAdornment: {
-          display: "none",
-        },
-      },
-    },
     MuiPaper: {
       styleOverrides: {
         root: {

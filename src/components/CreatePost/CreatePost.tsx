@@ -106,25 +106,31 @@ export const CreatePost = ({
     }
   };
 
+  const validateForm = () => {
+    if (!chosenFile) {
+      setError(true);
+    }
+  };
+
   const handleFormSubmit = async () => {
     setLoading(true);
     let location;
     let geohash;
+    let address;
     if (currentLocation) {
+      address = await geocodeAddressFromCoords(currentLocation.coords);
       location = new GeoPoint(
         currentLocation.coords.latitude,
         currentLocation.coords.longitude
       );
     } else if (chosenLocation) {
-      const {
-        structured_formatting: { main_text, secondary_text },
-      } = chosenLocation;
-      const address = `${main_text}, ${secondary_text}`;
+      const { description } = chosenLocation;
+      address = description;
       const coords = await geocodeCoordsFromAddress(address);
       location = new GeoPoint(coords!.lat, coords!.lng);
     } else {
       setError(true);
-      setErrorMessage("You must choose a location");
+      setErrorMessage("You must choose a location!");
     }
     if (location) {
       geohash = geofire.geohashForLocation([
@@ -170,6 +176,7 @@ export const CreatePost = ({
       );
 
       const post = {
+        address,
         location,
         geohash,
         tags,
@@ -252,6 +259,7 @@ export const CreatePost = ({
         currentAddress={currentAddress}
         handleGetLocation={getCurrentLocation}
         handleSetPreferences={handleSetPreferences}
+        handleResetAddress={setCurrentAddress}
       />
       <Button variant="contained" onClick={handleFormSubmit}>
         Submit Post
