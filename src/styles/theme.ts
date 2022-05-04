@@ -13,10 +13,10 @@ declare module "@mui/material/Button" {
 const themeBase = {
   palette: {
     primary: {
-      main: secondaryColor,
+      main: primaryColor,
     },
     secondary: {
-      main: primaryColor,
+      main: secondaryColor,
     },
   },
   components: {
@@ -36,19 +36,19 @@ const themeBase = {
 };
 
 export const light = createTheme({
-  typography: {
-    fontFamily: "Poppins, sans-serif;",
-  },
+  ...themeBase,
   palette: {
-    primary: {
-      main: primaryColor,
-    },
-    secondary: {
-      main: secondaryColor,
-    },
+    ...themeBase.palette,
     mode: "light",
   },
   components: {
+    MuiAutocomplete: {
+      styleOverrides: {
+        endAdornment: {
+          display: "none",
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -82,31 +82,6 @@ export const light = createTheme({
             background: "#f5f5f5",
             color: "#bdbdbd",
           },
-        },
-      },
-    },
-  },
-});
-
-export const dark = createTheme({
-  typography: {
-    fontFamily: "Poppins, sans-serif;",
-  },
-  palette: {
-    primary: {
-      main: secondaryColor,
-    },
-    secondary: {
-      main: primaryColor,
-    },
-    mode: "dark",
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          ...themeBase.components.MuiButton.styleOverrides.root,
-          background: `linear-gradient(45deg, ${secondaryColor} 10%, ${primaryColor} 90%)`,
         },
       },
     },

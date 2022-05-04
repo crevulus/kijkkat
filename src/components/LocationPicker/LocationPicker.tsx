@@ -29,7 +29,7 @@ export function LocationPicker({
           <Typography variant="body1" padding={2}>
             Would you like to use your current location?
           </Typography>
-          <Stack direction="row" spacing={2} justifyContent="center">
+          <Stack direction="row" spacing={1} justifyContent="center">
             <Button
               startIcon={<LocationOn />}
               onClick={handleGetLocation}
