@@ -32,6 +32,7 @@
 - [ ] Refactor map to always use url param coords, not `chosenLocation`
 - [x] Redirect/alert on like if user is not logged in
 - [x] Store geocoded address as string so don't need to geocode every time
+- [ ] Landing page for desktop
 
 ### TODO: Design
 
