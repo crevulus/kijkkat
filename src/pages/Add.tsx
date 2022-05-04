@@ -1,29 +1,21 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getAuth } from "firebase/auth";
 
 import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   Divider,
   styled,
   Typography,
-  Grow,
 } from "@mui/material";
 
-import { firebaseApp } from "../firebase";
-import { NavigationRoutes } from "../data/enums";
 import { useUserStore } from "../data/store";
 import { CreatePost } from "../components";
 import { addStyles } from "./Pages.styles";
+import { SignInDialog } from "../components/utils/SignInDialog";
+import { useCheckSignedIn } from "../hooks/useCheckSignedIn";
 
-const auth = getAuth(firebaseApp);
+const DIALOG_MESSAGE_ACTION = "post pictures";
 
 const RootContainer = styled(Container)(({ theme }) => ({
   ...theme.typography.body2,
@@ -34,24 +26,8 @@ const RootContainer = styled(Container)(({ theme }) => ({
 
 export function Add() {
   const isSignedIn = useUserStore((state) => state.isSignedIn);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [chosenFile, setChosenFile] = useState<File | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
-
-  const checkSignedIn = () => {
-    if (!auth.currentUser) {
-      setShowAlert(true);
-    }
-  };
-
-  const handleRedirect = () => {
-    if (!auth.currentUser) {
-      navigate(NavigationRoutes.Account, {
-        state: { path: location.pathname },
-      });
-    }
-  };
+  const { showAlert, setShowAlert, checkSignedIn } = useCheckSignedIn();
 
   const handleAddPicture = async (eventTarget: HTMLInputElement) => {
     if (eventTarget.files) {
@@ -63,26 +39,11 @@ export function Add() {
 
   return (
     <RootContainer sx={addStyles.rootContainer}>
-      <Dialog
-        open={showAlert}
-        onClose={() => setShowAlert(false)}
-        TransitionComponent={Grow}
-        keepMounted
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle>Uh oh, you need to be signed in to do that...</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            You can post pictures to your heart's content once we know who you
-            are.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={addStyles.dialogActions}>
-          <Button onClick={handleRedirect} variant="outlined">
-            Login
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <SignInDialog
+        showAlert={showAlert}
+        setShowAlert={setShowAlert}
+        message={DIALOG_MESSAGE_ACTION}
+      />
       <Typography variant="h6" color="primary" gutterBottom>
         Add a new post
       </Typography>

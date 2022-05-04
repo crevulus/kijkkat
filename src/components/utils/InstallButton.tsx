@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@mui/material";
 
-const InstallButton = () => {
+export const InstallButton = () => {
   const [supportsPWA, setSupportsPWA] = useState(false);
   const [promptInstall, setPromptInstall] = useState<any>(null);
 
@@ -41,5 +41,3 @@ const InstallButton = () => {
     </Button>
   );
 };
-
-export default InstallButton;
