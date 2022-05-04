@@ -35,8 +35,8 @@ import { NotFound } from "./pages/NotFound";
 
 import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
+import { InstallButton } from "./components/utils/InstallButton";
 import styles from "./App.styles";
-import InstallButton from "./components/InstallButton";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();

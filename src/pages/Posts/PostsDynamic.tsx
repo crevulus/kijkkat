@@ -30,11 +30,15 @@ import { firebaseApp } from "../../firebase";
 import { NavigationRoutes } from "../../data/enums";
 import { postsStyles } from "../Pages.styles";
 import MainImage from "../../components/MainImage";
+import { useCheckSignedIn } from "../../hooks/useCheckSignedIn";
+import { SignInDialog } from "../../components/utils/SignInDialog";
 
 const auth = getAuth();
 const db = getFirestore();
 const functions = getFunctions(firebaseApp, "europe-west1");
 const likePost = httpsCallable(functions, "likePost");
+
+const DIALOG_MESSAGE_ACTION = "like pictures";
 
 const CustomisedIconButton = styled(IconButton)(({ theme }) => ({
   "&.Mui-disabled": {
@@ -47,6 +51,7 @@ const CustomisedIconButton = styled(IconButton)(({ theme }) => ({
 export function PostsDynamic({ id }: { id: string }) {
   const setError = useErrorStore((state) => state.setError);
   const tagsDocData = useSiteDataStore((state) => state.tagsDocData);
+  const { showAlert, setShowAlert, checkSignedIn } = useCheckSignedIn();
 
   const [data, setData] = useState<DocumentData>();
   const [date, setDate] = useState("");
@@ -108,13 +113,18 @@ export function PostsDynamic({ id }: { id: string }) {
     }
   };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     setLoadingLiked(true);
+    if (!checkSignedIn()) {
+      setLoadingLiked(false);
+      setShowAlert(true);
+      return;
+    }
     if (data && data.likedBy.includes(auth.currentUser?.uid)) {
       setLoadingLiked(false);
       return;
     }
-    likePost({ postId: id }).catch((error) => {
+    await likePost({ postId: id }).catch((error) => {
       setError(true, error.message);
     });
     setLoadingLiked(false);
@@ -134,6 +144,11 @@ export function PostsDynamic({ id }: { id: string }) {
 
   return (
     <Container sx={postsStyles.postsDynamic.container}>
+      <SignInDialog
+        showAlert={showAlert}
+        setShowAlert={setShowAlert}
+        message={DIALOG_MESSAGE_ACTION}
+      />
       <Card sx={postsStyles.postsDynamic.card}>
         {data?.address && (
           <CardContent>

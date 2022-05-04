@@ -178,12 +178,12 @@ export const CreatePost = ({
       );
       const thumbnailUrlWebpLarge = editThumbnailFileName(
         uuid,
-        "_400x400.webp",
+        "_800x800.webp",
         auth.currentUser?.uid
       );
       const thumbnailUrlJpegLarge = editThumbnailFileName(
         uuid,
-        "_400x400.jpeg",
+        "_800x800.jpeg",
         auth.currentUser?.uid
       );
 
