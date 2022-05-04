@@ -49,7 +49,6 @@ connectStoreToReduxDevtools("siteDataStore", useSiteDataStore);
 
 function App() {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const setUser = useUserStore((state) => state.setUser);
   const setIsSignedIn = useUserStore((state) => state.setIsSignedIn);
   const setTagsDocData = useSiteDataStore((state) => state.setTagsDocData);
@@ -75,8 +74,7 @@ function App() {
 
   const shareUrl = () => {
     if (!window.navigator.canShare) {
-      setError(true);
-      setErrorMessage("Your browser does not support sharing");
+      setError(true, "Your browser does not support sharing");
       return;
     }
     window.navigator.share({

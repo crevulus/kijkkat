@@ -6,7 +6,6 @@ Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_GEOCODING_API_KEY!);
 
 export const useGeocoder = () => {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
 
   const geocodeAddressFromCoords = (coords: any) =>
     Geocode.fromLatLng(coords.latitude.toString(), coords.longitude.toString())
@@ -20,8 +19,7 @@ export const useGeocoder = () => {
           return formattedAddress;
         },
         (error) => {
-          setError(true);
-          setErrorMessage(error.message);
+          setError(true, error.message);
         }
       )
       .then((data) => data ?? null);
@@ -34,7 +32,7 @@ export const useGeocoder = () => {
           return { lat, lng };
         },
         (error: any) => {
-          setError(true);
+          setError(true, error.message);
         }
       )
       .then((data) => data ?? null);

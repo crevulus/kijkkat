@@ -41,19 +41,17 @@ export const useUserStore = create<UserStateType>((set) => ({
 
 type ErrorStateType = {
   error: boolean;
-  setError: (error: boolean) => void;
   errorMessage: string;
-  setErrorMessage: (isSignedIn: string) => void;
+  setError: (error: boolean, errorMessage?: string) => void;
 };
 
 const defaultErrorMessage = "Oops! Something went wrong.";
 
 export const useErrorStore = create<ErrorStateType>((set) => ({
   error: false,
-  setError: (error) => set((state) => ({ ...state, error })),
   errorMessage: defaultErrorMessage,
-  setErrorMessage: (message = defaultErrorMessage) =>
-    set((state) => ({ ...state, errorMessage: message })),
+  setError: (error, errorMessage = defaultErrorMessage) =>
+    set((state) => ({ ...state, error, errorMessage })),
 }));
 
 export interface TagsType {

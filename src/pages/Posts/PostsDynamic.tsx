@@ -46,7 +46,6 @@ const CustomisedIconButton = styled(IconButton)(({ theme }) => ({
 // TODO: Error handling
 export function PostsDynamic({ id }: { id: string }) {
   const setError = useErrorStore((state) => state.setError);
-  const setErrorMessage = useErrorStore((state) => state.setErrorMessage);
   const tagsDocData = useSiteDataStore((state) => state.tagsDocData);
 
   const [data, setData] = useState<DocumentData>();
@@ -116,8 +115,7 @@ export function PostsDynamic({ id }: { id: string }) {
       return;
     }
     likePost({ postId: id }).catch((error) => {
-      setError(true);
-      setErrorMessage(error.message);
+      setError(true, error.message);
     });
     setLoadingLiked(false);
   };
