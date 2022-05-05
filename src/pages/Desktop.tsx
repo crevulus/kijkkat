@@ -6,7 +6,7 @@ import { desktopStyles, StyledDesktopImg } from "./Pages.styles";
 
 export function Desktop(): ReactElement {
   return (
-    <Container sx={desktopStyles.container}>
+    <Container sx={desktopStyles.container} disableGutters>
       <Typography variant="h3">Kijkkat</Typography>
       <Box sx={desktopStyles.imgBox}>
         <StyledDesktopImg

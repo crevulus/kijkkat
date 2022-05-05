@@ -13,6 +13,7 @@ export const addStyles = {
 
 export const desktopStyles = {
   container: {
+    maxWidth: "none !important",
     padding: 2,
     gap: 4,
     display: "flex",
