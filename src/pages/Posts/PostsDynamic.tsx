@@ -193,7 +193,7 @@ export function PostsDynamic({ id }: { id: string }) {
         <CardActions sx={postsStyles.postsDynamic.cardActions}>
           <Box sx={postsStyles.postsDynamic.box}>
             {loadingLiked ? (
-              <CircularProgress />
+              <CircularProgress color="secondary" />
             ) : (
               <>
                 <CustomisedIconButton

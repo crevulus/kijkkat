@@ -35,6 +35,7 @@
 - [x] Landing page for desktop
 - [ ] Larger loading screen for home page db call
 - [ ] Real time location tracking
+- [ ] Attributions: Device Mockup created from <a href="https://deviceframes.com/templates/iphone-13">iPhone mockups</a>
 
 ### TODO: Design
 

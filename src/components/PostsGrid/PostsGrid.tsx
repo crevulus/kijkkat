@@ -1,6 +1,12 @@
 import React, { ReactElement, useEffect, useState } from "react";
 
-import { Button, ImageList } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Container,
+  ImageList,
+  Typography,
+} from "@mui/material";
 
 import PostsGridItem from "./PostsGridItem";
 import { DocsType } from "../../pages/Home";
@@ -27,7 +33,8 @@ export function PostsGrid({
   const [result, loading, loadError] = useCollection(q);
 
   useEffect(() => {
-    if (docs && docsLength && docs.length === docsLength) {
+    // only applicable to posts grids with a load more button
+    if (loadMoreCallback && docs && docsLength && docs.length === docsLength) {
       setError(true, "No more posts to load!");
       setDisableLoadMore(true);
     } else {
@@ -48,7 +55,7 @@ export function PostsGrid({
       setError(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadError]);
+  }, [loadError, loading]);
 
   const handleLoadMore = () => {
     if (loadMoreCallback) {
@@ -60,19 +67,30 @@ export function PostsGrid({
 
   return (
     <>
-      <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
-        {docs.map((item) => (
-          <PostsGridItem key={item.id} item={item} />
-        ))}
-      </ImageList>
-      {loadMoreCallback && (
-        <Button
-          variant="contained"
-          onClick={handleLoadMore}
-          disabled={disableLoadMore}
-        >
-          Load More
-        </Button>
+      {loading ? (
+        <Container>
+          <CircularProgress color="secondary" sx={styles.container} />
+          <Typography variant="h6" color="primary">
+            Fetching some cat pictures for you...
+          </Typography>
+        </Container>
+      ) : (
+        <>
+          <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
+            {docs.map((item) => (
+              <PostsGridItem key={item.id} item={item} />
+            ))}
+          </ImageList>
+          {loadMoreCallback && (
+            <Button
+              variant="contained"
+              onClick={handleLoadMore}
+              disabled={disableLoadMore}
+            >
+              Load More
+            </Button>
+          )}
+        </>
       )}
     </>
   );

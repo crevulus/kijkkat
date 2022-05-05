@@ -11,7 +11,7 @@ export function FullScreenLoadingSpinner({
 }: FullScreenLoadingSpinnerPropsType): ReactElement {
   return (
     <Backdrop sx={styles.backdrop} open={loading}>
-      <CircularProgress />
+      <CircularProgress color="secondary" />
     </Backdrop>
   );
 }
