@@ -26,6 +26,11 @@ import {
 } from "./data/store";
 import { firebaseApp } from "./firebase";
 
+import { NavigationRoutes } from "./data/enums";
+import { BottomNav, ErrorSnackbar } from "./components";
+import { InstallButton } from "./components/utils/InstallButton";
+import { isDesktop } from "./utils/deviceUtils";
+
 import { Desktop } from "./pages/Desktop";
 import { Home } from "./pages/Home";
 import { Map } from "./pages/Map";
@@ -33,12 +38,9 @@ import { Account } from "./pages/Account";
 import { Add } from "./pages/Add";
 import { Posts } from "./pages/Posts/Posts";
 import { NotFound } from "./pages/NotFound";
+import { Miscellaneous } from "./pages/Miscellaneous";
 
-import { NavigationRoutes } from "./data/enums";
-import { BottomNav, ErrorSnackbar } from "./components";
-import { InstallButton } from "./components/utils/InstallButton";
 import styles from "./App.styles";
-import { isDesktop } from "./utils/deviceUtils";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -121,6 +123,10 @@ function App() {
               <Route path={NavigationRoutes.Posts} element={<Posts />} />
               <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
               <Route path={NavigationRoutes.Account} element={<Account />} />
+              <Route
+                path={NavigationRoutes.Miscellaneous}
+                element={<Miscellaneous />}
+              />
               <Route path={NavigationRoutes.NotFound} element={<NotFound />} />
             </Routes>
           </Container>

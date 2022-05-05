@@ -97,6 +97,11 @@ export const mapStyles = {
   container: { height: "100%" },
 };
 
+export const miscellaneousStyles = {
+  container: { p: 2 },
+  header: { mt: 2 },
+};
+
 export const notFoundStyles = {
   grid: { p: 2, alignItems: "center", justifyContent: "center" },
 };

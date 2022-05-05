@@ -33,9 +33,9 @@
 - [x] Redirect/alert on like if user is not logged in
 - [x] Store geocoded address as string so don't need to geocode every time
 - [x] Landing page for desktop
-- [ ] Larger loading screen for home page db call
+- [x] Larger loading screen for home page db call
 - [ ] Real time location tracking
-- [ ] Attributions: Device Mockup created from <a href="https://deviceframes.com/templates/iphone-13">iPhone mockups</a>
+- [x] Attributions: Device Mockup created from <a href="https://deviceframes.com/templates/iphone-13">iPhone mockups</a>
 
 ### TODO: Design
 
