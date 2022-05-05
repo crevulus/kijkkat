@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Container } from "@mui/material";
 import { primaryColor, secondaryColor } from "../styles/theme";
 
 export const accountStyles = {
@@ -29,7 +30,43 @@ export const desktopStyles = {
   icon: { height: "auto" },
 };
 
-export const StyledDesktopImg = styled("img")`
+export const StyledContainer = styled("div")`
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+`;
+
+export const StyledDesktopCTAContainer = styled(Container)`
+  @media only screen and (max-width: 1440px) {
+    padding-right: 240px;
+  }
+`;
+
+const StyledDesktopImg = styled("img")`
+  position: absolute;
+  top: 50%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  max-height: 800px;
+  overflow-x: hidden;
+`;
+
+export const StyledDesktopImgPrimary = styled(StyledDesktopImg)`
+  @media only screen and (min-width: 1440px) {
+    left: 80%;
+  }
+`;
+
+export const StyledDesktopImgSecondary = styled(StyledDesktopImg)`
+  display: none;
+  @media only screen and (min-width: 1440px) {
+    left: 20%;
+    display: block;
+  }
+`;
+
+export const StyledDesktopQRCode = styled("img")`
   max-width: 100%;
   border-radius: 20px;
 `;
