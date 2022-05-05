@@ -23,8 +23,8 @@
 - [x] comment functions and map
 - [x] consistent styling (css or sx, preferably not both)
 - [x] Add perf/crashlytics
-- [ ] Share via navigator
-- [ ] Install button
+- [x] Share via navigator
+- [x] Install button
 - [ ] Cookie banner
 - [x] Self-host Google Fonts
 - [x] Static map centering
@@ -32,7 +32,10 @@
 - [ ] Refactor map to always use url param coords, not `chosenLocation`
 - [x] Redirect/alert on like if user is not logged in
 - [x] Store geocoded address as string so don't need to geocode every time
-- [ ] Landing page for desktop
+- [x] Landing page for desktop
+- [ ] Larger loading screen for home page db call
+- [ ] Real time location tracking
+- [ ] Attributions: Device Mockup created from <a href="https://deviceframes.com/templates/iphone-13">iPhone mockups</a>
 
 ### TODO: Design
 

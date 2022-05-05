@@ -69,6 +69,11 @@
       url("../assets/fonts/poppins-v20-latin-700italic.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
+:root {
+  --primary: #00bcd4;
+  --secondary: #ba9fe3;
+}
+
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -89,7 +94,7 @@ svg {
 
 /* map style overrides */
 .search-button {
-  background-color: #ba9fe3;
+  background-color: var(--secondary);
   border: none;
   color: #fff;
   border-radius: 20px;
@@ -111,4 +116,34 @@ svg {
   background-color: #f5f5f5;
   border-color: #f5f5f5;
   color: #bdbdbd;
+}
+
+.info-window-image {
+  width: 100px;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+/* google map class overrides */
+.gm-style .gm-style-iw-c,
+.gm-style .gm-style-iw-d {
+  overflow: hidden !important;
+  padding: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-top: 0;
+  background: var(--primary) !important;
+}
+
+.gm-style .gm-style-iw-t::after {
+  background: var(--primary) !important;
+}
+
+.gm-ui-hover-effect {
+  opacity: 1 !important;
+}
+
+.gm-ui-hover-effect span {
+  background-color: white;
 }

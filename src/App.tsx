@@ -26,6 +26,7 @@ import {
 } from "./data/store";
 import { firebaseApp } from "./firebase";
 
+import { Desktop } from "./pages/Desktop";
 import { Home } from "./pages/Home";
 import { Map } from "./pages/Map";
 import { Account } from "./pages/Account";
@@ -37,6 +38,7 @@ import { NavigationRoutes } from "./data/enums";
 import { BottomNav, ErrorSnackbar } from "./components";
 import { InstallButton } from "./components/utils/InstallButton";
 import styles from "./App.styles";
+import { isDesktop } from "./utils/deviceUtils";
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();
@@ -83,6 +85,16 @@ function App() {
       text: "Explore the city with cats",
     });
   };
+
+  if (isDesktop()) {
+    return (
+      <ThemeProvider theme={light}>
+        <div className="App">
+          <Desktop />
+        </div>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={light}>

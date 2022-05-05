@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 
 import { firebaseApp } from "../../firebase";
-import { createImage, createMapButton } from "../../utils/mapUtils";
+import { createMapButton, createMarker } from "../../utils/mapUtils";
 import { useErrorStore, useGeographicStore } from "../../data/store";
 import { CoordsType } from "../../pages/Map";
 import { NavigationRoutes } from "../../data/enums";
@@ -98,25 +98,9 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
         if (matchingDocs.length === 0) {
           setError(true, "No cats found within 5km");
         }
-        matchingDocs.map((data) => {
+        matchingDocs.map(async (data) => {
           // apply markers to map if existing in geohash bounds
-          const lat = data.location.latitude;
-          const lng = data.location.longitude;
-          const marker = new google.maps.Marker({
-            position: { lat, lng },
-            map: mapObject,
-            animation: google.maps.Animation.DROP,
-          });
-          const infowindow = new google.maps.InfoWindow({
-            content: createImage(data.imageUrl),
-          });
-          marker.addListener("click", () => {
-            infowindow.open({
-              anchor: marker,
-              map: mapObject,
-              shouldFocus: true,
-            });
-          });
+          const [marker, infowindow] = await createMarker(data, mapObject);
           infowindow.addListener("domready", () => {
             const image = document.querySelector(".info-window-image");
             image?.addEventListener("click", () => {
