@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { primaryColor, secondaryColor } from "../styles/theme";
 
 export const accountStyles = {
@@ -9,6 +10,28 @@ export const addStyles = {
   rootContainer: { mt: 2, mb: 2, width: "100%" },
   dialogActions: { justifyContent: "center" },
 };
+
+export const desktopStyles = {
+  container: {
+    padding: 2,
+    gap: 4,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    backgroundColor: "primary.main",
+    color: "white",
+  },
+  imgBox: { width: 400 },
+  ctaBox: { display: "flex", gap: 2 },
+  icon: { height: "auto" },
+};
+
+export const StyledDesktopImg = styled("img")`
+  max-width: 100%;
+  border-radius: 20px;
+`;
 
 export const homeStyles = {
   container: { p: 2 },
