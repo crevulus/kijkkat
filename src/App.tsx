@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDocumentData } from "react-firebase-hooks/firestore";
@@ -31,16 +31,31 @@ import { BottomNav, ErrorSnackbar } from "./components";
 import { InstallButton } from "./components/utils/InstallButton";
 import { isDesktop } from "./utils/deviceUtils";
 
-import { Desktop } from "./pages/Desktop";
 import { Home } from "./pages/Home";
-import { Map } from "./pages/Map";
-import { Account } from "./pages/Account";
-import { Add } from "./pages/Add";
-import { Posts } from "./pages/Posts/Posts";
-import { NotFound } from "./pages/NotFound";
-import { Miscellaneous } from "./pages/Miscellaneous";
 
 import styles from "./App.styles";
+
+const Account = lazy(async () => ({
+  default: (await import("./pages/Account")).Account,
+}));
+const Add = lazy(async () => ({
+  default: (await import("./pages/Add")).Add,
+}));
+const Desktop = lazy(async () => ({
+  default: (await import("./pages/Desktop")).Desktop,
+}));
+const Map = lazy(async () => ({
+  default: (await import("./pages/Map")).Map,
+}));
+const Miscellaneous = lazy(async () => ({
+  default: (await import("./pages/Miscellaneous")).Miscellaneous,
+}));
+const NotFound = lazy(async () => ({
+  default: (await import("./pages/NotFound")).NotFound,
+}));
+const Posts = lazy(async () => ({
+  default: (await import("./pages/Posts/Posts")).Posts,
+}));
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore();

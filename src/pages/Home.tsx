@@ -13,7 +13,7 @@ import { Box, Container, Icon, Typography } from "@mui/material";
 import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
 import KijkkatLogo from "../assets/icons/kijkkat-violet.svg";
-import { homeStyles } from "./Pages.styles";
+import { homeStyles, StyledLogo } from "./Pages.styles";
 
 const db = getFirestore(firebaseApp);
 
@@ -37,7 +37,7 @@ export function Home() {
     <Container maxWidth="sm" sx={homeStyles.container}>
       <Box sx={homeStyles.box}>
         <Icon sx={homeStyles.icon}>
-          <img src={KijkkatLogo} alt="Kijkkat Logo" />
+          <StyledLogo src={KijkkatLogo} alt="Kijkkat Logo" />
         </Icon>
         <Typography variant="h2" sx={homeStyles.typography}>
           Explore the city with cats

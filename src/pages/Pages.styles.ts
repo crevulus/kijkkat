@@ -93,6 +93,10 @@ export const homeStyles = {
   },
 };
 
+export const StyledLogo = styled("img")`
+  max-width: 100%;
+`;
+
 export const mapStyles = {
   container: { height: "100%" },
 };
