@@ -66,30 +66,28 @@ export function PostsGrid({
 
   return (
     <>
-      <>
-        <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
-          {docs.map((item) => (
-            <PostsGridItem key={item.id} item={item} />
-          ))}
-        </ImageList>
-        {(loading || loadMore) && (
-          <Container sx={styles.container}>
-            <CircularProgress color="secondary" />
-            <Typography variant="h6" color="primary">
-              Fetching some cat pictures for you...
-            </Typography>
-          </Container>
-        )}
-        {loadMoreCallback && (
-          <Button
-            variant="contained"
-            onClick={handleLoadMore}
-            disabled={disableLoadMore}
-          >
-            Load More
-          </Button>
-        )}
-      </>
+      <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
+        {docs.map((item) => (
+          <PostsGridItem key={item.id} item={item} />
+        ))}
+      </ImageList>
+      {(loading || loadMore) && (
+        <Container sx={styles.container}>
+          <CircularProgress color="secondary" />
+          <Typography variant="h6" color="primary">
+            Fetching some cat pictures for you...
+          </Typography>
+        </Container>
+      )}
+      {loadMoreCallback && (
+        <Button
+          variant="contained"
+          onClick={handleLoadMore}
+          disabled={disableLoadMore}
+        >
+          Load More
+        </Button>
+      )}
     </>
   );
 }

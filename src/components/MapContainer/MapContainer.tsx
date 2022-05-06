@@ -24,6 +24,7 @@ import { secondaryColor } from "../../styles/theme";
 
 type MapContainerProps = {
   coords: CoordsType | null;
+  zoom: number;
   forceTriggerQuery?: boolean;
 };
 
@@ -32,12 +33,16 @@ const DEFAULT_RADIUS = 5000; // in metres
 
 const db = getFirestore(firebaseApp);
 
-export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
+export function MapContainer({
+  coords,
+  zoom,
+  forceTriggerQuery,
+}: MapContainerProps) {
   const setError = useErrorStore((state) => state.setError);
   const setMapLoaded = useGeographicStore((state) => state.setMapLoaded);
   const googlemapRef = useRef(null);
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
-  const [center, setCenter] = useState(AMSTERDAM_COORDS);
+  const [center, setCenter] = useState(coords || AMSTERDAM_COORDS);
   const [triggerQuery, setTriggerQuery] = useState(forceTriggerQuery);
 
   const navigate = useNavigate();
@@ -51,6 +56,13 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
       setCenter(coords);
     }
   }, [coords, mapObject]);
+
+  useEffect(() => {
+    if (mapObject) {
+      mapObject.setZoom(zoom);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoom]);
 
   const performGeoQuery = () => {
     if (!mapObject) {
@@ -113,6 +125,8 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
       });
   };
 
+  console.log(zoom);
+
   useEffect(() => {
     // set triggerQuery prop because we don't want to trigger on every map move
     if (triggerQuery) {
@@ -131,7 +145,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
       loader.load().then(() => {
         const initialView = {
           center,
-          zoom: 12,
+          zoom,
         };
         const google = window.google;
         if (googlemapRef.current) {
@@ -182,6 +196,7 @@ export function MapContainer({ coords, forceTriggerQuery }: MapContainerProps) {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setMapLoaded, setMapObject, mapObject, googlemapRef, center]);
 
   return <div ref={googlemapRef} style={{ height: "100%" }} />;

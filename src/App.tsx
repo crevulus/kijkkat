@@ -1,4 +1,4 @@
-import { useEffect, lazy } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDocumentData } from "react-firebase-hooks/firestore";
@@ -27,7 +27,11 @@ import {
 import { firebaseApp } from "./firebase";
 
 import { NavigationRoutes } from "./data/enums";
-import { BottomNav, ErrorSnackbar } from "./components";
+import {
+  BottomNav,
+  ErrorSnackbar,
+  FullScreenLoadingSpinner,
+} from "./components";
 import { InstallButton } from "./components/utils/InstallButton";
 import { isDesktop } from "./utils/deviceUtils";
 
@@ -131,19 +135,27 @@ function App() {
             </Toolbar>
           </AppBar>
           <Container sx={styles.container} disableGutters>
-            <Routes>
-              <Route path={NavigationRoutes.Home} element={<Home />} />
-              <Route path={NavigationRoutes.Map} element={<Map />} />
-              <Route path={NavigationRoutes.Add} element={<Add />} />
-              <Route path={NavigationRoutes.Posts} element={<Posts />} />
-              <Route path={NavigationRoutes.PostsDynamic} element={<Posts />} />
-              <Route path={NavigationRoutes.Account} element={<Account />} />
-              <Route
-                path={NavigationRoutes.Miscellaneous}
-                element={<Miscellaneous />}
-              />
-              <Route path={NavigationRoutes.NotFound} element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<FullScreenLoadingSpinner loading={true} />}>
+              <Routes>
+                <Route path={NavigationRoutes.Home} element={<Home />} />
+                <Route path={NavigationRoutes.Map} element={<Map />} />
+                <Route path={NavigationRoutes.Add} element={<Add />} />
+                <Route path={NavigationRoutes.Posts} element={<Posts />} />
+                <Route
+                  path={NavigationRoutes.PostsDynamic}
+                  element={<Posts />}
+                />
+                <Route path={NavigationRoutes.Account} element={<Account />} />
+                <Route
+                  path={NavigationRoutes.Miscellaneous}
+                  element={<Miscellaneous />}
+                />
+                <Route
+                  path={NavigationRoutes.NotFound}
+                  element={<NotFound />}
+                />
+              </Routes>
+            </Suspense>
           </Container>
           <BottomNav />
         </div>

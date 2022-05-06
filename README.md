@@ -29,7 +29,7 @@
 - [x] Self-host Google Fonts
 - [x] Static map centering
 - [x] Move tags call to App and store in state (EDIT: Still need to do it in create post)
-- [ ] Refactor map to always use url param coords, not `chosenLocation`
+- [x] Refactor map to always use url param coords, not `chosenLocation`
 - [x] Redirect/alert on like if user is not logged in
 - [x] Store geocoded address as string so don't need to geocode every time
 - [x] Landing page for desktop

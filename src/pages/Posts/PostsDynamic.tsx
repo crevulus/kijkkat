@@ -109,7 +109,8 @@ export function PostsDynamic({ id }: { id: string }) {
   const handleLocationClick = () => {
     if (data?.location) {
       const params = `lat=${data.location.latitude}&lng=${data.location.longitude}`;
-      navigate(`${NavigationRoutes.Map}?${params}`);
+      const zoom = 15;
+      navigate(`${NavigationRoutes.Map}?${params}&zoom=${zoom}`);
     }
   };
 

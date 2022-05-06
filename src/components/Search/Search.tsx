@@ -3,18 +3,14 @@ import parse from "autosuggest-highlight/parse";
 import throttle from "lodash.throttle";
 import { useNavigate } from "react-router-dom";
 
-// TODO: named imports
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import { Box, TextField, Autocomplete, Grid, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 
 import { NavigationRoutes } from "../../data/enums";
 import { useGeographicStore } from "../../data/store";
 
 import styles, { StyledSpan } from "./Search.styles";
+import { useGeocoder } from "../../hooks/useGeocoder";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -57,6 +53,7 @@ export function Search({ redirect }: SearchPropsType) {
     (state) => state.setChosenLocation
   );
   const mapLoaded = useGeographicStore((state) => state.mapLoaded);
+  const { geocodeCoordsFromAddress } = useGeocoder();
 
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
@@ -134,12 +131,13 @@ export function Search({ redirect }: SearchPropsType) {
     };
   }, [chosenLocation, inputValue, fetch]);
 
-  const handleSelectPlace = (newValue: PlaceType | null) => {
+  const handleSelectPlace = async (newValue: PlaceType | null) => {
     if (newValue) {
       setOptions(newValue ? [newValue, ...options] : options);
-      setChosenLocation(newValue);
-      if (redirect) {
-        navigate(NavigationRoutes.Map);
+      const coords = await geocodeCoordsFromAddress(newValue.description);
+      if (redirect && coords) {
+        const params = `lat=${coords.lat}&lng=${coords.lng}`;
+        navigate(`${NavigationRoutes.Map}?${params}`);
       }
     } else {
       setChosenLocation(null);
