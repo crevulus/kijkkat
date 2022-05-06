@@ -5,6 +5,7 @@ export enum NavigationRoutes {
   Posts = "/posts",
   PostsDynamic = "/posts/:id",
   Account = "/account",
+  Miscellaneous = "/misc",
   NotFound = "*",
 }
 
@@ -14,6 +15,7 @@ export enum PageNames {
   Add = "Add",
   Posts = "Posts",
   Account = "Account",
+  Miscellaneous = "Miscellaneous",
 }
 
 export enum RatingCategories {

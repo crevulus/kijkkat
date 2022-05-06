@@ -21,7 +21,7 @@ export function PostsDefault() {
   const q = query(
     collection(db, "posts"),
     orderBy("likes", "desc"),
-    limit(count * 2)
+    limit(count * 12)
   );
 
   const handleLoadMoreImages = () => {

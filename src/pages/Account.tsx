@@ -44,7 +44,7 @@ export function Account() {
     collection(db, "posts"),
     where("userId", "==", auth.currentUser?.uid || ""),
     orderBy("likes", "desc"),
-    limit(count * 2)
+    limit(count * 12)
   );
 
   const location = useLocation();
