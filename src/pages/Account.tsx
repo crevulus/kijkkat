@@ -38,7 +38,6 @@ export function Account() {
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const setUser = useUserStore((state) => state.setUser);
   const [count, setCount] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   const q = query(
     collection(db, "posts"),
@@ -66,10 +65,6 @@ export function Account() {
     setCount((count) => count + 1);
   };
 
-  const handleLoading = (loadingPosts: boolean) => {
-    setLoading(loadingPosts);
-  };
-
   const amendedUiConfig = {
     ...uiConfig,
     callbacks: {
@@ -82,9 +77,7 @@ export function Account() {
     },
   };
 
-  return loading ? (
-    <FullScreenLoadingSpinner loading={loading} />
-  ) : (
+  return (
     <Container sx={accountStyles.container}>
       <Typography variant="h6" color="primary" gutterBottom>
         Your account
@@ -99,11 +92,7 @@ export function Account() {
             <Typography variant="h6" color="primary" gutterBottom>
               Cats you've kijk'd
             </Typography>
-            <PostsGrid
-              q={q}
-              loadMoreCallback={handleLoadMoreImages}
-              handleLoading={handleLoading}
-            />
+            <PostsGrid q={q} loadMoreCallback={handleLoadMoreImages} />
           </Box>
         </>
       )}
