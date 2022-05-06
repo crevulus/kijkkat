@@ -134,6 +134,7 @@ export function Search({ redirect }: SearchPropsType) {
   const handleSelectPlace = async (newValue: PlaceType | null) => {
     if (newValue) {
       setOptions(newValue ? [newValue, ...options] : options);
+      setChosenLocation(newValue);
       const coords = await geocodeCoordsFromAddress(newValue.description);
       if (redirect && coords) {
         const params = `lat=${coords.lat}&lng=${coords.lng}`;
