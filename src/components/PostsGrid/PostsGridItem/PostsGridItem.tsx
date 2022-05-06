@@ -63,7 +63,7 @@ export function PostsGridItem({ item }: any): ReactElement {
         <StyledImage
           src={webpValue || jpegValue}
           srcSet={jpegValue}
-          alt={item.title}
+          alt="A cat was kijk'd!"
           loading="lazy"
           onClick={handleClick}
         />

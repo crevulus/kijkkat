@@ -58,7 +58,7 @@ export function MapContainer({
   }, [coords, mapObject]);
 
   useEffect(() => {
-    if (mapObject) {
+    if (mapObject && zoom !== mapObject.getZoom()) {
       mapObject.setZoom(zoom);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,8 +124,6 @@ export function MapContainer({
         });
       });
   };
-
-  console.log(zoom);
 
   useEffect(() => {
     // set triggerQuery prop because we don't want to trigger on every map move
