@@ -77,7 +77,7 @@ export function LocationPicker({
         </CardContent>
       )}
       {checkedCurrentLocation && !wantsCurrentLocation && !currentAddress && (
-        <SearchBox redirect={false} />
+        <SearchBox redirect={false} label="Where did you Kijkkat?" />
       )}
     </Card>
   );

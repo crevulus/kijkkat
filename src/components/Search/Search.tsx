@@ -45,9 +45,10 @@ export interface PlaceType {
 
 interface SearchPropsType {
   redirect: boolean;
+  label?: string;
 }
 
-export function Search({ redirect }: SearchPropsType) {
+export function Search({ redirect, label = "Search" }: SearchPropsType) {
   const chosenLocation = useGeographicStore((state) => state.chosenLocation);
   const setChosenLocation = useGeographicStore(
     (state) => state.setChosenLocation
@@ -134,6 +135,7 @@ export function Search({ redirect }: SearchPropsType) {
   const handleSelectPlace = async (newValue: PlaceType | null) => {
     if (newValue) {
       setOptions(newValue ? [newValue, ...options] : options);
+      setChosenLocation(newValue);
       const coords = await geocodeCoordsFromAddress(newValue.description);
       if (redirect && coords) {
         const params = `lat=${coords.lat}&lng=${coords.lng}`;
@@ -165,7 +167,7 @@ export function Search({ redirect }: SearchPropsType) {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Search for cats" fullWidth />
+        <TextField {...params} label={label} fullWidth />
       )}
       renderOption={(props, option) => {
         const matches =
