@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   getFirestore,
   collection,
@@ -10,7 +9,7 @@ import {
 
 import { Box, Container, Icon, Typography } from "@mui/material";
 
-import { FullScreenLoadingSpinner, PostsGrid, Search } from "../components";
+import { PostsGrid, Search } from "../components";
 import { firebaseApp } from "../firebase";
 import KijkkatLogo from "../assets/icons/kijkkat-violet.svg";
 import { homeStyles, StyledLogo } from "./Pages.styles";
@@ -23,17 +22,9 @@ export interface DocsType {
 }
 
 export function Home() {
-  const [loading, setLoading] = useState(false);
-
   const q = query(collection(db, "posts"), orderBy("time", "desc"), limit(12));
 
-  const handleLoading = (loadingPosts: boolean) => {
-    setLoading(loadingPosts);
-  };
-
-  return loading ? (
-    <FullScreenLoadingSpinner loading={loading} />
-  ) : (
+  return (
     <Container maxWidth="sm" sx={homeStyles.container}>
       <Box sx={homeStyles.box}>
         <Icon sx={homeStyles.icon}>
@@ -44,7 +35,7 @@ export function Home() {
         </Typography>
       </Box>
       <Search redirect />
-      <PostsGrid q={q} handleLoading={handleLoading} />
+      <PostsGrid q={q} />
     </Container>
   );
 }
