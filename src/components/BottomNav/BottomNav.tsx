@@ -4,7 +4,7 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import CameraIcon from "@mui/icons-material/Camera";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PetsIcon from "@mui/icons-material/Pets";
 import FaceIcon from "@mui/icons-material/Face";
 
@@ -52,7 +52,7 @@ export function BottomNav(): ReactElement {
       />
       <CustomisedBottomNavigationAction
         label={PageNames.Add}
-        icon={<CameraIcon />}
+        icon={<AddCircleOutlineIcon />}
         component={RouterLink}
         to={NavigationRoutes.Add}
       />

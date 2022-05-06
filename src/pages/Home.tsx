@@ -34,7 +34,7 @@ export function Home() {
           Explore the city with cats
         </Typography>
       </Box>
-      <Search redirect />
+      <Search redirect label="Search for cats" />
       <PostsGrid q={q} />
     </Container>
   );
