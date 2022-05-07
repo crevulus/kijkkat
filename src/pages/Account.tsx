@@ -46,6 +46,12 @@ export function Account() {
     limit(count * 12)
   );
 
+  const q2 = query(
+    collection(db, "users", auth.currentUser?.uid || "", "likes"),
+    orderBy("time", "desc"),
+    limit(count * 12)
+  );
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -93,6 +99,12 @@ export function Account() {
               Cats you've kijk'd
             </Typography>
             <PostsGrid q={q} loadMoreCallback={handleLoadMoreImages} />
+          </Box>
+          <Box sx={accountStyles.box}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Cats you've liked
+            </Typography>
+            <PostsGrid q={q2} loadMoreCallback={handleLoadMoreImages} />
           </Box>
         </>
       )}

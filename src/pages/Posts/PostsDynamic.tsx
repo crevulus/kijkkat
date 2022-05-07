@@ -60,6 +60,9 @@ export function PostsDynamic({ id }: { id: string }) {
   const [tags, setTags] = useState<TagsType[]>([]);
 
   const [result, loading] = useDocument(doc(db, "posts", id));
+  const [likesData] = useDocument(
+    doc(db, "users", auth.currentUser?.uid ?? "", "likes", id)
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,11 +87,11 @@ export function PostsDynamic({ id }: { id: string }) {
     if (!data) {
       return;
     }
-    if (!data.likes || data.likedBy.length < 1) {
+    if (!data.likes || !likesData) {
       return;
     }
-    setLiked(data.likedBy.includes(auth.currentUser?.uid));
-  }, [data]);
+    setLiked(likesData?.exists());
+  }, [data, likesData]);
 
   const getDate = () => {
     if (!date) {
