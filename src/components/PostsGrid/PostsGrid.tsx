@@ -33,7 +33,9 @@ export function PostsGrid({
 
   useEffect(() => {
     // only applicable to posts grids with a load more button
-    if (loadMoreCallback && docs && docsLength && docs.length === docsLength) {
+    const hasSameLength =
+      loadMoreCallback && docs && docsLength && docs.length === docsLength;
+    if (hasSameLength) {
       setError(true, "No more posts to load!");
       setDisableLoadMore(true);
     } else {
@@ -66,20 +68,25 @@ export function PostsGrid({
 
   return (
     <>
-      <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
-        {docs.map((item) => (
-          <PostsGridItem key={item.id} item={item} />
-        ))}
-      </ImageList>
+      {!!docsLength && (
+        <ImageList sx={styles.imageList} cols={3} rowHeight="auto">
+          {docs.map((item) => (
+            <PostsGridItem key={item.id} item={item} />
+          ))}
+        </ImageList>
+      )}
+      {!docsLength && !loading && !loadMore && (
+        <Typography variant="body1">No cats yet...</Typography>
+      )}
       {(loading || loadMore) && (
         <Container sx={styles.container}>
           <CircularProgress color="secondary" />
-          <Typography variant="h6" color="primary">
+          <Typography variant="body1">
             Fetching some cat pictures for you...
           </Typography>
         </Container>
       )}
-      {loadMoreCallback && (
+      {!!loadMoreCallback && !!docsLength && (
         <Button
           variant="contained"
           onClick={handleLoadMore}

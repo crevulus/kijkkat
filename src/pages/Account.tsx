@@ -37,13 +37,20 @@ type LocationStateType = {
 export function Account() {
   const isSignedIn = useUserStore((state) => state.isSignedIn);
   const setUser = useUserStore((state) => state.setUser);
-  const [count, setCount] = useState(1);
+  const [kijkdCount, setKijkdCount] = useState(1);
+  const [likedCount, setLikedCount] = useState(1);
 
   const q = query(
     collection(db, "posts"),
-    where("userId", "==", auth.currentUser?.uid || ""),
+    where("userId", "==", auth.currentUser?.uid ?? "null"),
     orderBy("likes", "desc"),
-    limit(count * 12)
+    limit(kijkdCount * 12)
+  );
+
+  const q2 = query(
+    collection(db, "users", auth.currentUser?.uid ?? "null", "likes"),
+    orderBy("time", "desc"),
+    limit(likedCount * 12)
   );
 
   const location = useLocation();
@@ -61,8 +68,12 @@ export function Account() {
     }
   };
 
-  const handleLoadMoreImages = () => {
-    setCount((count) => count + 1);
+  const handleLoadMoreKijkdImages = () => {
+    setKijkdCount((count) => count + 1);
+  };
+
+  const handleLoadMoreLikedImages = () => {
+    setLikedCount((count) => count + 1);
   };
 
   const amendedUiConfig = {
@@ -92,7 +103,13 @@ export function Account() {
             <Typography variant="h6" color="primary" gutterBottom>
               Cats you've kijk'd
             </Typography>
-            <PostsGrid q={q} loadMoreCallback={handleLoadMoreImages} />
+            <PostsGrid q={q} loadMoreCallback={handleLoadMoreKijkdImages} />
+          </Box>
+          <Box sx={accountStyles.box}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Cats you've liked
+            </Typography>
+            <PostsGrid q={q2} loadMoreCallback={handleLoadMoreLikedImages} />
           </Box>
         </>
       )}

@@ -144,9 +144,19 @@ exports.likePost = functions
     }
     const batch = admin.firestore().batch();
     const postRef = admin.firestore().collection("posts").doc(data.postId);
+    const likesRef = admin
+      .firestore()
+      .collection("users")
+      .doc(context.auth.uid)
+      .collection("likes")
+      .doc(data.postId);
     batch.update(postRef, {
       likes: admin.firestore.FieldValue.increment(1),
-      likedBy: admin.firestore.FieldValue.arrayUnion(context.auth.uid),
+    });
+    batch.set(likesRef, {
+      time: admin.firestore.Timestamp.now(),
+      thumbnailUrlWebpSmall: data.thumbnailUrlWebpSmall,
+      thumbnailUrlJpegSmall: data.thumbnailUrlJpegSmall,
     });
     return batch.commit();
   });
