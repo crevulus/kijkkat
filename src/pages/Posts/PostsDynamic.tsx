@@ -61,7 +61,7 @@ export function PostsDynamic({ id }: { id: string }) {
 
   const [result, loading] = useDocument(doc(db, "posts", id));
   const [likesData] = useDocument(
-    doc(db, "users", auth.currentUser?.uid ?? "", "likes", id)
+    doc(db, "users", auth.currentUser?.uid ?? "null", "likes", id)
   );
   const navigate = useNavigate();
 
@@ -124,11 +124,15 @@ export function PostsDynamic({ id }: { id: string }) {
       setShowAlert(true);
       return;
     }
-    if (data && data.likedBy.includes(auth.currentUser?.uid)) {
+    if (data && likesData?.exists()) {
       setLoadingLiked(false);
       return;
     }
-    await likePost({ postId: id }).catch((error) => {
+    await likePost({
+      postId: id,
+      thumbnailUrlWebpSmall: data?.thumbnailUrlWebpSmall,
+      thumbnailUrlJpegSmall: data?.thumbnailUrlJpegSmall,
+    }).catch((error) => {
       setError(true, error.message);
     });
     setLoadingLiked(false);

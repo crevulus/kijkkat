@@ -202,7 +202,6 @@ export const CreatePost = ({
         thumbnailUrlWebpLarge,
         thumbnailUrlJpegLarge,
         likes: 0,
-        likedBy: [],
       };
       await setDoc(doc(db, "posts", uuid), post)
         .then(() => navigate(`${NavigationRoutes.Posts}/${uuid}`))

@@ -152,9 +152,8 @@ exports.likePost = functions
       .doc(data.postId);
     batch.update(postRef, {
       likes: admin.firestore.FieldValue.increment(1),
-      likedBy: admin.firestore.FieldValue.arrayUnion(context.auth.uid),
     });
-    batch.update(likesRef, {
+    batch.set(likesRef, {
       time: admin.firestore.Timestamp.now(),
       thumbnailUrlWebpSmall: data.thumbnailUrlWebpSmall,
       thumbnailUrlJpegSmall: data.thumbnailUrlJpegSmall,
