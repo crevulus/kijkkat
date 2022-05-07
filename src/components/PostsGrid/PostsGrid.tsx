@@ -25,9 +25,9 @@ export function PostsGrid({
 }: PostsGridPropsType): ReactElement {
   const setError = useErrorStore((state) => state.setError);
   const [disableLoadMore, setDisableLoadMore] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
   const [docsLength, setDocsLength] = useState<number>(0);
   const [docs, setDocs] = useState<DocsType[]>([]);
-  const [loadMore, setLoadMore] = useState(false);
 
   const [result, loading, loadError] = useCollection(q);
 
@@ -48,6 +48,9 @@ export function PostsGrid({
     if (result) {
       const docs = result.docs.map((doc) => ({ data: doc.data(), id: doc.id }));
       setDocs(docs);
+      setLoadMore(false);
+    } else {
+      setLoadMore(true); // hacky workaround to ensure "no cats" message doesn't show if not needed
     }
   }, [result]);
 
