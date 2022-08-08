@@ -4,6 +4,7 @@ import { useDocumentData } from "react-firebase-hooks/firestore";
 
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardContent,
@@ -51,27 +52,30 @@ export function AccountInfo({
 
   if (user && result)
     return (
-      <Card sx={styles.card}>
-        <CardMedia>
-          <Avatar
-            src={result.photoURL ?? ""}
-            {...stringAvatar(user.displayName ?? "")}
-          />
-        </CardMedia>
-        <CardContent>
-          <CardHeader color="primary" title={user.displayName} />
-          <Typography>Email: {user.email}</Typography>
-          <Typography>Kijking cats since {date}</Typography>
-          <Button
-            sx={styles.button}
-            variant="outlined"
-            color="error"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </Button>
-        </CardContent>
-      </Card>
+      <>
+        <Card sx={styles.card}>
+          <Box sx={styles.patternContainer}></Box>
+          <CardMedia>
+            <Avatar
+              src={result.photoURL ?? ""}
+              {...stringAvatar(user.displayName ?? "")}
+            />
+          </CardMedia>
+          <CardContent>
+            <CardHeader color="primary" title={user.displayName} />
+            <Typography>Email: {user.email}</Typography>
+            <Typography>Kijking cats since {date}</Typography>
+            <Button
+              sx={styles.button}
+              variant="outlined"
+              color="error"
+              onClick={handleSignOut}
+            >
+              Sign out
+            </Button>
+          </CardContent>
+        </Card>
+      </>
     );
 
   return null;
