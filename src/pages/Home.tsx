@@ -31,7 +31,7 @@ export function Home() {
           <StyledLogo src={KijkkatLogo} alt="Kijkkat Logo" />
         </Icon>
         <Typography variant="h2" sx={homeStyles.typography}>
-          Explore the city with cats
+          Explore the city with furry friends
         </Typography>
       </Box>
       <Search redirect label="Search for cats" />
